@@ -52,10 +52,16 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .profile-img {
   width: 60px;
   height: 60px;
+}
+
+.input-box {
+  width: 301px;
+  border-radius: 20px;
+  text-align: center;
 }
 
 input::placeholder {

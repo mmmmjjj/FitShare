@@ -6,7 +6,7 @@
         <div>
           {{ friend.name }}
         </div>
-        <div class="d-flex mt-2">
+        <div class="d-flex mt-2 button-box">
           <button class="">수락</button>
           <button class="ms-3">거절</button>
         </div>
@@ -37,6 +37,15 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+.button-box {
+  font-size: 12px;
+}
 
+.button-box > button {
+  background: #FDFAF3;
+  font-size: 12px;
+  border-radius: 15px;
+  width: 90px;
+}
 </style>

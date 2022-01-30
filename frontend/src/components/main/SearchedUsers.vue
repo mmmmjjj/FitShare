@@ -13,8 +13,13 @@
           {{ SearchedUser.email }}
         </div>
       </div>
-      <div class="align-self-center">
+      <!-- <div class="align-self-center">
         <img src="@/assets/plus_icon.png" alt="plus">
+      </div> -->
+      <div class="d-flex align-self-center btn-box justify-content-center">
+        <button class="plus-btn">
+          +
+        </button>
       </div>
     </div>
   </div>
@@ -57,11 +62,19 @@ input::placeholder {
   font-size: 12px;
 }
 
-button {
-  width: 32px;
-}
 img {
   width: 50px;
   height: 50px;
 }
+
+.plus-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 25px;
+  background-color: #FDFAF3;
+}
+.btn-box {
+  width: 50px;
+}
+
 </style>

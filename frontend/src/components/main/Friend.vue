@@ -47,7 +47,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 /* 탭 전체 스타일 */
 .tabs {
   background-color: #FDFAF3;
@@ -56,12 +56,12 @@ export default {
   height: 564px;
   margin: 0 auto;
 }
+
 /* 탭 스타일 */
 .tab_item {
   width: calc(100%/3);
   height: 50px;
   border-bottom: 3px solid #333333;
-  /* background-color: #f8f8f8; */
   background-color: #8ABDBE;
   line-height: 50px;
   font-size: 16px;
@@ -69,7 +69,6 @@ export default {
   color: #333333;
   display: block;
   float: left;
-  text-align: center;
   font-weight: bold;
   transition: all 0.2s ease;
 }
@@ -87,9 +86,7 @@ input[name="tab_item"] {
   display: none;
   padding: 15px 40px 0;
   clear: both;
-  /* overflow: hidden; */
   height: 400px;
-  /* overflow: auto; */
   overflow-y: scroll;
 }
 

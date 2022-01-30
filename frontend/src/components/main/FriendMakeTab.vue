@@ -66,4 +66,13 @@ img {
   height: 60px;
 }
 
+.input-box {
+  width: 301px;
+  border-radius: 20px;
+  text-align: center;
+}
+
+input::placeholder {
+  text-align: center;
+}
 </style>

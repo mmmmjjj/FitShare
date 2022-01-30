@@ -22,24 +22,7 @@ export default {
 }
 </script>
 
-<style>
-.input-box {
-  width: 301px;
-  border-radius: 20px;
-  text-align: center;
-}
-
-button {
-  background: #FDFAF3;
-  font-size: 12px;
-  border-radius: 15px;
-  width: 90px;
-}
-
-input::placeholder {
-  text-align: center;
-}
-
+<style scoped>
 /* user 이름 font-size */
 .name-box {
   font-size: 16px;
@@ -47,5 +30,12 @@ input::placeholder {
 
 .button-box {
   font-size: 12px;
+}
+
+.button-box > button {
+  background: #FDFAF3;
+  font-size: 12px;
+  border-radius: 15px;
+  width: 90px;
 }
 </style>

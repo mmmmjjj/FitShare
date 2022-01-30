@@ -4,19 +4,17 @@
     <h1>home</h1>
     <div class="container">
 
-
-      <!-- 친구 아이콘 html / css tab 버전 -->
-      <div id="circle" @click="OpenTab">
+      <!-- 버튼 클릭 시 친구 아이콘 html / css tab 버전 -->
+      <button class="friend-btn" @click="OpenTab">
         <img class="friend_icon" src="@/assets/friend_icon.png" alt="friend_icon">
-      </div>
+      </button>
       <div v-if="status">
         <friend class="tab-box" @close-tab="CloseTab"></friend>
-        <!-- <button class="btn btn-position" @click="CloseTab">닫기</button> -->
-        <!-- <button class="btn btn-position" @click="CloseTab">
-          <img class="close-img" src="@/assets/close-icon.png" alt="">
-        </button> -->
-        <img class="close-img" @click="CloseTab" src="@/assets/close-icon.png" alt="close-img">
+        <button>
+          <img class="close-img" @click="CloseTab" src="@/assets/close-icon.png" alt="close-img">
+        </button>
       </div>
+
     </div>
   </div>
 </template>
@@ -52,21 +50,11 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .container {
   width: 1156px;
   height: 944px;
   border: solid black;
-}
-
-#circle {
-  background-color: #8ABDBE;
-  width: 100px;
-  height: 100px;
-  border-radius: 50px;
-  position: relative;
-  left: 1095px;
-  top: 700px;
 }
 
 .friend_icon {
@@ -80,23 +68,25 @@ export default {
 .tab-box {
   top: 300px;
   left: 1100px;
-  /* position: relative; */
   position: fixed;
 }
 
-/* 닫기를 버튼으로 처리했을 때 style */
-.btn {
-  top: 261px;
-  position: fixed;
-  left: 1100px;
-}
-
-/* 닫기를 이미지로 처리했을 때 style */
+/* 닫기 이미지 style */
 .close-img {
   width: 30px;
   height: 30px;
   top: 265px;
   position: fixed;
   left: 1100px;
+}
+
+.friend-btn {
+  width: 100px;
+  height: 100px;
+  border-radius: 50px;
+  position: relative;
+  left: 1095px;
+  top: 700px;
+  background-color: #8ABDBE;
 }
 </style>
