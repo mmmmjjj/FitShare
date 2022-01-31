@@ -36,6 +36,8 @@ dependencies {
     // Swagger
     implementation 'io.springfox:springfox-boot-starter:3.0.0'
     implementation 'org.springframework.security:spring-security-oauth2-client'
+    // h2
+    runtimeOnly 'com.h2database:h2'
 }
 
 tasks.named('test') {

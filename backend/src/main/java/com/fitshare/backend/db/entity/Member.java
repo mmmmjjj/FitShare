@@ -15,7 +15,7 @@ import javax.persistence.*;
 @DynamicInsert
 @DynamicUpdate
 @Entity
-@Table(name = "member", schema = "fitshare")
+@Table(name = "member")
 public class Member extends BaseTimeEntity {
 
     @Id

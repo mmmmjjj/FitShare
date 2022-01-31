@@ -1,7 +1,7 @@
 package com.fitshare.backend.db.entity;
 
 import lombok.Getter;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.EntityListeners;
@@ -11,8 +11,8 @@ import java.time.LocalDateTime;
 @Getter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public class BaseTimeEntity extends CreatedTimeEntity {
+public class CreatedTimeEntity {
 
-    @LastModifiedDate
-    private LocalDateTime updatedTime;
+    @CreatedDate
+    private LocalDateTime createdTime;
 }
