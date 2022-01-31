@@ -1,4 +1,5 @@
 import { createStore } from 'vuex';
+import mall from '@/store/modules/mall.js';
 
 export default createStore({
 	state: {
@@ -8,5 +9,8 @@ export default createStore({
 	mutations: {
 	},
 	actions: {
-	}
+	},
+	modules: {
+		mall,
+	},
 });
