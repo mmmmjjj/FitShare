@@ -38,6 +38,8 @@ dependencies {
     implementation 'org.springframework.security:spring-security-oauth2-client'
     // h2
     runtimeOnly 'com.h2database:h2'
+    // OpenVidu
+    implementation 'io.openvidu:openvidu-java-client:2.20.0'
 }
 
 tasks.named('test') {

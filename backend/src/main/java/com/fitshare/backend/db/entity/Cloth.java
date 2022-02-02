@@ -16,8 +16,8 @@ public class Cloth extends CreatedTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "closet_id")
-    private Closet closet;
+    @JoinColumn(name = "room_participant_id")
+    private RoomParticipant roomParticipant;
 
     @Column
     private String shoppingMallUrl;

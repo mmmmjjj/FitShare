@@ -1,12 +1,14 @@
 package com.fitshare.backend.db.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "shopping_room")
 public class ShoppingRoom extends BaseTimeEntity {
@@ -33,7 +35,7 @@ public class ShoppingRoom extends BaseTimeEntity {
     private int participantCount;
 
     @Column
-    private int password;
+    private String password;
 
     @Column
     private Boolean isPrivate;
@@ -43,7 +45,4 @@ public class ShoppingRoom extends BaseTimeEntity {
 
     @Column
     private Boolean isCustomShoppingMall;
-
-    @OneToOne(mappedBy = "shoppingRoom", fetch = FetchType.LAZY)
-    private GroupChat groupChat;
 }
