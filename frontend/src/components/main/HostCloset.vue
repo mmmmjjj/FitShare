@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="container">
-      <div class="host-name">
-        김명섭 님의 옷장
+      <div class="host-name fw-bold">
+        {{ selectedShoppingRoom.hostName }}님의 옷장 
       </div>
       <!-- 옷장에서 옷 가져오기 -->
       <host-closet-item class="host-closet-item"></host-closet-item>
@@ -14,7 +14,13 @@
 import HostClosetItem from './HostClosetItem.vue'
 export default {
   name: 'HostCloset',
+
   components: { HostClosetItem },
+
+  props: {
+    selectedShoppingRoom: Object,
+  },
+  
 }
 </script>
 
@@ -40,7 +46,7 @@ export default {
   overflow-x: hidden;
 }
 .host-closet-item::-webkit-scrollbar {
-  width: 10px;
+  width: 7px;
   /* background-color: beige; */
 }
 .host-closet-item::-webkit-scrollbar-thumb {
