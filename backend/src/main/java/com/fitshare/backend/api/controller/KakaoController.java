@@ -1,24 +1,29 @@
 package com.fitshare.backend.api.controller;
 
 
+import com.fitshare.backend.api.response.KakaoLoginRes;
 import com.fitshare.backend.api.service.MemberService;
+import com.fitshare.backend.common.model.BaseResponseBody;
 import com.fitshare.backend.common.model.KakaoProfile;
-import com.fitshare.backend.common.model.OAuthToken;
 import com.fitshare.backend.common.auth.KakaoApiService;
+import com.fitshare.backend.common.model.RoleType;
 import com.fitshare.backend.db.entity.Member;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Optional;
 
+import static com.fitshare.backend.common.model.ResponseMessage.LOGIN;
 
-@Api(value = "카카오 인증 API")
+
+@Api(value = "카카오 인증 API", tags = "Kakao")
 @RestController
 @RequestMapping("/api/v1/kakao")
 public class KakaoController {
@@ -30,35 +35,41 @@ public class KakaoController {
     MemberService memberService;
 
     @GetMapping(value = "/login")
-    @ApiOperation(value = "카카오 로그인", notes = "인가코드 받고 카카오에 토큰을 요청합니다. 토큰 발급 후 받은 유저 정보를 토대로 로그인하는 API입니다.")
-    public ModelAndView login(@RequestParam String code){
+    @ApiOperation(value = "카카오 로그인", notes = "카카오 액세스 토큰으로 유저 정보를 받아 jwt토큰을 발급하고 전송하는 api입니다.")
+    public ResponseEntity<BaseResponseBody> login(@RequestParam String accessToken){
+        String jwt = null;
 
         // 1. 인가 코드로 카카오 access 토큰, refresh 토큰 받아오기
-        OAuthToken oAuthToken = kakaoApiService.requestToken(code);
+        //OAuthToken oAuthToken = kakaoApiService.requestToken(code);
 
-        // 2. 유저 정보 받아오기
-        KakaoProfile kakaoProfile = kakaoApiService.requestUserInfo(oAuthToken);
+        // 1. access token으로 유저 정보 받아오기
+        KakaoProfile kakaoProfile = kakaoApiService.requestUserInfo(accessToken);
         System.out.println(kakaoProfile.toString());
 
-        // 3. DB에서 카카오회원번호로 회원 정보 불러오기
+        // 2. DB에서 카카오회원번호로 회원 정보 불러오기
         Long uid = kakaoProfile.getId();
-        System.out.println(uid);
 
         Optional<Member> member = memberService.findMemberByUid(uid);
 
-        // 4. 없으면 DB에 저장
+        // 3. 없으면 DB에 저장
         if(null==member)
-            memberService.createMember(kakaoProfile);
+           member = Optional.ofNullable(memberService.createMember(kakaoProfile));
 
-        // 5. redis에 refreshToken 저장
+        // 4. JWT token 발급
+        jwt = kakaoApiService.createToken(member.get().getId(), RoleType.USER);
 
+        KakaoLoginRes kakaoLoginRes = new KakaoLoginRes(member.get().getId(), jwt, member.get().getName(), member.get().getProfileImg());
 
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName("경로");
-        mav.addObject("accessToken", oAuthToken.getAccess_token()); //토큰
-
-        return mav;
+        return ResponseEntity.ok(BaseResponseBody.of(HttpStatus.CREATED, LOGIN, kakaoLoginRes));
     }
 
+    @GetMapping(value = "/logout")
+    @ApiOperation(value = "카카오 로그아웃",notes = "토큰을 만료 시킨 후 로그아웃한다.")
+    public ResponseEntity logout(){
+        // 1. redis에서 token 삭제
 
+        // 2. 카카오 서비스 로그아웃
+
+        return ResponseEntity.ok("로그아웃 되었습니다.");
+    }
 }

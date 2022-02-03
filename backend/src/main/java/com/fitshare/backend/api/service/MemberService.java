@@ -11,4 +11,6 @@ public interface MemberService {
     Member createMember(KakaoProfile kakaoProfile);
 
     Optional<Member> findMemberByUid(Long uid);
+
+    Optional<Member> findMemberById(Long id);
 }

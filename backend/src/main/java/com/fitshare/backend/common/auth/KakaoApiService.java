@@ -2,16 +2,24 @@ package com.fitshare.backend.common.auth;
 
 import com.fitshare.backend.common.model.KakaoProfile;
 import com.fitshare.backend.common.model.OAuthToken;
+import com.fitshare.backend.common.model.RoleType;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 @Component
+@RequiredArgsConstructor
+@Slf4j
 public class KakaoApiService {
+    private final JwtTokenProvider tokenProvider;
 
     static String clientId = "9596c9c79f92bc2d9fbdeacfee238961";
 
@@ -27,7 +35,7 @@ public class KakaoApiService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type","authorization_code");
         body.add("client_id",clientId);
-        body.add("redirect_uri","http://localhost:8080/api/v1/kakao/login");
+        body.add("redirect_uri","http://localhost:8081/api/v1/kakao/login");
         body.add("code",code);
 
         //Http Header와 Body 담기
@@ -42,14 +50,15 @@ public class KakaoApiService {
 
     }
 
-    public KakaoProfile requestUserInfo(OAuthToken oAuthToken){
+    public KakaoProfile requestUserInfo(String accessToken){
 
         RestTemplate restTemplate = new RestTemplate();
+        restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
 
         //HttpHeader
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type","application/x-www-form-urlencoded;charset=utf-8");
-        headers.add("Authorization","Bearer " + oAuthToken.getAccess_token());
+        headers.add("Authorization","Bearer " + accessToken);
 
         //HttpHeader 담기
         HttpEntity<MultiValueMap<String,String>> kakaoProfileRequest = new HttpEntity<>(headers);
@@ -60,6 +69,10 @@ public class KakaoApiService {
                 kakaoProfileRequest,
                 KakaoProfile.class).getBody();
 
+    }
+
+    public String createToken(Long id, RoleType roleType){
+        return tokenProvider.createToken(id.toString(),roleType);
     }
 
 }
