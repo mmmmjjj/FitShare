@@ -4,6 +4,8 @@ import Main from "@/views/Main.vue";
 import CreateRoom from "@/views/CreateRoom.vue";
 import ShoppingRoom from "@/views/ShoppingRoom.vue";
 
+import Test from "@/views/Test.vue"
+
 const routes = [
     {
       path: "/",
@@ -25,6 +27,11 @@ const routes = [
       name: "ShoppingRoom",
       component: ShoppingRoom,
     },
+    {
+      path: "/test",
+      name: "test",
+      component: Test,
+    }
     
   ];
   
