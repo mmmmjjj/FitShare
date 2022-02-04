@@ -1,8 +1,11 @@
 package com.fitshare.backend.db.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -45,4 +48,8 @@ public class ShoppingRoom extends BaseTimeEntity {
 
     @Column
     private Boolean isCustomShoppingMall;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "shoppingRoom")
+    List<RoomParticipant> roomParticipants = new ArrayList<>();
 }

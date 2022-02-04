@@ -13,9 +13,15 @@ import java.util.Optional;
 @Repository
 public interface ShoppingRoomRepository extends JpaRepository<ShoppingRoom, Long> {
 
-    @Query("select new com.fitshare.backend.api.response.ShoppingRoomRes(m.name, s.id, s.shoppingMallName, s.shoppingMallUrl, s.isPrivate, s.participantCount, count(r.id)) " +
-            "from ShoppingRoom s, Friend f, Member m, RoomParticipant r " +
-            "where s.isActive = true and f.member.id = :memberId and s.host = f.friend and f.friend = m and s = r.shoppingRoom " +
+    @Query("select new com.fitshare.backend.api.response.ShoppingRoomRes(" +
+            "m.name, s.id, s.shoppingMallName, s.shoppingMallUrl, s.isPrivate, s.participantCount, count(r.id)) " +
+            "from ShoppingRoom s " +
+            "join s.roomParticipants r " +
+            "join Friend f " +
+            "on s.host = f.friend " +
+            "join f.friend m " +
+            "where s.isActive = true " +
+            "and f.member.id = :memberId " +
             "group by s " +
             "order by s.createdTime desc ")
     Optional<List<ShoppingRoomRes>> getShoppingRoomByMemberId(@Param("memberId") Long memberId);
