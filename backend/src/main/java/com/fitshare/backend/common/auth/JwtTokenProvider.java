@@ -4,6 +4,7 @@ import com.fitshare.backend.common.model.RoleType;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.InitializingBean;
@@ -21,6 +22,7 @@ import java.util.Date;
 import java.util.stream.Collectors;
 
 // 토큰 생성, 유효성 검증을 담당
+@Slf4j
 @Component
 public class JwtTokenProvider implements InitializingBean {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);

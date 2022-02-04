@@ -13,14 +13,12 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
 import static com.fitshare.backend.common.model.ResponseMessage.LOGIN;
+import static org.springframework.security.config.Elements.LOGOUT;
 
 
 @Api(value = "카카오 인증 API", tags = "Kakao")
@@ -65,11 +63,9 @@ public class KakaoController {
 
     @GetMapping(value = "/logout")
     @ApiOperation(value = "카카오 로그아웃",notes = "토큰을 만료 시킨 후 로그아웃한다.")
-    public ResponseEntity logout(){
-        // 1. redis에서 token 삭제
+    public ResponseEntity<BaseResponseBody> logout(@RequestHeader("Authorization") String accessToken) {
 
-        // 2. 카카오 서비스 로그아웃
 
-        return ResponseEntity.ok("로그아웃 되었습니다.");
+        return ResponseEntity.ok(BaseResponseBody.of(HttpStatus.OK,LOGOUT));
     }
 }

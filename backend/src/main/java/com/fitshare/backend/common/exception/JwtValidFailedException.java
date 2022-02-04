@@ -1,4 +1,4 @@
-package com.fitshare.backend.common.auth;
+package com.fitshare.backend.common.exception;
 
 public class JwtValidFailedException extends RuntimeException {
 
