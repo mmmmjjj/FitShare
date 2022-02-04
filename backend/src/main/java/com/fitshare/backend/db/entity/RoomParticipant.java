@@ -1,12 +1,12 @@
 package com.fitshare.backend.db.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "room_participant")
 public class RoomParticipant extends CreatedTimeEntity {
@@ -22,4 +22,9 @@ public class RoomParticipant extends CreatedTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    public RoomParticipant(ShoppingRoom shoppingRoom, Member member) {
+        this.shoppingRoom = shoppingRoom;
+        this.member = member;
+    }
 }

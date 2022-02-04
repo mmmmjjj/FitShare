@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-@ApiModel("MakeRoomRequest")
+@ApiModel("MakeShoppingRoomRequest")
 @Getter
 @Setter
 public class MakeShoppingRoomReq {
