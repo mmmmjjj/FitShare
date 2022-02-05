@@ -1,6 +1,6 @@
 <template>
   <div>
-    <iframe id="example" title="example" src="http://www.nike.com&output=embed"
+    <iframe id="example" class="site" title="example" :src="shoppingMallUrl"
       frameborder="0" width="859" height="780">
     </iframe>
   </div>
@@ -10,10 +10,41 @@
 export default {
     name: 'ShoppingSite',
     
+    props: {
+      shoppingMallUrl: String,
+    },
+
+    setup() {
+      // document.cookie = "safeCookie1=foo; SameSite=Lax"
+      // document.cookie = "safeCookie2=foo"
+      // document.cookie = "crossCookie=bar; SameSite=None; Secure";
+      
+      document.cookie = "SameSite=None; Secure"
+      
+      // document.cookie = 'cookie1=value1; SameSite=Lax';
+      // document.cookie = 'cookie2=value2; SameSite=None; Secure';
+
+      return {
+      }
+    }
+
 }
 </script>
 
 <style>
-/* width="859" height="765" */
-/* src="https://www.openstreetmap.org/export/embed.html?bbox=-0.004017949104309083%2C51.47612752641776%2C0.00030577182769775396%2C51.478569861898606&layer=mapnik" */
+
+iframe {
+  background-color: white;
+}
+
+.site::-webkit-scrollbar {
+  width: 7px;
+}
+.site::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+.site::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: #D3E2E7;
+}
 </style>

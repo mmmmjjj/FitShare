@@ -2,7 +2,7 @@
   <div class="room-container">
    <h2>Live</h2>
    <div class="row">
-     <!-- emit event room 정보 -->
+     <!-- emit change-host-room -->
      <div id="room" class="room col-6" :class="index % 2 ? 'room-right' : 'room-left'" 
       :style="{ 'background-image': `url(${require(`../../assets/shopping_${index % 5 + 1}.png`)})` }"
       v-for="(room, index) in shoppingRoomList" :key="index" 
@@ -18,54 +18,27 @@
 </template>
 
 <script>
-import { reactive, toRefs } from 'vue';
+import { reactive, toRefs, } from 'vue';
 
 export default {
     name: 'ShoppingRoomList',
     
-    emits: ['first-host-closet', 'change-host-closet'],
+    props: {
+      shoppingRoomList: Object,
+    },
 
-    setup(props, { emit }) {
-      // 필요 정보 : mall이름, host이름(or hostId), 참여인원수, roomID(sessionID),   
+    emits: ['change-host-closet'],
+
+    setup() {
       const state = reactive({
-        shoppingRoomList : [
-          { shoppingRoomId: 1, hostName: '김싸피', shoppingMallId: 1, shoppingMallName: 'nike', shoppingMallUrl: '..' },  // 이 외에 추가적으로
-          { shoppingRoomId: 2, hostName: '이싸피', shoppingMallId: 2, shoppingMallName: '지그재그', shoppingMallUrl: '..'},
-          { shoppingRoomId: 3, hostName: '최싸피', shoppingMallId: 1, shoppingMallName: '홈', shoppingMallUrl: '..'},
-          { shoppingRoomId: 4, hostName: '박싸피', shoppingMallId: 1, shoppingMallName: '쇼핑몰', shoppingMallUrl: '..'},
-          { shoppingRoomId: 5, hostName: '...', shoppingMallId: 1, shoppingMallName: '쇼핑몰2', shoppingMallUrl: '..'},
-        ],
+        // shoppingRoomList : [
+        //   { shoppingRoomId: 1, hostName: '김싸피', maxParticipantCount: 2, isPrivate: true, shoppingMallName: 'nike', shoppingMallUrl: '..' },  // 이 외에 추가적으로
+        // ],
 
       })
 
-      // methods
-
-      // axios로 쇼핑룸 목록 불러오기 
-      function getShoppingRoomList () {
-        // axios({
-        //   method: 'get',
-        //   url: '쇼핑룸 목록 API',
-        // })
-        //   .then(res => {
-        //     state.shoppingRoomList = res.data
-        //   })
-        //   .then(() => {
-        //     this.$emit('first-host-closet', state.shoppingRoomList[0])
-        //   })
-      }
-      
-      // 첫번째 쇼핑룸 emit
-      function emitFirstHost() {
-        emit('first-host-closet', state.shoppingRoomList[0])
-      }
-
-      // created
-      // getShoppingRoomList()
-      emitFirstHost()  
-
       return {
-        ...toRefs(state), getShoppingRoomList, 
-        emitFirstHost,
+        ...toRefs(state),
       }
     }
 }

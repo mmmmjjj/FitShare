@@ -1,7 +1,7 @@
 <template>
   <div class="create-container">
     <div id="new-room"> 
-			<div id="dialog" class="jumbotron vertical-center">
+			<div id="dialog" class="vertical-center">
         <div class="d-flex flex-row title">
           <i class="bi bi-house-door me-4"></i>
           <h1>New Room</h1>
@@ -125,9 +125,12 @@ export default {
     let isPrivate = ref(false);
     let password = ref(null);
 
+    // 테스트용 토큰
+    let token = ref('eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0Iiwicm9sZXMiOiJVU0VSIiwiZXhwIjoxNjQ3NDc3NzYyfQ.tRLXFW9wHHIXCrJotone8gsjsi5Vba6zWvIQGCUtZWFrYZw3F9OaHLDeDQ9ZSOpn9E9y2OrLiDuHazuSTd4yAw')
+
     const state = reactive({
-      mySessionId: 'sessionA',
-      myUserName: 'participant12', 
+      // mySessionId: 'sessionA',
+      // myUserName: 'participant12', 
 
       shoppingMallList: [  // 서버 적용시 store에서 불러오는 방식으로 진행
         { id: 1, name: 'Nike', url: 'https://www.nike.com'},
@@ -168,7 +171,7 @@ export default {
     // 바깥영역 클릭으로 dropdown 닫기
     document.addEventListener('click', function(e){
       if (isMallVisible.value == false ) {
-        console.log('')
+        // console.log('')
       } else {
         if (e.target.className !== 'dropdown-popover' && e.target.className !== 'selected-item form-select' && e.target.className !== '' && e.target.className !== 'search-mall-input' ) {
           isMallVisible.value = false
@@ -187,7 +190,7 @@ export default {
     watch(filteredMalls, (filteredMalls) => {
       if (filteredMalls.length === 0) {
         state.isMall = false;
-        selectedItem.value = null
+        selectedItem.value = null;
       } else {
         state.isMall = true;
       }
@@ -204,38 +207,36 @@ export default {
 
     // 쇼핑룸 생성
     function makeRoom () {
-      // const mallId = null
-      // if (selectedItem) {
-      //   console.log(selectedItem)
-      //   this.mallId = selectedItem.value.id
-      // } 
+      let mallId = null
+      if (selectedItem.value) {
+        mallId = selectedItem.value.id
+        state.mallName = null
+        state.mallUrl = null
+      } 
 
       const roomData = {  
-        // userId: '',  // username(or id) 필요 => DB host_id 저장 
         customShoppingMall: true,
         participantCount: selectedCnt.value,
         password: password.value,  // null
-        private: isPrivate.value,  // T/F
-        shoppingMallId: null,  // null (this.mallId)
-        shoppingMallName: state.mallName, // null
-        shoppingMallUrl: state.mallUrl,  // null
+        private: isPrivate.value,  
+        shoppingMallId: mallId,  // null 
+        shoppingMallName: state.mallName, 
+        shoppingMallUrl: state.mallUrl,  
       }
-      console.log(roomData)
+      // console.log(roomData)
 
       axios({
         method : 'post',
         url: 'http://i6a405.p.ssafy.io:8081/api/v1/shopping-rooms/',
         data: roomData,
-        // header: 
+        headers: { Authorization : `Bearer ${token.value}` }
       })
         .then(res => {
-          console.log(res.data.data)  // sessionId(=roomId), mall url, token
-          router.push({ name: 'ShoppingRoom', params: { roomId: res.data.data.roomId, token: res.data.data.token, myUserName: state.myUserName }}) // mallUrl: res.data.mall_url
+          console.log(res.data.data)
+          const data = res.data.data
+          router.push({ name: 'ShoppingRoom', params: { roomId: data.shoppingRoomId, token: data.token, mallUrl: data.ShoppingRoomUrl }}) 
         })
         .catch(err => console.log(err))
-
-
-      // router.push({ name: 'ShoppingRoom', params: { roomId: state.mySessionId, myUserName: state.myUserName } })
     }
 
     const goToMain = () => {
@@ -243,7 +244,7 @@ export default {
     }
 
     return { 
-      clickPrivate, makeRoom, goToMain, clickPublic, 
+      clickPrivate, makeRoom, goToMain, clickPublic, token,
       ...toRefs(state), counts, searchQuery, selectedCnt ,selectedItem, isMallVisible, 
       isCntVisible, filteredMalls, selectItem, selectCnt, isPrivate, password,
     }
@@ -252,6 +253,18 @@ export default {
 </script>
 
 <style scoped>
+.create-container {
+  margin: 0px 142px 0;
+  display: flex;
+  justify-content: center;
+}
+
+#new-room {
+  margin: 0px 187px 100px;
+  width: 782px;
+  height: 951px;
+}
+
 .dropdown-wrapper {
   width: 454px;
   height: 35px;
@@ -365,14 +378,6 @@ input:focus {
 .title {
   font-size: 36px;
   margin-bottom: 60px;
-}
-
-.create-container {
-  margin: 0px 142px 0;
-}
-
-#new-room {
-  margin: 0px 187px 100px;
 }
 
 #dialog {

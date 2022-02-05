@@ -1,5 +1,5 @@
 import { createStore } from 'vuex';
-import mall from '@/store/modules/mall.js';
+import room from '@/store/modules/room';
 
 export default createStore({
 	state: {
@@ -11,6 +11,6 @@ export default createStore({
 	actions: {
 	},
 	modules: {
-		mall,
+		room
 	},
 });

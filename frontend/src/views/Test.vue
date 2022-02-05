@@ -60,7 +60,7 @@ export default {
           url: '/v1/user/unlink',
           success: function(response) {
             console.log("getAccessToken: ");
-            console.log(response);l
+            console.log(response);
 
           },
           fail: function(error) {

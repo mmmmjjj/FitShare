@@ -4,8 +4,9 @@
     <div class="container">
       <!-- 쇼핑룸, host옷장 -->
       <div class="row">
-        <shopping-room-list @change-host-closet="changeHostCloset" @first-host-closet="firstHostCloset"></shopping-room-list>
+        <shopping-room-list :shopping-room-list="shoppingRoomList" @change-host-closet="changeHostCloset"></shopping-room-list>
         <div class="host-container">
+          <!-- <host-closet class="host-closet" :selected-shopping-room="selectedShoppingRoom"></host-closet> -->
           <host-closet class="host-closet" :selected-shopping-room="selectedShoppingRoom"></host-closet>
           <button class="btn shadow-none" @click="goToRoom()">입장하기</button>
         </div>
@@ -23,8 +24,8 @@
       </div>
     </div>
 
-    <!-- 비밀번호 모달 -->
-    <div class="modal overlay" :class="isPrivate ? 'show-modal' : 'hide-modal'" tabindex="-1">
+    <!-- 비밀번호 입력 모달 -->
+    <div class="modal overlay" tabindex="-1" :class="isPrivate ? 'show-modal' : 'hide-modal'">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -32,7 +33,7 @@
             <button type="button" class="btn-close shadow-none ms-2" data-bs-dismiss="modal" @click="closeModal"></button>
           </div>
           <div class="modal-body">
-            <input type="password" v-model="password" placeholder="비밀번호를 입력해주세요">
+            <input type="password" v-model="inputPassword" placeholder="비밀번호를 입력해주세요">
             <p v-if="errorMessage" class="error-message">비밀번호 오류! 다시 입력해주세요</p>
             <span class="d-flex justify-content-center">
               <button class="btn shadow-none" @click="checkPassword">입장하기</button>              
@@ -53,7 +54,8 @@ import ShoppingRoomList from '@/components/main/ShoppingRoomList.vue'
 import HostCloset from '../components/main/HostCloset.vue'
 import { reactive, ref, toRefs } from 'vue'
 import { useRouter } from 'vue-router';
-// import axios from 'axios'
+// import { useStore } from "vuex";
+import axios from 'axios'
 
 export default {
   name: 'Main',
@@ -67,15 +69,18 @@ export default {
 
   setup() {
     const router = useRouter()
-
+    // const store = useStore();
+    
     const status = ref(false)
-    const selectedShoppingRoom = ref({})
-    const isPrivate = ref(false)
-    const password = ref(null)
-    const errorMessage = ref(false)
+    const shoppingRoomList = ref([])
+    let selectedShoppingRoom = ref({})
+    
+    let isPrivate = ref(false)
+    let inputPassword = ref(null)  
+    let errorMessage = ref(false)
 
-    const state = reactive({
-      confirmPassword: null,
+    const state = reactive({ 
+      confirmPassword: null,  // 비밀번호 api 사용시 필요없음
       roomId: null,
       token: null, 
       mallUrl: null,
@@ -90,44 +95,53 @@ export default {
       status.value = false
     };
     
-    // host 옷장 내용 
+    // 쇼핑룸목록 불러오기 
+    function getShoppingRoomList () {
+        axios({
+          method: 'get',
+          url: 'http://i6a405.p.ssafy.io:8081/api/v1/shopping-rooms/',
+          headers: { Authorization : `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0Iiwicm9sZXMiOiJVU0VSIiwiZXhwIjoxNjQ3NDc3NzYyfQ.tRLXFW9wHHIXCrJotone8gsjsi5Vba6zWvIQGCUtZWFrYZw3F9OaHLDeDQ9ZSOpn9E9y2OrLiDuHazuSTd4yAw` }
+        })
+          .then(res => {
+            shoppingRoomList.value = res.data.data
+            selectedShoppingRoom.value = res.data.data[0]  // 첫번째 쇼핑룸
+          })
+    }
+
+    // 선택한 host 옷장으로 변경
     function changeHostCloset(roomInfo) {
       selectedShoppingRoom.value = roomInfo
     }
 
-    function firstHostCloset(firstRoomInfo) {
-      selectedShoppingRoom.value = firstRoomInfo
-    }
-    
     // 입장하기
     function goToRoom() {
-      // request : username, roomId
-      isPrivate.value = true
+      isPrivate.value = false
       
-      // axios({
-      //   method : 'post',
-      //   url: 'http://i6a405.p.ssafy.io:8081/api/v1/shopping-rooms/',
-      //   data: {
-      //     username: '',
-      //     shoppingRoomId: '',
-      //   },
-      //   // header: , 
-      // })
-      //   .then(res => {
-      //     // isPrivate 여부 => F: token, roomId, mallurl (username 필요X) / T: isPrivate, password
-      //     const data = res.data  
-      //     if (!data.isPrivate) {  // public
-      //       router.push({ name: 'ShoppingRoom', params: { roomId: data.roomId, token: data.token, mallUrl: data.mall_url }})
-      //     } else { 
-      //       isPrivate.value = true
-      //       confirmPassword.value = data.password
-      //     }
-      //   })
-      //   .catch(err => console.log(err)) // 인원수 초과시 에러메세지 
+      axios({
+        method : 'get',
+        url: 'http://i6a405.p.ssafy.io:8081/api/v1/shopping-rooms/54',  // roomId는 임시로 바꿔서 테스트
+        // url: `http://i6a405.p.ssafy.io:8081/api/v1/shopping-rooms/${selectedShoppingRoom.shoppingRoomId}`,
+        headers: { Authorization : `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0Iiwicm9sZXMiOiJVU0VSIiwiZXhwIjoxNjQ3NDc3NzYyfQ.tRLXFW9wHHIXCrJotone8gsjsi5Vba6zWvIQGCUtZWFrYZw3F9OaHLDeDQ9ZSOpn9E9y2OrLiDuHazuSTd4yAw` }
+      })
+        .then(res => {
+          const data = res.data.data 
+          console.log(res.data.data)
+          router.push({ name: 'ShoppingRoom', params: { roomId: data.shoppingRoomId, token: data.token, mallUrl: data.ShoppingRoomUrl }}) 
+
+          // isPrivate 여부 => F: token, roomId, mallurl (username 필요X) / T: isPrivate, password
+          // if (!data.isPrivate) {  // public
+          //   router.push({ name: 'ShoppingRoom', params: { roomId: data.shoppingRoomId, token: data.token, mallUrl: data.ShoppingRoomUrl }})
+          // } else { 
+          //   isPrivate.value = true
+          //   confirmPassword.value = data.password  // 비번 API X 경우
+          // }
+        })
+        .catch(err => console.log(err))
     }
 
+    // 비밀번호 확인
     function checkPassword() {
-      // password를 goToRoom에서 받은 경우 
+      // password를 goToRoom에서 받는 경우 
       // if (password.value == state.confirmPassword) {
       //   isPrivate.value = false
       //   router.push({ name: 'ShoppingRoom', params: { roomId: state.roomId, token: state.token, mallUrl: state.mall_url }})
@@ -135,19 +149,41 @@ export default {
       //   errorMessage.value = true
       //   password.value = null
       // }
+
+      // API 사용시 
+      // axios({
+      //   method: 'post',
+      //   url: '',
+      //   data: { password: inputPassword.value },
+      //   headers: { Authorization: `Bearer 토큰`}
+      // })
+      //   .then(res => {
+      //     const data = res.data.data
+      //     router.push({ name: 'ShoppingRoom', params: { roomId: data.shoppingRoomId, token: data.token, mallUrl: data.ShoppingRoomUrl }}) 
+      //   })
     }
 
     function closeModal() {
       isPrivate.value = false
-      password.value = null
+      inputPassword.value = null
     }
 
+    // created
+    getShoppingRoomList()
+
+    // created (store 사용시 )
+    // function getList() {
+    //   console.log('start')
+    //   store.dispatch('mall/loadShoppingMallList')
+    // }
+    // getList()
 
     return {
-      status, selectedShoppingRoom, isPrivate, password, errorMessage, ...toRefs(state),
+      status, shoppingRoomList, selectedShoppingRoom, isPrivate, inputPassword, errorMessage, ...toRefs(state),
       OpenTab,CloseTab,
-      changeHostCloset,firstHostCloset,
+      changeHostCloset,getShoppingRoomList,
       goToRoom, checkPassword, closeModal,
+      // getList, 
     }
   }
 }
