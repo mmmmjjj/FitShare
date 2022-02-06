@@ -1,15 +1,19 @@
 package com.fitshare.backend.db.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Getter
-@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "friend")
 public class Friend extends CreatedTimeEntity {
+
+    public Friend(Member member, Member friend) {
+        this.member = member;
+        this.friend = friend;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
