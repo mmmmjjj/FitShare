@@ -1,13 +1,14 @@
 package com.fitshare.backend.api.service;
 
+import com.fitshare.backend.api.response.BaseMemberRes;
 import com.fitshare.backend.common.model.KakaoProfile;
 import com.fitshare.backend.db.entity.Member;
 import com.fitshare.backend.db.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -15,8 +16,7 @@ import java.util.Optional;
 @Transactional
 public class MemberServiceImpl implements MemberService  {
 
-    @Autowired
-    MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     public Member createMember(KakaoProfile kakaoProfile) {
@@ -48,9 +48,13 @@ public class MemberServiceImpl implements MemberService  {
 
         Optional<Member> member = memberRepository.findById(id);
 
-        if(member.isPresent())
-            return member;
+        if (member.isPresent()) return member;
 
         return null;
+    }
+
+    @Override
+    public List<BaseMemberRes> searchMembersByEmail(String email) {
+        return memberRepository.findByEmailLike(email);
     }
 }
