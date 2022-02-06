@@ -26,19 +26,4 @@ public class MemberController {
         return ResponseEntity.ok(BaseResponseBody.of(HttpStatus.OK, SEARCH_MEMBERS_BY_EMAIL, memberService.searchMembersByEmail(email)));
     }
 
-
-    // 프로필 사진 변경
-//    @PutMapping("/image")
-//    @ApiOperation(value="프로필 사진 변경", notes = "유저의 프로필 사진을 변경합니다.")
-//    public ResponseEntity<> changeProfileImage(MultipartHttpServletRequest request){
-//
-//
-//        return ResponseEntity.ok("프로필 사진을 수정하였습니다.");
-//    }
-
-    // 회원 정보 수정
-
-
-    // 회원 탈퇴
-
 }

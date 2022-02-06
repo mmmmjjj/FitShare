@@ -11,8 +11,9 @@ public class ResponseMessage {
     public static final String GET_SHOPPING_LIST = "쇼핑룸 목록 조회 성공입니다.";
 
     // Login
-    public static final String LOGIN = "로그인 되었습니다.";
-    public static final String LOGOUT = "로그아웃 되었습니다.";
+    public static final String GET_ACCESS_TOKEN = "카카오 토큰 생성 성공입니다.";
+    public static final String LOGIN = "로그인 성공입니다.";
+    public static final String LOGOUT = "로그아웃 성공입니다.";
 
     // Member
     public static final String SEARCH_MEMBERS_BY_EMAIL = "이메일로 사용자 조회 성공입니다.";
