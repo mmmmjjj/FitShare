@@ -10,8 +10,9 @@ const room = {
 
     mutations: {
       LOAD_SHOPPING_MALL_LIST: function (state, results) {
-        state.shoppingMallList.value = results
-        console.log(state.shoppingMallList)
+        console.log(results)
+        state.shoppingMallList = results
+        
       }
     },
 

@@ -28,7 +28,7 @@
             <button @click="removeFilter()">remove</button>
           </div>
         </div>
-        <closet class="closet"></closet>
+        <closet :subscribers="subscribers" class="closet"></closet>
       </div>
 		</div>
   </div>
@@ -65,7 +65,7 @@ export default {
           subscribers: [], 
 
           mySessionId: '',
-          myUserName: 'user1234',  // 임시 => store에서 사용자 정보 불러오기 
+          myUserName: '김싸피 12',  // 임시 => store에서 사용자 정보 불러오기 
 
           isAudio: false,
           isVideo: false,
@@ -74,7 +74,6 @@ export default {
         // created 
         state.mySessionId = route.params.roomId  
         shoppingMallUrl.value = route.params.mallUrl 
-        
         
         // methods        
         const goToMain = () => {
@@ -101,13 +100,13 @@ export default {
 
         // openvidu method
         function filter() {
-          // this.publisher.stream.applyFilter("GStreamerFilter", { command: "textoverlay text='Embedded text' valignment=top halignment=right" })
-          //   .then(() => {
-          //       console.log("Video rotated!");
-          //   })
-          //   .catch(error => {
-          //       console.error(error);
-          //   });
+          this.publisher.stream.applyFilter("GStreamerFilter", { command: "gdkpixbufoverlay location=https://cdn.pixabay.com/photo/2019/08/09/15/10/flowers-4395240_960_720.jpg offset-x=10 offset-y=10 overlay-height=200 overlay-width=200" })
+            .then(() => {
+                console.log("Video rotated!");
+            })
+            .catch(error => {
+                console.error(error);
+            });
         }
 
         function removeFilter() {
@@ -141,7 +140,6 @@ export default {
             console.warn(exception);
           });
           
-          console.log('토큰 전달 전')
           // ------------- token 관련 method -----------------
           state.session.connect(route.params.token, { clientData: state.myUserName })
             .then(() => {
@@ -156,13 +154,13 @@ export default {
                 insertMode: 'APPEND',	
                 mirror: false,
               });
-                
+              
+              publisher.subscribeToRemote();
+
               state.mainStreamManager = publisher;
               state.publisher = publisher;
-              console.log('publisher data저장 후')
               // --- Publish your stream ---
-              state.session.publish(state.publisher);
-              console.log('세션 publish 후')
+              state.session.publish(publisher);
             })
             .catch(error => {
                 console.log('There was an error connecting to the session:', error.code, error.message);

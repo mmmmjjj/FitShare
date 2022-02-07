@@ -106,6 +106,7 @@
 <script>
 import { reactive, ref, toRefs, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
+import { useStore } from 'vuex'
 import axios from 'axios'
 
 export default {
@@ -113,6 +114,7 @@ export default {
   
   setup() {
     const router = useRouter()
+    const store = useStore()
 
     let counts = ref([1, 2, 3, 4, 5, 6])
     let selectedCnt = ref(null);
@@ -129,9 +131,6 @@ export default {
     let token = ref('eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0Iiwicm9sZXMiOiJVU0VSIiwiZXhwIjoxNjQ3NDc3NzYyfQ.tRLXFW9wHHIXCrJotone8gsjsi5Vba6zWvIQGCUtZWFrYZw3F9OaHLDeDQ9ZSOpn9E9y2OrLiDuHazuSTd4yAw')
 
     const state = reactive({
-      // mySessionId: 'sessionA',
-      // myUserName: 'participant12', 
-
       shoppingMallList: [  // 서버 적용시 store에서 불러오는 방식으로 진행
         { id: 1, name: 'Nike', url: 'https://www.nike.com'},
         { id: 2, name: '무신사', url: 'https://www.musinsa.com'},
@@ -227,14 +226,15 @@ export default {
 
       axios({
         method : 'post',
-        url: 'http://i6a405.p.ssafy.io:8081/api/v1/shopping-rooms/',
+        url: `${store.state.url}/api/v1/shopping-rooms/`,
+        // url: 'http://i6a405.p.ssafy.io:8081/api/v1/shopping-rooms/',
         data: roomData,
         headers: { Authorization : `Bearer ${token.value}` }
       })
         .then(res => {
           console.log(res.data.data)
           const data = res.data.data
-          router.push({ name: 'ShoppingRoom', params: { roomId: data.shoppingRoomId, token: data.token, mallUrl: data.ShoppingRoomUrl }}) 
+          router.push({ name: 'ShoppingRoom', params: { roomId: data.shoppingRoomId, token: data.token, mallUrl: data.shoppingRoomUrl }}) 
         })
         .catch(err => console.log(err))
     }

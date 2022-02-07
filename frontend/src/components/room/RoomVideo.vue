@@ -1,7 +1,7 @@
 <template>
   <div class="video-container" v-if="streamManager">
     <ov-video :stream-manager="streamManager"/>
-    <!-- <div><p>{{ state.clientData }}</p></div> -->
+    <div><p>{{ state.clientData }}</p></div>
   </div>
 </template>
 
@@ -24,7 +24,7 @@ export default {
       const state = reactive({
         clientData: computed(() => {
           const { clientData } = getConnectionData();
-          return clientData
+          return clientData.split(' ')[0]
         })
       })
 
@@ -42,22 +42,26 @@ export default {
 </script>
 
 <style scoped>
-/* .video-container {
+.video-container {
   position: relative;
 }
 
 p {
   display: inline-block;
-	background: #f8f8f8;
+	/* background: #f8f8f8a8; */
 	padding-left: 5px;
 	padding-right: 5px;
-	color: #777777;
+	color: black;
 	font-weight: bold;
-	border-bottom-right-radius: 4px;
+	border-bottom-left-radius: 10px;
   position: absolute;
-  font-size: 12px;
-  top: 32px;
+  font-size: 16px;
+  /* top: 34px; */
+  /* left: 51.5px;
+  bottom: -0.5px; */
+
   left: 50%;
+  bottom: -25px;
   transform: translate(-50%, -50%);  
-} */
+}
 </style>

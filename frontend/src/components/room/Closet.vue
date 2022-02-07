@@ -52,6 +52,9 @@ export default {
   components: {
     // HostCloset,
   },
+  props: {
+    subscribers: Object,
+  },
   setup() {
     const friends = ref([
       {id:1, name: '김싸피'},
@@ -64,7 +67,7 @@ export default {
 
     // const SiteUrl = ref('')
     const ImgUrl = ref('')
-
+    
     const Urls = ref('')
 
     // const AddUrl = () => {
