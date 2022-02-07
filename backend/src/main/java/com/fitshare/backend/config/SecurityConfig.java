@@ -49,7 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .cors().and()
+                .cors().configurationSource(corsConfigurationSource()).and()
                 .csrf().disable()
                 // 에러 처리 핸들러 등록
                 .exceptionHandling()
@@ -68,5 +68,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .anyRequest().permitAll() // 이 코드를 주석을 푸세요
                 .and()
                 .apply(new JwtSecurityConfig(tokenProvider));
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("http://localhost:8080");
+        configuration.addAllowedHeader("*");
+        configuration.addAllowedMethod("*");
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }
