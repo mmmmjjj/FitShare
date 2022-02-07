@@ -46,7 +46,7 @@ public class KakaoController {
     public ResponseEntity<BaseResponseBody> login(@RequestParam String accessToken){
         String jwt = null;
 
-//         1. access token으로 유저 정보 받아오기
+        // 1. access token으로 유저 정보 받아오기
         KakaoProfile kakaoProfile = kakaoApiService.requestUserInfo(accessToken);
         System.out.println(kakaoProfile.toString());
 

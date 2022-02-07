@@ -15,6 +15,11 @@ public class ResponseMessage {
     public static final String LOGIN = "로그인 성공입니다.";
     public static final String LOGOUT = "로그아웃 성공입니다.";
 
+    // Cloth
+    public static final String ADD_CLOTH = "옷 추가 성공입니다.";
+    public static final String GET_CLOTHES_LIST = "옷 목록 조회 성공입니다.";
+    public static final String DELETE_CLOTH = "옷 삭제 성공입니다.";
+
     // Member
     public static final String SEARCH_MEMBERS_BY_EMAIL = "이메일로 사용자 조회 성공입니다.";
 
