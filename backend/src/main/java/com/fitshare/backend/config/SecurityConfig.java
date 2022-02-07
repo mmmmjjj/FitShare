@@ -1,10 +1,7 @@
 package com.fitshare.backend.config;
 
-import com.fitshare.backend.common.auth.JwtAccessDeniedHandler;
-import com.fitshare.backend.common.auth.JwtAuthenticationEntryPoint;
-import com.fitshare.backend.common.auth.JwtTokenProvider;
+import com.fitshare.backend.common.auth.*;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -13,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.cors.*;
 
 @EnableWebSecurity(debug = true)
 @EnableGlobalMethodSecurity(prePostEnabled = true)
