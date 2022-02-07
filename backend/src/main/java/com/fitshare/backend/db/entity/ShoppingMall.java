@@ -26,6 +26,4 @@ public class ShoppingMall extends BaseTimeEntity {
     @Column
     private String logo;
 
-    @OneToOne(mappedBy = "shoppingMall", fetch = FetchType.LAZY)
-    private ShoppingRoom shoppingRoom;
 }

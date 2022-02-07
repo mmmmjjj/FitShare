@@ -40,7 +40,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/h2-console/**",
                         "/error",
                         "/swagger-resources/**",
-                        "/swagger-ui/**"
+                        "/swagger-ui/**",
+                        "/api/v1/shopping-malls"
                 );
     }
 
