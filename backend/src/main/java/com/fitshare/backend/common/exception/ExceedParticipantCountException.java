@@ -1,10 +1,14 @@
 package com.fitshare.backend.common.exception;
 
-import javax.persistence.EntityNotFoundException;
+import com.fitshare.backend.common.exception.handler.ErrorCode;
 
-public class ExceedParticipantCountException extends RuntimeException {
+public class ExceedParticipantCountException extends BusinessException {
 
     public ExceedParticipantCountException() {
-        super("Exceed the number of participants");
+        super(ErrorCode.EXCEED_PARTICIPANT_COUNT);
+    }
+
+    private ExceedParticipantCountException(String message) {
+        super(message);
     }
 }

@@ -41,6 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/error",
                         "/swagger-resources/**",
                         "/swagger-ui/**",
+                        "/api/v1/shopping-rooms/*/validate",
                         "/api/v1/shopping-malls"
                 );
     }

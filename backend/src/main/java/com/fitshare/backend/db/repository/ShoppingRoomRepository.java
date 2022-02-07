@@ -24,5 +24,5 @@ public interface ShoppingRoomRepository extends JpaRepository<ShoppingRoom, Long
             "and f.member.id = :memberId " +
             "group by s " +
             "order by s.createdTime desc ")
-    Optional<List<ShoppingRoomRes>> getShoppingRoomByMemberId(@Param("memberId") Long memberId);
+    Optional<List<ShoppingRoomRes>> findShoppingRoomsByMemberId(@Param("memberId") Long memberId);
 }

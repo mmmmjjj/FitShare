@@ -155,7 +155,17 @@ public class ShoppingRoomServiceImpl implements ShoppingRoomService {
      **/
     @Override
     public List<ShoppingRoomRes> listShoppingRoom(Long memberId) {
-        return shoppingRoomRepository.getShoppingRoomByMemberId(memberId).orElse(null);
+        return shoppingRoomRepository.findShoppingRoomsByMemberId(memberId).orElse(null);
+    }
+
+    @Override
+    public boolean validatePassword(Long shoppingRoomId, String password) {
+        ShoppingRoom shoppingRoom = shoppingRoomRepository.findById(shoppingRoomId).orElseThrow(() -> new ShoppingRoomNotFoundException(shoppingRoomId));
+
+        if (shoppingRoom.getPassword().equals(password))
+            return true;
+
+        return false;
     }
 
     // openvidu 세션 속성 설정

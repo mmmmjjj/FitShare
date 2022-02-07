@@ -25,29 +25,38 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.apache.commons:commons-pool2'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+    // validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
     // https://mvnrepository.com/artifact/org.webjars/stomp-websocket
     implementation 'org.webjars:stomp-websocket:2.3.3-1'
     implementation 'junit:junit:4.13.1'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'mysql:mysql-connector-java'
+
     // lombok
     annotationProcessor 'org.projectlombok:lombok'
     compileOnly 'org.projectlombok:lombok'
+
     // jwt Token
     implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'
 
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
     // Swagger
     implementation 'io.springfox:springfox-boot-starter:3.0.0'
     implementation 'io.springfox:springfox-swagger-ui:3.0.0'
     implementation 'org.springframework.security:spring-security-oauth2-client'
+
     // h2
     runtimeOnly 'com.h2database:h2'
+
     // OpenVidu
     implementation 'io.openvidu:openvidu-java-client:2.20.0'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
 }
 
 tasks.named('test') {
