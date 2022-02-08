@@ -9,7 +9,6 @@ import lombok.Setter;
 @ApiModel("ClothRequest")
 @Getter
 @Setter
-@AllArgsConstructor
 public class ClothReq {
 
     @ApiModelProperty(name = "쇼핑룸 Id", example = "1")

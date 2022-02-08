@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
@@ -26,6 +27,8 @@ public class ClothServiceImpl implements ClothService {
     private final ClothRepository clothRepository;
     private final RoomParticipantRepository roomParticipantRepository;
 
+    private final S3ServiceImpl s3Service;
+
     private static final String PYTHON_PATH = "img_trans.py";
 
     /**
@@ -39,38 +42,44 @@ public class ClothServiceImpl implements ClothService {
 
         // python backend/img_trans.py "imagUrl" "저장할 경로" "이미지 타이틀"
         // 이미지타이틀 : 쇼핑룸id_멤버id_생성시간.png
-        RoomParticipant roomParticipant = roomParticipantRepository.findByMemberId(memberId).orElse(null);
+        RoomParticipant roomParticipant = roomParticipantRepository.findByMemberIdAndShoppingRoomId(memberId, shoppingRoomId).orElse(null);
 
         // 이미지 저장 경로, 제목 지정
         SimpleDateFormat time = new SimpleDateFormat("yyyyMMdd_HHmmss");
 
-        String imagePath = "/data/"+shoppingRoomId;
-        String imageTitle = shoppingRoomId+"_"+memberId+"_"+time.format(System.currentTimeMillis());
+        String imagePath = "/data";
+        String imageTitle = shoppingRoomId + "_" + memberId + "_" + time.format(System.currentTimeMillis()) + ".png";
 
         ProcessBuilder builder = new ProcessBuilder("python3", PYTHON_PATH, imageUrl, imagePath, imageTitle);
 
+        String clothUrl = null;
         try {
             Process process = builder.start();
+            // 파이썬 프로세스가 종료 될 때 까지 기다린다.
+            int exitval = process.waitFor();
 
-            int exitval = process.waitFor(); // 파이썬 프로세스가 종료 될 때 까지 기다린다.
-
-            if(exitval != 0) {
+            if (exitval != 0) {
                 // 비정상 종료
-                log.debug("{} 이미지 프로세스가 비정상적으로 종료되었습니다.",imageTitle);
+                log.debug("{} 이미지 프로세스가 비정상적으로 종료되었습니다.", imageTitle);
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
 
+        File transImage = new File("/data/" + imageTitle);
+
+        // S3 서버에 업로드
+        clothUrl = s3Service.upload(transImage, "images");
+
         Cloth cloth = Cloth.builder()
                 .roomParticipant(roomParticipant)
-                .clothUrl("프론트 기준 경로"+shoppingRoomId+"/"+imageTitle)
+                .clothUrl(clothUrl)
                 .build();
 
         // 옷 정보 DB 저장
         clothRepository.save(cloth);
 
-        return new ClothRes(cloth.getId(),cloth.getClothUrl());
+        return new ClothRes(cloth.getId(), cloth.getClothUrl());
     }
 
     /**
@@ -87,6 +96,7 @@ public class ClothServiceImpl implements ClothService {
      **/
     @Override
     public void deleteCloth(Long clothId) {
+        s3Service.delete(clothRepository.getById(clothId).getClothUrl());
         clothRepository.deleteById(clothId);
     }
 

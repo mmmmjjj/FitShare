@@ -35,6 +35,6 @@ img.putdata(newData)
 if not os.path.isdir(path):
   os.mkdir(path)
 
-img.save(path+title, "PNG") # PNG 포맷으로 저장합니다.
+img.save(path+"/"+title, "PNG") # PNG 포맷으로 저장합니다.
 
-print("변환 완료")
+print("completed")
