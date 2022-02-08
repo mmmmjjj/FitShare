@@ -22,9 +22,9 @@ public interface FriendRequestRepository extends JpaRepository<FriendRequest, Lo
      * friend_request table 에서 targetMemberId 에게 친구 요청한 사용자들을 찾는다
      */
     @Query(value = "SELECT NEW com.fitshare.backend.api.response.FriendRes" +
-            "( f.member.id, m.name, m.email, m.phone, m.profileImg, f.createdTime )" +
+            "( m.id, m.name, m.email, m.phone, m.profileImg, f.createdTime )" +
             "  FROM FriendRequest f" +
-            "  JOIN f.targetMember m" +
+            "  JOIN f.member m" +
             " WHERE f.targetMember.id = :targetMemberId" +
             "   AND m.isActive = true" +
             " ORDER BY m.name")
