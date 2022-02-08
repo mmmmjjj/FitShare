@@ -26,7 +26,7 @@ public class ShoppingMallController {
 
     @ApiOperation(value = "쇼핑몰 검색", notes = "keyword 에 입력된 값이 포함된 쇼핑몰 이름 또는 쇼핑몰 url 을 검색하여 쇼핑몰 목록을 반환한다.")
     @GetMapping("")
-    public ResponseEntity<BaseResponseBody> searchShoppingMalls(@RequestParam String keyword) {
+    public ResponseEntity<BaseResponseBody> searchShoppingMalls(@RequestParam(required = false) String keyword) {
         return ResponseEntity.ok(BaseResponseBody.of(HttpStatus.OK, SEARCH_SHOPPING_MALL, shoppingMallService.searchShoppingMalls(keyword)));
     }
 }

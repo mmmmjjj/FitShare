@@ -7,7 +7,5 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ShoppingMallRepository extends JpaRepository<ShoppingMall, Long> {
-
-    List<ShoppingMall> findShoppingMallsByNameContainingOrUrlContaining(String nameKeyword, String urlKeyword);
+public interface ShoppingMallRepository extends JpaRepository<ShoppingMall, Long>, ShoppingMallRepositorySupport {
 }

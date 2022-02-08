@@ -18,7 +18,7 @@ public class ShoppingMallServiceImpl implements ShoppingMallService {
     @Override
     public List<ShoppingMallRes> searchShoppingMalls(String keyword) {
 
-        return shoppingMallRepository.findShoppingMallsByNameContainingOrUrlContaining(keyword, keyword)
+        return shoppingMallRepository.findShoppingMallsByNameContainingOrUrlContaining(keyword)
                 .stream().map(ShoppingMallRes::new)
                 .collect(Collectors.toList());
     }
