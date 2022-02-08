@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
-    Optional<Member> findByUid(Long uid);
+    Optional<Member> findByUid(String uid);
 
     @Query(value = "SELECT NEW com.fitshare.backend.api.response.BaseMemberRes" +
             "( m.id, m.name, m.profileImg, m.email )" +

@@ -2,6 +2,7 @@ package com.fitshare.backend.api.service;
 
 import com.fitshare.backend.api.response.BaseMemberRes;
 import com.fitshare.backend.common.model.KakaoProfile;
+import com.fitshare.backend.common.model.NaverProfile;
 import com.fitshare.backend.db.entity.Member;
 import com.fitshare.backend.db.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,21 +20,38 @@ public class MemberServiceImpl implements MemberService  {
     private final MemberRepository memberRepository;
 
     @Override
-    public Member createMember(KakaoProfile kakaoProfile) {
-
-        Member member = new Member();
-
-        //카카오에서 받은 정보들로 회원 생성
-        member.setUid(kakaoProfile.getId());
-        member.setName(kakaoProfile.getKakao_account().getProfile().getNickname());
-        member.setEmail(kakaoProfile.getKakao_account().getEmail());
-        member.setProfileImg(kakaoProfile.getKakao_account().getProfile().getProfile_image_url());
-
+    public Member createMember(Member member) {
         return memberRepository.save(member);
     }
 
     @Override
-    public Optional<Member> findMemberByUid(Long uid) {
+    public Member createKakaoMember(KakaoProfile kakaoProfile) {
+        Member member = new Member();
+
+        //카카오에서 받은 정보들로 회원 생성
+        member.setUid(Long.toString(kakaoProfile.getId()));
+        member.setName(kakaoProfile.getKakao_account().getProfile().getNickname());
+        member.setEmail(kakaoProfile.getKakao_account().getEmail());
+        member.setProfileImg(kakaoProfile.getKakao_account().getProfile().getProfile_image_url());
+
+        return createMember(member);
+    }
+
+    @Override
+    public Member createNaverMember(NaverProfile naverProfile) {
+        Member member = new Member();
+
+        //카카오에서 받은 정보들로 회원 생성
+        member.setUid(naverProfile.getResponse().getId());
+        member.setName(naverProfile.getResponse().getName());
+        member.setEmail(naverProfile.getResponse().getEmail());
+        member.setProfileImg(naverProfile.getResponse().getMobile());
+
+        return createMember(member);
+    }
+
+    @Override
+    public Optional<Member> findMemberByUid(String uid) {
 
         Optional<Member> member = memberRepository.findByUid(uid);
 

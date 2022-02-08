@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class KakaoLoginRes {
+public class LoginRes {
 
     @ApiModelProperty(name = "유저 ID", example = "1")
     private Long id;

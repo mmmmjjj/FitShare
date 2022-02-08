@@ -23,7 +23,7 @@ public class Member extends BaseTimeEntity {
     private Long id;
 
     @Column
-    private Long uid;
+    private String uid;
 
     @Column
     private String name;
