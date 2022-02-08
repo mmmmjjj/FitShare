@@ -1,23 +1,20 @@
 <template>
   <div>
-    <div v-if="SearchedUsers" class="text-center result-box mt-3">
+    <div v-if="friends.length > 0" class="text-center result-box mt-3">
       검색 결과
     </div>
-    <div v-for="SearchedUser in SearchedUsers" :key="SearchedUser.id" class="d-flex mt-3">
-      <img :src="SearchedUser.src" alt="profile-img">
+    <div v-for="(friend, index) in friends" :key="friend.id" class="d-flex mt-3">
+      <img :src="friend.profileImg" alt="profile-img">
       <div class="ms-3 d-flex flex-column profile-box">
         <div class="d-flex justify-content-between name-box">
-          {{ SearchedUser.name }}
+          {{ friend.name }}
         </div>
         <div class="d-flex mt-2 email-box">
-          {{ SearchedUser.email }}
+          {{ friend.email }}
         </div>
       </div>
-      <!-- <div class="align-self-center">
-        <img src="@/assets/plus_icon.png" alt="plus">
-      </div> -->
       <div class="d-flex align-self-center btn-box justify-content-center">
-        <button class="plus-btn">
+        <button class="plus-btn" @click="RequestFriend(friends, index)">
           +
         </button>
       </div>
@@ -26,9 +23,31 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   name: 'SearchedUsers',
-  props: ['SearchedUsers']
+  props: ['friends'],
+  setup() {
+    
+    // 친구 요청 post
+    const RequestFriend = (friends, index) => {
+      axios({
+        method: 'POST',
+        url: 'http://i6a405.p.ssafy.io:8081/api/v1/friends/requests',
+        headers: { Authorization : `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0Iiwicm9sZXMiOiJVU0VSIiwiZXhwIjoxNjQ3NDc3NzYyfQ.tRLXFW9wHHIXCrJotone8gsjsi5Vba6zWvIQGCUtZWFrYZw3F9OaHLDeDQ9ZSOpn9E9y2OrLiDuHazuSTd4yAw` },
+        data: {"friendId": friends[index].id}
+      })
+      .then(res => {
+        console.log(res)
+      })
+      friends.splice(index, 1)
+    }
+
+    return {
+      RequestFriend,
+    }
+  }
 }
 </script>
 
@@ -65,6 +84,7 @@ input::placeholder {
 img {
   width: 50px;
   height: 50px;
+  border-radius: 25px;
 }
 
 .plus-btn {

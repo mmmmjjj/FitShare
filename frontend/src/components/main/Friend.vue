@@ -1,11 +1,11 @@
 <template>
   <div>
     <div class="tabs">
-      <input id="friendlist" type="radio" name="tab_item" checked>
+      <input id="friendlist" type="radio" name="tab_item" checked @click="GetFriendList">
       <label class="tab_item" for="friendlist">친구목록</label>
       <input id="friendmake" type="radio" name="tab_item">
       <label class="tab_item" for="friendmake">친구추가</label>
-      <input id="friendcheck" type="radio" name="tab_item">
+      <input id="friendcheck" type="radio" name="tab_item" @click="CheckFriendRequest">
       <label class="tab_item" for="friendcheck">요청확인</label>
       
       <!-- 친구목록 component -->
@@ -13,16 +13,20 @@
       <!-- 친구추가 component -->
       <friend-make-tab class="tab_content" id="friendmake_content"></friend-make-tab>
       <!-- 친구요청확인 component -->
-      <friend-check-tab class="tab_content" id="friendcheck_content"></friend-check-tab>
+      <friend-check-tab class="tab_content" id="friendcheck_content" :checkRequests="state.checkRequests"></friend-check-tab>
+
     </div>
   </div>
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import FriendListTab from '@/components/main/FriendListTab.vue'
 import FriendMakeTab from '@/components/main/FriendMakeTab.vue'
 import FriendCheckTab from '@/components/main/FriendCheckTab.vue'
+import axios from 'axios'
+import { useStore } from 'vuex'
+
 
 export default {
   name: 'Friend',
@@ -32,16 +36,65 @@ export default {
     FriendCheckTab,
   },
   setup() {
-
     const status = ref(true)
+
+    const state = reactive({
+      friends: [],
+      friendLists: [],
+      checkRequests: [],
+    })
 
     const CloseTab = () => {
       status.value = false
     }
 
+    // store
+    const store = useStore()
+
+    // 친구목록 클릭 시 친구 목록 받아오는 Axios
+    const GetFriendList = () => {
+      axios({
+        method: 'GET',
+        url: 'http://i6a405.p.ssafy.io:8081/api/v1/friends',
+        headers: { Authorization : `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0Iiwicm9sZXMiOiJVU0VSIiwiZXhwIjoxNjQ3NDc3NzYyfQ.tRLXFW9wHHIXCrJotone8gsjsi5Vba6zWvIQGCUtZWFrYZw3F9OaHLDeDQ9ZSOpn9E9y2OrLiDuHazuSTd4yAw` }
+      })
+        .then(res => {
+          console.log(res)
+          state.friendLists = res.data.data
+        })
+        .then(res => {
+          console.log(res)
+          const friend = state.friendLists
+          console.log(state.friendLists)
+          console.log(friend)
+          store.dispatch('getfriendsbyclick', friend)
+        })
+    }
+
+    const stateFriends = computed(() => {
+      return store.state.friends
+    })
+
+    // 요청확인 클릭 시 요청 목록 받아오는 Axios
+    const CheckFriendRequest = () => {
+      axios({
+        method: 'GET',
+        url: 'http://i6a405.p.ssafy.io:8081/api/v1/friends/requests',
+        headers: { Authorization : `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0Iiwicm9sZXMiOiJVU0VSIiwiZXhwIjoxNjQ3NDc3NzYyfQ.tRLXFW9wHHIXCrJotone8gsjsi5Vba6zWvIQGCUtZWFrYZw3F9OaHLDeDQ9ZSOpn9E9y2OrLiDuHazuSTd4yAw` }
+      })
+        .then(res => {
+          console.log(res)
+          state.checkRequests = res.data.data
+        })
+    }
+
     return {
       status,
-      CloseTab
+      CloseTab,
+      state,
+      GetFriendList,
+      CheckFriendRequest,
+      stateFriends,
     }
   }
 }

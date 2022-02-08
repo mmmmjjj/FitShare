@@ -4,12 +4,13 @@
     <input
       class="input-box"
       type="text"
+      placeholder="이메일 검색"
+      @keyup="SearchUserEmail"
       v-model="SearchUser"
-      placeholder="이름 또는 이메일 검색"
     >
-
+    
     <!-- 이름, 이메일로 검색 시 나오는 users들 components -->
-    <searched-users :SearchedUsers="SearchedUsers"></searched-users>
+    <searched-users :friends="state.friends"></searched-users>
 
 
   </div>
@@ -17,7 +18,8 @@
 
 <script>
 import SearchedUsers from './SearchedUsers.vue'
-import { ref, computed } from 'vue'
+import { ref, reactive } from 'vue'
+import axios from 'axios'
 
 export default {
   name: 'FriendMakeTab',
@@ -25,30 +27,30 @@ export default {
     SearchedUsers,
   },
   setup() {
-    const friends = ref([
-      {id: 1, name: '김싸피', src: require('@/assets/friend_icon.png'), email: 'ssafykim@samsung.com'},
-      {id: 2, name: '이싸피', src: require('@/assets/friend_icon.png'), email: 'ssafylee@samsung.com'},
-      {id: 3, name: '박싸피', src: require('@/assets/friend_icon.png'), email: 'ssafypark@samsung.com'},
-      {id: 4, name: '최싸피', src: require('@/assets/friend_icon.png'), email: 'ssafychoi@samsung.com'},
-      {id: 5, name: '양싸피', src: require('@/assets/friend_icon.png'), email: 'ssafyyang@samsung.com'},
-      {id: 6, name: '오싸피', src: require('@/assets/friend_icon.png'), email: 'ssafyo@samsung.com'},
-      {id: 7, name: '김싸피2', src: require('@/assets/friend_icon.png'), email: 'ssafykim2@samsung.com'},
-    ])
+    const state = reactive({
+      friends: []
+    })
 
+    // input에 입력하는 값
     const SearchUser = ref('');
-    const SearchedUsers = computed(() => {
-      if (SearchUser.value) {
-        return friends.value.filter(friend => {
-          return friend.name.includes(SearchUser.value)
+
+    // input에 email 입력 시 server에 요청
+    const SearchUserEmail = () => {
+      axios({
+        method: 'GET',
+        url: `http://i6a405.p.ssafy.io:8081/api/v1/members/${SearchUser.value}`,
+        headers: { Authorization : `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0Iiwicm9sZXMiOiJVU0VSIiwiZXhwIjoxNjQ3NDc3NzYyfQ.tRLXFW9wHHIXCrJotone8gsjsi5Vba6zWvIQGCUtZWFrYZw3F9OaHLDeDQ9ZSOpn9E9y2OrLiDuHazuSTd4yAw` }
         })
-      }
-      return ''
-    });
+        .then(res => {
+          console.log(res)
+          state.friends = res.data.data
+        })
+    }
 
     return {
-      friends,
+      state,
       SearchUser,
-      SearchedUsers,
+      SearchUserEmail,
     }
   }
 }
