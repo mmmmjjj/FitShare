@@ -108,8 +108,8 @@ export default {
       
       axios({
         method : 'get',
-        url: `${store.state.url}/api/v1/shopping-rooms/75`,
-        // url: `${store.state.url}/api/v1/shopping-rooms/${selectedShoppingRoom.shoppingRoomId}`,
+        url: `${store.state.url}/v1/shopping-rooms/193`,
+        // url: `${store.state.url}/v1/shopping-rooms/${selectedShoppingRoom.shoppingRoomId}`,
         headers: { Authorization : `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0Iiwicm9sZXMiOiJVU0VSIiwiZXhwIjoxNjQ3NDc3NzYyfQ.tRLXFW9wHHIXCrJotone8gsjsi5Vba6zWvIQGCUtZWFrYZw3F9OaHLDeDQ9ZSOpn9E9y2OrLiDuHazuSTd4yAw` }
       })
         .then(res => {

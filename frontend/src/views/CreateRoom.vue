@@ -25,23 +25,21 @@
             </div>
           </div>
 
-          <!-- 쇼핑몰 사이트 -->
+          <!-- 쇼핑몰 사이트 검색 -->
           <div class="row mall-container" :class="isMall ? '' : 'mall-margin-change'">
             <label><i class="bi bi-asterisk"></i>쇼핑몰 사이트</label>
             <div class="dropdown-wrapper">
-              <div class="selected-item form-select" @click="isMallVisible = !isMallVisible">
+              <div class="selected-item form-select" @click="isMallListVisible = !isMallListVisible">
                 <p v-if="selectedItem">{{ selectedItem.name }}</p>
-                <!-- <p v-else-if="filteredMalls.length === 0">직접 입력해주세요</p> -->
                 <p v-else>쇼핑몰을 선택하세요</p>
               </div>
-              <div v-if="isMallVisible" class="dropdown-popover">
-                <!-- 단점 : 한글입력이 바로 안됨 -->
-                <input v-model="searchQuery" class="search-mall-input" type="text" placeholder="검색하세요">
-                <span v-if="filteredMalls.length === 0"><p class="text-center">검색결과 없음</p></span>
+              <div v-if="isMallListVisible" class="dropdown-popover">
+                <input @keyup="searchMall()" v-model="searchQuery" class="search-mall-input" type="text" placeholder="검색하세요">
+                <span v-if="searchedMalls.length === 0"><p class="text-center">검색결과 없음</p></span>
                 <div class="options">
                   <ul class="scroll">
-                    <li v-for="mall in filteredMalls" :key="mall.name" :value="mall.name" @click="selectItem(mall)">
-                      {{mall.name}}
+                    <li v-for="mall in searchedMalls" :key="mall.id" :value="mall.name" @click="selectItem(mall)">
+                      {{ mall.name }}
                     </li>
                   </ul>
                 </div>
@@ -53,26 +51,26 @@
             <div class="mall-input-container">
               <div class="mall-input mb-2">
                 <label><i class="bi bi-asterisk"></i>사이트 이름</label>
-                <input v-model="mallName" class="form-control text-input shadow-none" type="text">
+                <input v-model="inputMallName" class="form-control text-input shadow-none" type="text">
               </div>
               <div class="mall-input">
                 <label><i class="bi bi-asterisk"></i>사이트 주소</label>
-                <input v-model="mallUrl" class="form-control text-input shadow-none" type="text">
+                <input v-model="inputMallUrl" class="form-control text-input shadow-none" type="text">
               </div>
             </div>
           </div>
 
-          <!-- 공개범위 -->
+          <!-- 공개범위 설정 -->
           <div class="row private-container" :class="isPrivate ? 'private-margin-change' : ''">
             <label>공개범위</label>
             <span class="form-radio">
-              <span @click="clickPublic()" class="radio-containers">
+              <span @click="selectPublic()" class="radio-containers">
                 <input class="form-check-input" type="radio" name="flexRadioDefault" checked="checked" id="public">
                 <label class="form-check-label" for="public">공개</label>
               </span>
-              <span @click="clickPrivate()" class="radio-containers">
+              <span @click="selectPrivate()" class="radio-containers">
                 <input class="form-check-input" type="radio" name="flexRadioDefault" id="private">
-                <label class="form-check-label" for="private" @click="clickPrivate()">비공개</label>
+                <label class="form-check-label" for="private" >비공개</label>
               </span>
             </span>
           </div>
@@ -81,17 +79,6 @@
 						<label>비밀번호</label>
 						<input v-model="password" class="form-control password-input shadow-none" type="password">
 					</div>
-
-          <!-- openvidu -->
-          <!-- ------------ 임시 -------------
-					<div>
-						<label>Participant</label>
-						<input v-model="myUserName" class="form-control" type="text" required>
-					</div>
-					<div>
-						<label>Session</label>
-						<input v-model="mySessionId" class="form-control" type="text" required>
-					</div> -->
 
 					<div class="text-center">
             <button class="btn create-btn shadow-none" @click="makeRoom()">생성하기</button>
@@ -104,7 +91,7 @@
 </template>
 
 <script>
-import { reactive, ref, toRefs, computed, watch } from 'vue';
+import { reactive, ref, toRefs, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex'
 import axios from 'axios'
@@ -122,27 +109,22 @@ export default {
 
     let searchQuery = ref('');
     let selectedItem = ref(null);  // 선택한 mall
-    let isMallVisible = ref(false);
+    let isMallListVisible = ref(false);
 
     let isPrivate = ref(false);
     let password = ref(null);
+    
+    // 검색된 쇼핑몰 리스트
+    let searchedMalls = ref({})  // {id: 2, logo: null, name: '아디다스', url: 'www.xxx.com'}
 
     // 테스트용 토큰
     let token = ref('eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0Iiwicm9sZXMiOiJVU0VSIiwiZXhwIjoxNjQ3NDc3NzYyfQ.tRLXFW9wHHIXCrJotone8gsjsi5Vba6zWvIQGCUtZWFrYZw3F9OaHLDeDQ9ZSOpn9E9y2OrLiDuHazuSTd4yAw')
 
     const state = reactive({
-      shoppingMallList: [  // 서버 적용시 store에서 불러오는 방식으로 진행
-        { id: 1, name: 'Nike', url: 'https://www.nike.com'},
-        { id: 2, name: '무신사', url: 'https://www.musinsa.com'},
-        { id: 3, name: '지그재그', url: 'https://www.zigzag.com'},
-        { id: 4, name: 'Zara', url: 'https://www.zara.com'},
-        { id: 5, name: 'next', url: 'https://www.next.com'},
-        { id: 6, name: 'ABC', url: 'https://www.abc.com'},
-        { id: 7, name: '지마켓', url: 'https://www.gmarket.com'},
-      ], 
-      isMall: true,  // 찾고자 하는 쇼핑몰이 리스트 존재여부
-      mallName: null,
-      mallUrl: null,
+      shoppingMallList: [],  // 
+      isMall: true,  // 찾고자 하는 쇼핑몰의 리스트 내 존재여부
+      inputMallName: null,
+      inputMallUrl: null,
     })
 
     // select dropdown method
@@ -153,41 +135,22 @@ export default {
 
     function selectItem(mall) {
       selectedItem.value = mall;
-      isMallVisible.value = false;
+      isMallListVisible.value = false;
+    }
+    
+    // 쇼핑몰 검색
+    function searchMall() {
+      // axios.get(`${store.state.url}/v1/shopping-malls?keyword=${searchQuery.value}`)
+      axios.get(`${store.state.url}/v1/shopping-malls`, { params: { keyword: searchQuery.value } })
+        .then(res => {
+          searchedMalls.value = res.data.data
+          console.log(searchedMalls.value)
+        })
     }
 
-    // 검색 기능 
-    const filteredMalls = computed(() => {
-      const query = searchQuery.value.toLowerCase();
-      if (searchQuery.value === '') {
-        return state.shoppingMallList
-      }
-      return state.shoppingMallList.filter((mall) => {
-        return Object.values(mall).some((word => String(word).toLowerCase().includes(query)))
-      })
-    })
-    
-    // 바깥영역 클릭으로 dropdown 닫기
-    document.addEventListener('click', function(e){
-      if (isMallVisible.value == false ) {
-        // console.log('')
-      } else {
-        if (e.target.className !== 'dropdown-popover' && e.target.className !== 'selected-item form-select' && e.target.className !== '' && e.target.className !== 'search-mall-input' ) {
-          isMallVisible.value = false
-        }
-      }
-      if (isCntVisible.value == false ) {
-        return
-      } else {
-        if (e.target.className !== 'dropdown-popover' && e.target.className !== 'selected-item form-select' && e.target.className !== '' && e.target.className !== 'search-mall-input' ) {
-          isCntVisible.value = false
-        }
-      }
-    })
-    
     // 쇼핑몰 입력부분 생성 
-    watch(filteredMalls, (filteredMalls) => {
-      if (filteredMalls.length === 0) {
+    watch(searchedMalls, (searchedMalls) => {
+      if (searchedMalls.length === 0) {
         state.isMall = false;
         selectedItem.value = null;
       } else {
@@ -195,12 +158,26 @@ export default {
       }
     }) 
 
+    // 바깥영역 클릭으로 dropdown 닫기
+    document.addEventListener('click', function(e){
+      if (isMallListVisible.value == true) {
+        if (e.target.className !== 'dropdown-popover' && e.target.className !== 'selected-item form-select' && e.target.className !== '' && e.target.className !== 'search-mall-input' ) {
+          isMallListVisible.value = false
+        }
+      } 
+      if (isCntVisible.value == true) {
+        if (e.target.className !== 'dropdown-popover' && e.target.className !== 'selected-item form-select' && e.target.className !== '' && e.target.className !== 'search-mall-input' ) {
+          isCntVisible.value = false
+        }
+      } 
+    })
+    
     // 기본 method
-    const clickPrivate = () => {
+    const selectPrivate = () => {
       isPrivate.value = true
     }
 
-    const clickPublic = () => {
+    const selectPublic = () => {
       isPrivate.value = false
     }
 
@@ -209,25 +186,24 @@ export default {
       let mallId = null
       if (selectedItem.value) {
         mallId = selectedItem.value.id
-        state.mallName = null
-        state.mallUrl = null
+        state.inputMallName = null
+        state.inputMallUrl = null
       } 
 
       const roomData = {  
-        customShoppingMall: true,
+        customShoppingMall: !state.isMall,
         participantCount: selectedCnt.value,
         password: password.value,  // null
         private: isPrivate.value,  
         shoppingMallId: mallId,  // null 
-        shoppingMallName: state.mallName, 
-        shoppingMallUrl: state.mallUrl,  
+        shoppingMallName: state.inputMallName, 
+        shoppingMallUrl: state.inputMallUrl,  
       }
-      // console.log(roomData)
+      console.log(roomData)
 
       axios({
         method : 'post',
-        url: `${store.state.url}/api/v1/shopping-rooms/`,
-        // url: 'http://i6a405.p.ssafy.io:8081/api/v1/shopping-rooms/',
+        url: `${store.state.url}/v1/shopping-rooms/`,
         data: roomData,
         headers: { Authorization : `Bearer ${token.value}` }
       })
@@ -244,9 +220,10 @@ export default {
     }
 
     return { 
-      clickPrivate, makeRoom, goToMain, clickPublic, token,
-      ...toRefs(state), counts, searchQuery, selectedCnt ,selectedItem, isMallVisible, 
-      isCntVisible, filteredMalls, selectItem, selectCnt, isPrivate, password,
+      selectPrivate, makeRoom, goToMain, selectPublic, token,
+      ...toRefs(state), counts, searchQuery, selectedCnt ,selectedItem, isMallListVisible, 
+      isCntVisible, selectItem, selectCnt, isPrivate, password,
+      searchedMalls, searchMall,
     }
   }
 }
