@@ -35,8 +35,8 @@ public class AuthServiceImpl implements AuthService {
 
     public AuthServiceImpl(JwtTokenProvider tokenProvider,
                            @Value("${kakao.client.id}") String kakaoClientId,
-                           @Value("1") String naverClientId,
-                           @Value("1") String naverClientSecret) {
+                           @Value("${naver.client.id}") String naverClientId,
+                           @Value("${naver.client.secret}") String naverClientSecret) {
         this.tokenProvider = tokenProvider;
 
         this.KAKAO_CLIENT_ID = kakaoClientId;

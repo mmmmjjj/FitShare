@@ -75,7 +75,7 @@ dependencies {
     implementation 'io.openvidu:openvidu-java-client:2.20.0'
 
     // AWS s3
-//    implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
+    implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
 
     // querydls
     implementation 'com.querydsl:querydsl-jpa'
