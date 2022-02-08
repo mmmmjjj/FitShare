@@ -2,12 +2,10 @@ package com.fitshare.backend.api.service;
 
 import com.fitshare.backend.api.request.FriendReq;
 import com.fitshare.backend.api.response.FriendRes;
-import com.fitshare.backend.common.auth.JwtUtil;
 import com.fitshare.backend.common.exception.*;
 import com.fitshare.backend.db.entity.*;
 import com.fitshare.backend.db.repository.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,8 +21,7 @@ public class FriendServiceImpl implements FriendService {
     private final FriendRequestRepository friendRequestRepository;
 
     @Override
-    public void addFriend(FriendReq friendReq) {
-        Long memberId = JwtUtil.getCurrentId().orElseThrow(() -> new AccessDeniedException("Access denied"));
+    public void addFriend(Long memberId, FriendReq friendReq) {
         Long friendId = friendReq.getFriendId();
 
         // 친구를 요청한 사용자와 요청을 받은 사용자가 같을 경우 방지
@@ -45,21 +42,17 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public List<FriendRes> getFriendList() {
-        Long memberId = JwtUtil.getCurrentId().orElseThrow(() -> new AccessDeniedException("Access denied"));
+    public List<FriendRes> getFriendList(Long memberId) {
         return friendRepository.findByMemberId(memberId);
     }
 
     @Override
-    public List<FriendRes> getFriendListByEmail(String friendEmail) {
-        Long memberId = JwtUtil.getCurrentId().orElseThrow(() -> new AccessDeniedException("Access denied"));
-        return friendRepository.findByMemberIdAndFriendEmailLike(memberId, friendEmail);
+    public List<FriendRes> getFriendListByName(Long memberId, String friendName) {
+        return friendRepository.findByMemberIdAndFriendNameLike(memberId, friendName);
     }
 
     @Override
-    public void deleteFriend(Long friendId) {
-        Long memberId = JwtUtil.getCurrentId().orElseThrow(() -> new AccessDeniedException("Access denied"));
-
+    public void deleteFriend(Long memberId, Long friendId) {
         // 친구 삭제를 요청한 사용자와 삭제할 사용자가 같을 경우 방지
         if (memberId.equals(friendId)) {
             throw new InvalidException(memberId, friendId);
@@ -75,8 +68,7 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public void addFriendRequest(FriendReq friendReq) {
-        Long memberId = JwtUtil.getCurrentId().orElseThrow(() -> new AccessDeniedException("Access denied"));
+    public void addFriendRequest(Long memberId, FriendReq friendReq) {
         Long targetMemberId = friendReq.getFriendId();
 
         // 친구를 요청한 사용자와 요청을 받은 사용자가 같을 경우, 이미 친구일 경우 방지
@@ -99,15 +91,12 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public List<FriendRes> getFriendRequestList() {
-        Long memberId = JwtUtil.getCurrentId().orElseThrow(() -> new AccessDeniedException("Access denied"));
+    public List<FriendRes> getFriendRequestList(Long memberId) {
         return friendRequestRepository.findByTargetMemberId(memberId);
     }
 
     @Override
-    public void deleteFriendRequest(Long requesterId) {
-        Long memberId = JwtUtil.getCurrentId().orElseThrow(() -> new AccessDeniedException("Access denied"));
-
+    public void deleteFriendRequest(Long memberId, Long requesterId) {
         // 친구를 요청한 사용자와 거절할 사용자가 같을 경우 방지
         if (memberId.equals(requesterId)) {
             throw new InvalidException(memberId, requesterId);

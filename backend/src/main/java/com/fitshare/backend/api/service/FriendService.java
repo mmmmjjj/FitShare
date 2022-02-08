@@ -7,18 +7,18 @@ import java.util.List;
 
 public interface FriendService {
 
-    void addFriend(FriendReq friendReq);
+    void addFriend(Long memberId, FriendReq friendReq);
 
-    List<FriendRes> getFriendList();
+    List<FriendRes> getFriendList(Long memberId);
 
-    List<FriendRes> getFriendListByEmail(String friendEmail);
+    List<FriendRes> getFriendListByName(Long memberId, String friendName);
 
-    void deleteFriend(Long friendId);
+    void deleteFriend(Long memberId, Long friendId);
 
-    void addFriendRequest(FriendReq friendReq);
+    void addFriendRequest(Long memberId, FriendReq friendReq);
 
-    List<FriendRes> getFriendRequestList();
+    List<FriendRes> getFriendRequestList(Long memberId);
 
-    void deleteFriendRequest(Long requesterId);
+    void deleteFriendRequest(Long memberId, Long requesterId);
 
 }

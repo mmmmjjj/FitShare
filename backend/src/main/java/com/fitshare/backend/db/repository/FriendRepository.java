@@ -39,9 +39,9 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
             "  JOIN f.friend m" +
             " WHERE f.member.id = :memberId" +
             "   AND m.isActive = true" +
-            "   AND f.friend.email LIKE %:friendEmail%" +
+            "   AND f.friend.name LIKE %:friendName%" +
             " ORDER BY m.name")
-    List<FriendRes> findByMemberIdAndFriendEmailLike(@Param("memberId") Long memberId, @Param("friendEmail") String friendEmail);
+    List<FriendRes> findByMemberIdAndFriendNameLike(@Param("memberId") Long memberId, @Param("friendName") String friendName);
 
     /**
      * friend table 에서 memberId 의 친구인 friendId 를 삭제한다
