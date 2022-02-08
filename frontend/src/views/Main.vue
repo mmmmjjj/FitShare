@@ -27,13 +27,17 @@
     <div class="modal overlay" :class="isPrivate ? 'show-modal' : 'hide-modal'" tabindex="-1">
       <div class="modal-dialog">
         <div class="modal-content">
-          <div class="modal-header">
+          <!-- <div class="modal-header">
             <p class="modal-title fw-bold">비공개 쇼핑룸</p>
-            <button type="button" class="btn-close shadow-none ms-2" data-bs-dismiss="modal" @click="closeModal"></button>
+            <button type="button" class="btn-close shadow-none ms-2 me-1" data-bs-dismiss="modal" @click="closeModal"></button>
+          </div> -->
+          <div class="modal-header pt-4 pb-0">
+            <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" @click="closeModal"></button>
           </div>
+          <i class="fas fa-lock text-center my-3"></i>
           <div class="modal-body">
             <input type="password" v-model="inputPassword" placeholder="비밀번호를 입력해주세요">
-            <p v-if="errorMessage" class="error-message">비밀번호 오류! 다시 입력해주세요</p>
+            <p v-if="errorMessage" class="error-message">비밀번호가 일치하지 않습니다!</p>
             <span class="d-flex justify-content-center">
               <button class="btn shadow-none" @click="checkPassword">입장하기</button>              
               <button class="btn shadow-none" @click="closeModal" data-bs-dismiss="modal">취 소</button>
@@ -104,13 +108,13 @@ export default {
     
     // 입장하기
     function goToRoom() {
-      isPrivate.value = false  // 임시 
+      isPrivate.value = true  // 임시 
       
       axios({
         method : 'get',
         url: `${store.state.url}/v1/shopping-rooms/193`,
         // url: `${store.state.url}/v1/shopping-rooms/${selectedShoppingRoom.shoppingRoomId}`,
-        headers: { Authorization : `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0Iiwicm9sZXMiOiJVU0VSIiwiZXhwIjoxNjQ3NDc3NzYyfQ.tRLXFW9wHHIXCrJotone8gsjsi5Vba6zWvIQGCUtZWFrYZw3F9OaHLDeDQ9ZSOpn9E9y2OrLiDuHazuSTd4yAw` }
+        headers: { Authorization : `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0Iiwicm9sZXMiOiJVU0VSIiwiZXhwIjoxNjQ3OTA5NTI5fQ.l1TfGZtQarYUWrLy6uI-6gFLX5CVQn62t28USVkJe0_kazLFL824YCDLrGbxx1hAhBWe5lxbtK5SArTgOP77uA` }
       })
         .then(res => {
           const data = res.data.data 
@@ -119,10 +123,10 @@ export default {
 
           // isPrivate 여부 => F: token, roomId, mallurl (username 필요X) / T: isPrivate, password
           // if (!data.isPrivate) {  // public
-          //   router.push({ name: 'ShoppingRoom', params: { roomId: data.roomId, token: data.token, mallUrl: data.mall_url }})
+          //   router.push({ name: 'ShoppingRoom', params: { roomId: data.shoppingRoomId, token: data.token, mallUrl: data.shoppingRoomUrl }})
           // } else { 
           //   isPrivate.value = true
-          //   confirmPassword.value = data.password
+          //   confirmPassword.value = data.password  // 안쓰는 방식으로..
           // }
         })
         .catch(err => console.log(err))
@@ -130,13 +134,13 @@ export default {
 
     function checkPassword() {
       // password를 goToRoom에서 받는 경우 
-      // if (password.value == state.confirmPassword) {
-      //   isPrivate.value = false
-      //   router.push({ name: 'ShoppingRoom', params: { roomId: state.roomId, token: state.token, mallUrl: state.mall_url }})
-      // } else {
-      //   errorMessage.value = true
-      //   password.value = null
-      // }
+      if (inputPassword.value == state.confirmPassword) {
+        isPrivate.value = false
+        router.push({ name: 'ShoppingRoom', params: { roomId: state.roomId, token: state.token, mallUrl: state.mall_url }})
+      } else {
+        errorMessage.value = true
+        inputPassword.value = null
+      }
 
       // API 사용시 
       // axios({
@@ -149,6 +153,11 @@ export default {
       //     const data = res.data.data
       //     router.push({ name: 'ShoppingRoom', params: { roomId: data.shoppingRoomId, token: data.token, mallUrl: data.ShoppingRoomUrl }}) 
       //   })
+      //   .catch(err => {
+      //     console.log(err.response)
+          
+      //   })
+
     }
 
     function closeModal() {
@@ -217,7 +226,7 @@ export default {
 }
 
 .modal-dialog {
-  margin-top: 400px;
+  margin-top: 380px;
 }
 
 .modal-content {
@@ -229,6 +238,17 @@ export default {
 .modal-title {
   font-size: 20px;
   margin: 5px 0 0 176px;
+  color: #1B4D50;
+}
+
+i {
+  font-size: 65px;
+  color: #1B4D50;
+  margin-top: 0
+  /*  */
+  /* width: 400px;
+  margin-left: 43px;
+  margin-top: 15px; */
 }
 
 .modal-body {
@@ -251,23 +271,26 @@ export default {
 
 .modal-body button {
   width: 100px;
-  margin: 25px 10px 0;
-  border: 2px solid white;
+  margin: 25px 10px 10px;
+  border: 3px solid #FDFAF3;
   border-radius: 10px;
   font-weight: bold;
-  color: white;
+  color: #FDFAF3;
+  /* #589B9A */
 }
 
 .modal-body button:hover {
-  background-color: rgba(170, 169, 169, 0.116);
+  /* rgb(250, 216, 154) */
+  color: #1B4D50;
+  border: 3px solid #1B4D50;
 }
 
 .error-message {
-  margin-top: 0;
+  margin-top: 3px;
   margin-bottom: 0;
-  color: #589B9A;
+  color: red;
   text-align: center;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .overlay {

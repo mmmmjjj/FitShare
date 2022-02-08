@@ -34,7 +34,7 @@ export default {
         shoppingRoomList: [],  //뒤에 
         
         // shoppingRoomList : [
-        //   { shoppingRoomId: 1, hostName: '김싸피', maxParticipantCount: 2, isPrivate: true, shoppingMallName: 'nike', shoppingMallUrl: '..' },  // 이 외에 추가적으로
+        //   { shoppingRoomId: 1, hostName: '김싸피', maxParticipantCount: 2, participantCount: 1, isPrivate: true, shoppingMallName: 'nike', shoppingMallUrl: '..' },  // 이 외에 추가적으로
         // ],
 
       })
@@ -45,7 +45,7 @@ export default {
         axios({
           method: 'get',
           url: `${store.state.url}/v1/shopping-rooms/`,
-          headers: { Authorization : `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0Iiwicm9sZXMiOiJVU0VSIiwiZXhwIjoxNjQ3NDc3NzYyfQ.tRLXFW9wHHIXCrJotone8gsjsi5Vba6zWvIQGCUtZWFrYZw3F9OaHLDeDQ9ZSOpn9E9y2OrLiDuHazuSTd4yAw` }
+          headers: { Authorization : `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0Iiwicm9sZXMiOiJVU0VSIiwiZXhwIjoxNjQ3OTA5NTI5fQ.l1TfGZtQarYUWrLy6uI-6gFLX5CVQn62t28USVkJe0_kazLFL824YCDLrGbxx1hAhBWe5lxbtK5SArTgOP77uA` }
         })
           .then(res => {
             // console.log(res.data.data)
