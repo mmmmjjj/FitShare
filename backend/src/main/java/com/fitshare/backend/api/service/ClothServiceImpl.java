@@ -11,10 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -74,6 +72,7 @@ public class ClothServiceImpl implements ClothService {
         Cloth cloth = Cloth.builder()
                 .roomParticipant(roomParticipant)
                 .clothUrl(clothUrl)
+                .clothPath("images/"+imageTitle)
                 .build();
 
         // 옷 정보 DB 저장
@@ -96,7 +95,8 @@ public class ClothServiceImpl implements ClothService {
      **/
     @Override
     public void deleteCloth(Long clothId) {
-        s3Service.delete(clothRepository.getById(clothId).getClothUrl());
+        Cloth cloth = clothRepository.getById(clothId);
+        s3Service.delete(cloth.getClothPath());
         clothRepository.deleteById(clothId);
     }
 

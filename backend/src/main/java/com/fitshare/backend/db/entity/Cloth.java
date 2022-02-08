@@ -26,4 +26,8 @@ public class Cloth extends CreatedTimeEntity {
 
     @Column
     private String clothUrl;
+
+    @Column
+    private String clothPath;
+
 }
