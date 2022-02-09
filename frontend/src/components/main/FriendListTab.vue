@@ -62,7 +62,7 @@ export default {
 
     // store의 state에서 받아와서 저장해두기
     const stateFriends = computed(() => {
-      return store.state.friends
+      return store.state.friend.friends
     })
 
     // 친구 삭제
@@ -97,7 +97,7 @@ export default {
           console.log('성공')
           console.log(state.friendLists)
           console.log(friend)
-          store.dispatch('getfriends', friend)
+          store.dispatch('friend/getfriends', friend)
         })
     }
 
@@ -118,7 +118,7 @@ export default {
         .then(res => {
           console.log(res)
           const friendbyname = state.friendEmail
-          store.dispatch('getfriendsbyname', friendbyname)
+          store.dispatch('friend/getfriendsbyname', friendbyname)
         })
     }
 

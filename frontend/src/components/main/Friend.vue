@@ -80,12 +80,12 @@ export default {
           const friend = state.friendLists
           console.log(state.friendLists)
           console.log(friend)
-          store.dispatch('getfriendsbyclick', friend)
+          store.dispatch('friend/getfriendsbyclick', friend)
         })
     }
 
     const stateFriends = computed(() => {
-      return store.state.friends
+      return store.state.friend.friends
     })
 
     // 요청확인 클릭 시 요청 목록 받아오는 Axios
