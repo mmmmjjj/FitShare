@@ -20,6 +20,7 @@
 import SearchedUsers from './SearchedUsers.vue'
 import { ref, reactive } from 'vue'
 import axios from 'axios'
+import { useCookies } from 'vue3-cookies'
 
 export default {
   name: 'FriendMakeTab',
@@ -31,26 +32,42 @@ export default {
       friends: []
     })
 
+    const { cookies } = useCookies() 
+
+    const setToken = () => {
+      const token = cookies.get('accessToken')
+      const config = {
+        Authorization: `Bearer ${token}`
+      }
+      return config
+    }
+
     // input에 입력하는 값
     const SearchUser = ref('');
 
     // input에 email 입력 시 server에 요청
     const SearchUserEmail = () => {
-      axios({
-        method: 'GET',
-        url: `http://i6a405.p.ssafy.io:8081/api/v1/members/${SearchUser.value}`,
-        headers: { Authorization : `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0Iiwicm9sZXMiOiJVU0VSIiwiZXhwIjoxNjQ3NDc3NzYyfQ.tRLXFW9wHHIXCrJotone8gsjsi5Vba6zWvIQGCUtZWFrYZw3F9OaHLDeDQ9ZSOpn9E9y2OrLiDuHazuSTd4yAw` }
-        })
-        .then(res => {
-          console.log(res)
-          state.friends = res.data.data
-        })
+      if (SearchUser.value) {
+        axios({
+          method: 'GET',
+          url: `http://i6a405.p.ssafy.io:8081/api/v1/members/${SearchUser.value}`,
+          headers: setToken()
+          })
+          .then(res => {
+            console.log(res)
+            state.friends = res.data.data
+          })
+      }
+      else{
+        state.friends = []
+      }
     }
 
     return {
       state,
       SearchUser,
       SearchUserEmail,
+      setToken,
     }
   }
 }

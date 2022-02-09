@@ -26,6 +26,7 @@ import FriendMakeTab from '@/components/main/FriendMakeTab.vue'
 import FriendCheckTab from '@/components/main/FriendCheckTab.vue'
 import axios from 'axios'
 import { useStore } from 'vuex'
+import { useCookies } from 'vue3-cookies'
 
 
 export default {
@@ -36,6 +37,18 @@ export default {
     FriendCheckTab,
   },
   setup() {
+
+    // accesstoken 받아오기
+    const { cookies } = useCookies() 
+
+    const setToken = () => {
+      const token = cookies.get('accessToken')
+      const config = {
+        Authorization: `Bearer ${token}`
+      }
+      return config
+    }
+    
     const status = ref(true)
 
     const state = reactive({
@@ -56,7 +69,7 @@ export default {
       axios({
         method: 'GET',
         url: 'http://i6a405.p.ssafy.io:8081/api/v1/friends',
-        headers: { Authorization : `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0Iiwicm9sZXMiOiJVU0VSIiwiZXhwIjoxNjQ3NDc3NzYyfQ.tRLXFW9wHHIXCrJotone8gsjsi5Vba6zWvIQGCUtZWFrYZw3F9OaHLDeDQ9ZSOpn9E9y2OrLiDuHazuSTd4yAw` }
+        headers: setToken()
       })
         .then(res => {
           console.log(res)
@@ -80,7 +93,7 @@ export default {
       axios({
         method: 'GET',
         url: 'http://i6a405.p.ssafy.io:8081/api/v1/friends/requests',
-        headers: { Authorization : `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0Iiwicm9sZXMiOiJVU0VSIiwiZXhwIjoxNjQ3NDc3NzYyfQ.tRLXFW9wHHIXCrJotone8gsjsi5Vba6zWvIQGCUtZWFrYZw3F9OaHLDeDQ9ZSOpn9E9y2OrLiDuHazuSTd4yAw` }
+        headers: setToken()
       })
         .then(res => {
           console.log(res)
@@ -95,6 +108,7 @@ export default {
       GetFriendList,
       CheckFriendRequest,
       stateFriends,
+      setToken
     }
   }
 }

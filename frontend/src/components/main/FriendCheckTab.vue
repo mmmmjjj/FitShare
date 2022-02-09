@@ -18,11 +18,23 @@
 <script>
 import { reactive } from 'vue'
 import axios from 'axios'
+import { useCookies } from 'vue3-cookies'
 
 export default {
   name: 'FriendCheckTab',
   props: ['checkRequests'],
   setup() {
+
+    const { cookies } = useCookies() 
+
+    const setToken = () => {
+      const token = cookies.get('accessToken')
+      const config = {
+        Authorization: `Bearer ${token}`
+      }
+      return config
+    }
+
     const state = reactive({
       friends: [],
     })
@@ -31,7 +43,7 @@ export default {
       const res = await axios({
         method: 'POST',
         url: 'http://i6a405.p.ssafy.io:8081/api/v1/friends',
-        headers: { Authorization : `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0Iiwicm9sZXMiOiJVU0VSIiwiZXhwIjoxNjQ3NDc3NzYyfQ.tRLXFW9wHHIXCrJotone8gsjsi5Vba6zWvIQGCUtZWFrYZw3F9OaHLDeDQ9ZSOpn9E9y2OrLiDuHazuSTd4yAw` },
+        headers: setToken(),
         data: {"friendId": checkRequests[index].id}
       })
       console.log(res)
@@ -39,7 +51,7 @@ export default {
       const res1 = await axios({
         method: 'DELETE',
         url: `http://i6a405.p.ssafy.io:8081/api/v1/friends/requests/${checkRequests[index].id}`,
-        headers: { Authorization : `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0Iiwicm9sZXMiOiJVU0VSIiwiZXhwIjoxNjQ3NDc3NzYyfQ.tRLXFW9wHHIXCrJotone8gsjsi5Vba6zWvIQGCUtZWFrYZw3F9OaHLDeDQ9ZSOpn9E9y2OrLiDuHazuSTd4yAw` },
+        headers: setToken()
       })
       console.log(res1)
 
@@ -51,7 +63,7 @@ export default {
       axios({
         method: 'DELETE',
         url: `http://i6a405.p.ssafy.io:8081/api/v1/friends/requests/${checkRequests[index].id}`,
-        headers: { Authorization : `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0Iiwicm9sZXMiOiJVU0VSIiwiZXhwIjoxNjQ3NDc3NzYyfQ.tRLXFW9wHHIXCrJotone8gsjsi5Vba6zWvIQGCUtZWFrYZw3F9OaHLDeDQ9ZSOpn9E9y2OrLiDuHazuSTd4yAw` }
+        headers: setToken()
         })
         .then(res => {
           console.log(checkRequests[index].id)
@@ -65,7 +77,8 @@ export default {
     return {
       state,
       AcceptFriend,
-      DeclineFriend
+      DeclineFriend,
+      setToken
     }
   }
 }

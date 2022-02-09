@@ -26,7 +26,7 @@ export default {
     });
 
     const getKakaoAccount = async (kakaoToken) => {
-      let path = "http://localhost:8081/api/v1/kakao/login";
+      let path = "http://i6a405.p.ssafy.io:8081/api/v1/auth/kakao/login";
       await axios
         .get(path, {
           params: {
@@ -37,6 +37,7 @@ export default {
           if (res.data.statusCode === 201) {
             console.log("카카오 계정 정보");
             console.log(res);
+            cookies.set("accessToken", res.data.data.token);
             store.dispatch("login/getId", res.data.data.id, { root: true });
             store.dispatch("login/getName", res.data.data.name, { root: true });
             store.dispatch("login/getProfileURI", res.data.data.profileURI, {
@@ -51,14 +52,14 @@ export default {
     };
 
     const getKakakoToken = async (code) => {
-      let path = `http://localhost:8081/api/v1/kakao/auth?code=${code}`;
+      let path = `http://i6a405.p.ssafy.io:8081/api/v1/auth/kakao/token?code=${code}`;
       await axios
         .get(path)
         .then((res) => {
           if (res.data.statusCode === 200) {
+            console.log(res.data.data)
             console.log("카카오 Access 토큰 생성 성공");
             // Cookie에 'accessToken' 설정
-            cookies.set("accessToken", res.data.data);
             getKakaoAccount(res.data.data);
           }
         })
