@@ -281,11 +281,11 @@ export default {
           router.push({ name: 'ShoppingRoom', params: { roomId: data.shoppingRoomId, token: data.token, mallUrl: data.shoppingRoomUrl }}) 
         })
         .catch(err => {
-          error.mallError = '유효하지 않은 쇼핑몰입니다. 다시 입력해주세요!'
+          // error.mallError = '유효하지 않은 쇼핑몰입니다. 다시 입력해주세요!'
           console.log(err.response)
-          // if (err.response.message == '' ) {
-          //   error.mallError = '유효하지 않은 쇼핑몰입니다. 다시 입력해주세요!'
-          // } 
+          if (err.response.data.message == ' Invalid Input Value' ) {
+            error.mallError = '유효하지 않은 쇼핑몰입니다. 다시 입력해주세요!'
+          } 
         })
     }
 

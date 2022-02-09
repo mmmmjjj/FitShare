@@ -22,7 +22,7 @@
             </div>
             <div class="img-box">
               <div v-for="friend in friends" :key="friend.id">
-                <button class="btn btn-secondary">입어보기</button>
+                <button class="btn btn-secondary" @click="$emit('fitting', friend.src)">입어보기</button>
                 <img :src="friend.src" alt="img" class="img-style">
               </div>
             </div>
@@ -47,9 +47,11 @@ export default {
   props: {
     subscribers: Object,
   },
+  emits: ['fitting'],
   setup() {
     const friends = ref([
-      {id:1, name: '김싸피', src: require('@/assets/shirt.jpg')},
+      // {id:1, name: '김싸피', src: require('@/assets/shirt.jpg')},
+      {id:1, name: '김싸피', src: 'https://image.msscdn.net/images/goods_img/20200407/1388147/1388147_3_500.jpg'},
       {id:2, name: '이싸피', src: require('@/assets/shirt.jpg')},
       {id:3, name: '박싸피', src: require('@/assets/shirt.jpg')},
       {id:4, name: '최싸피', src: require('@/assets/shirt.jpg')},
@@ -72,11 +74,16 @@ export default {
       }
     }
 
+    const fitting = () => {
+
+    }
+
     return {
       friends,
       ImgUrl,
       AddUrl,
       Urls,
+      fitting,
     }
   }
 }

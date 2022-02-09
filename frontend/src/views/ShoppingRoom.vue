@@ -19,11 +19,10 @@
           
           <!-- 화상회의 버튼 -->
           <div class="buttons">
-            <!-- 쇼핑사이트, 가상피팅화면 전환 -->
+            <!-- 가상피팅화면 전환 -->
             <button v-if="showMainVideo" class="btn shadow-none stop-fitting-btn" @click="backToSite">
               <i class="fas fa-arrow-left"></i><p>가상피팅 종료</p>
             </button>
-
             <!-- 기본기능 -->
             <button v-if="isAudio" class="btn shadow-none" @click="offAudio()"><i class="bi bi-mic-mute-fill"></i></button>
             <button v-if="!isAudio" class="btn shadow-none" @click="onAudio()"><i class="bi bi-mic-fill"></i></button>
@@ -34,10 +33,9 @@
             <!-- overlay 테스트 -->
             <button class="btn" @click="overlayFilter()">filter</button>
             <!-- <button @click="removeFilter()">remove</button> -->
-            
           </div>
         </div>
-        <closet :subscribers="subscribers" class="closet"></closet>
+        <closet :subscribers="subscribers" @fitting="overlayFitting" class="closet"></closet>
       </div>
 		</div>
   </div>
@@ -112,9 +110,8 @@ export default {
           state.isVideo = true;
         }
         
-        // openvidu method
-        function overlayFilter() {  // closet에서 사용시 event emit해서 해당 method 실행
-          // 메인화면 포맷
+        // 옷장과 연결 
+        const overlayFitting = (clothesUrl) => {
           if (isFitting.value) removeFilter();
           showMainVideo.value = false
            
@@ -124,8 +121,7 @@ export default {
                 filter.execMethod(
                     "setOverlayedImage",
                     {
-                        // aws 이미지 주소 사용 예정
-                        "uri": "https://image.msscdn.net/images/goods_img/20200407/1388147/1388147_3_500.jpg",
+                        "uri": clothesUrl,
                         "offsetXPercent":"-1.5F",
                         "offsetYPercent":"0.8F",  // 하의 : 3.0F
                         "widthPercent":"4.0F",
@@ -139,7 +135,7 @@ export default {
             })
             .catch(err => console.log(err));
 
-          // faceoverlay 모자 
+          // faceoverlay 모자
           // state.publisher.stream.applyFilter("FaceOverlayFilter")
           //   .then(filter => {
           //       filter.execMethod(
@@ -208,10 +204,8 @@ export default {
               });
               
               publisher.subscribeToRemote();
-
               state.mainStreamManager = publisher;
               state.publisher = publisher;
-              // --- Publish your stream ---
               state.session.publish(publisher);
             })
             .catch(error => {
@@ -244,17 +238,15 @@ export default {
         }
 
         const updateMainVideoStreamManager = (stream) => {  // 화상화면 클릭시 해당 화면이 메인으로 이동 
-          // if (state.mainStreamManager === stream) return;
           showMainVideo.value = false  // 추가
-
           state.mainStreamManager = stream;
+
           if (!showMainVideo.value) showMainVideo.value = true;
           if (isFitting.value) { 
             removeFilter()
             isFitting.value = false  
             console.log('피팅 종료')
           }
-
         }
 
         // created
@@ -262,8 +254,8 @@ export default {
 
         return { 
           goToMain, offAudio, offVideo, onAudio, onVideo,
-          joinSession, leaveSession, updateMainVideoStreamManager, backToSite, overlayFilter, removeFilter,
-          ...toRefs(state), isFitting, showMainVideo, 
+          joinSession, leaveSession, updateMainVideoStreamManager, overlayFitting, backToSite, removeFilter,
+          ...toRefs(state), isFitting, showMainVideo,
         }
     }
 
@@ -280,7 +272,7 @@ export default {
   background-color: #D3E2E7;
   height: 185px;
   /* 임시 */
-  border-bottom: 1px solid white;  
+  /* border-bottom: 1px solid white;   */
 }
 
 .video-row {
