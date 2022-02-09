@@ -25,7 +25,7 @@ export default {
       code: "",
     });
 
-    const getKakaoAcoount = async (kakaoToken) => {
+    const getKakaoAccount = async (kakaoToken) => {
       let path = "http://localhost:8081/api/v1/kakao/login";
       await axios
         .get(path, {
@@ -59,7 +59,7 @@ export default {
             console.log("카카오 Access 토큰 생성 성공");
             // Cookie에 'accessToken' 설정
             cookies.set("accessToken", res.data.data);
-            getKakaoAcoount(res.data.data);
+            getKakaoAccount(res.data.data);
           }
         })
         .catch((error) => {
@@ -77,7 +77,7 @@ export default {
 
     return {
       getKakakoToken,
-      getKakaoAcoount,
+      getKakaoAccount,
       cookies,
       movePage,
     };

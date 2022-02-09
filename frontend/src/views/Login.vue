@@ -31,7 +31,7 @@
           
           <!-- <NaverLogin
             client-id="skkqxLCLHDQrwOlhytTS"
-            callback-url="http://localhoust:8080/main"
+            callback-url="http://localhost:8080/main"
             is-popup="false"
             :callbackFunction=callbackFunction
           /> -->
