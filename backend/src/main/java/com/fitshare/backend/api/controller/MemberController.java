@@ -22,8 +22,8 @@ public class MemberController {
 
     @ApiOperation(value = "사용자 검색", notes = "가입한 사용자 전체 리스트에서 이메일로 사용자를 검색합니다.")
     @GetMapping("/{email}")
-    public ResponseEntity<BaseResponseBody> searchMembersByEmail(@PathVariable String email) {
-        return ResponseEntity.ok(BaseResponseBody.of(HttpStatus.OK, SEARCH_MEMBERS_BY_EMAIL, memberService.searchMembersByEmail(email)));
+    public ResponseEntity<BaseResponseBody> findMemberByEmail(@PathVariable String email) {
+        return ResponseEntity.ok(BaseResponseBody.of(HttpStatus.OK, SEARCH_MEMBERS_BY_EMAIL, memberService.findMemberByEmail(email)));
     }
 
 }
