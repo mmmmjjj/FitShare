@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -25,9 +26,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class JwtTokenProvider implements InitializingBean {
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
 
     private static final String AUTHORITIES_KEY = "roles";
+    private final RedisTemplate<String, String> redisTemplate;
 
     private Key key;
     private final String secret;
@@ -35,9 +36,10 @@ public class JwtTokenProvider implements InitializingBean {
     private final long tokenValidityInMilliseconds;
 
     public JwtTokenProvider(@org.springframework.beans.factory.annotation.Value("${jwt.secret}") String secret,
-                            @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds) {
+                            @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds, RedisTemplate<String,String> redisTemplate) {
         this.secret = secret;
-        this.tokenValidityInMilliseconds = tokenValidityInSeconds * 1000;
+        this.tokenValidityInMilliseconds = tokenValidityInSeconds * 100;
+        this.redisTemplate = redisTemplate;
     }
 
 
@@ -55,6 +57,16 @@ public class JwtTokenProvider implements InitializingBean {
 
         return Jwts.builder()
                 .setClaims(claims)
+                .signWith(key, SignatureAlgorithm.HS512)
+                .setExpiration(validity)
+                .compact();
+    }
+
+    public String createRefreshToken() {
+        long now = (new Date()).getTime();
+        Date validity = new Date(now + this.tokenValidityInMilliseconds*1000);
+
+        return Jwts.builder()
                 .signWith(key, SignatureAlgorithm.HS512)
                 .setExpiration(validity)
                 .compact();
@@ -85,13 +97,13 @@ public class JwtTokenProvider implements InitializingBean {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            logger.info("잘못된 JWT 서명입니다.");
+            log.info("잘못된 JWT 서명입니다.");
         } catch (ExpiredJwtException e) {
-            logger.info("만료된 JWT 토큰입니다.");
+            log.info("만료된 JWT 토큰입니다.");
         } catch (UnsupportedJwtException e) {
-            logger.info("지원되지 않는 JWT 토큰입니다.");
+            log.info("지원되지 않는 JWT 토큰입니다.");
         } catch (IllegalArgumentException e) {
-            logger.info("JWT 토큰이 잘못되었습니다.");
+            log.info("JWT 토큰이 잘못되었습니다.");
         }
         return false;
     }

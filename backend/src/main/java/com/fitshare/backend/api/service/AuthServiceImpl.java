@@ -1,5 +1,6 @@
 package com.fitshare.backend.api.service;
 
+import com.fitshare.backend.api.response.TokenRes;
 import com.fitshare.backend.common.auth.JwtTokenProvider;
 import com.fitshare.backend.common.model.KakaoProfile;
 import com.fitshare.backend.common.model.NaverProfile;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -25,6 +27,7 @@ import java.net.URL;
 @Service
 public class AuthServiceImpl implements AuthService {
     private final JwtTokenProvider tokenProvider;
+    private final RedisService redisService;
 
     // 카카오 client id
     private final String KAKAO_CLIENT_ID;
@@ -34,10 +37,11 @@ public class AuthServiceImpl implements AuthService {
     private final String NAVER_CLIENT_SCECRET;
 
     public AuthServiceImpl(JwtTokenProvider tokenProvider,
-                           @Value("${kakao.client.id}") String kakaoClientId,
+                           RedisService redisService, @Value("${kakao.client.id}") String kakaoClientId,
                            @Value("${naver.client.id}") String naverClientId,
                            @Value("${naver.client.secret}") String naverClientSecret) {
         this.tokenProvider = tokenProvider;
+        this.redisService = redisService;
 
         this.KAKAO_CLIENT_ID = kakaoClientId;
         this.NAVER_CLIENT_ID = naverClientId;
@@ -111,9 +115,29 @@ public class AuthServiceImpl implements AuthService {
                 NaverProfile.class).getBody();
     }
 
+    // accessToken 발급
     @Override
     public String createToken(Long id, RoleType roleType){
+
         return tokenProvider.createToken(id.toString(),roleType);
+    }
+
+    // refreshToken 발급
+    @Override
+    public String createRefreshToken(Long id){
+        String refreshToken = tokenProvider.createRefreshToken();
+
+        //Redis에 저장
+        redisService.setData(refreshToken, String.valueOf(id));
+        return refreshToken;
+    }
+
+    // refreshToken으로 accessToken 재발급
+    public TokenRes refreshAccessToken(String refreshToken) {
+
+        String id = redisService.getData(refreshToken);
+
+        return new TokenRes(tokenProvider.createToken(id,RoleType.USER),refreshToken);
     }
 
     private String getAccessToken(String reqURL, String param) {
@@ -144,8 +168,6 @@ public class AuthServiceImpl implements AuthService {
 
             br.close();
             bw.close();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }

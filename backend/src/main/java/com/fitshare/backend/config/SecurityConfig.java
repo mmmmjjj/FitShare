@@ -12,7 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.cors.*;
 
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtTokenProvider tokenProvider;
@@ -43,7 +43,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/swagger-ui/**",
                         "/api/v1/shopping-rooms/*/validate",
                         "/api/v1/shopping-malls",
-                        "/api/v1/chat/**"
+                        "/api/v1/auth/kakao/**",
+                        "/api/v1/auth/naver/**",
+                        "/api/v1/auth/refresh",
+                        "/api/v1/chat/**",
+                        "/v2/api-docs"
                 );
     }
 
@@ -63,10 +67,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/v1/auth/**").permitAll()
-                .antMatchers("/v2/api-docs").permitAll()
-                .anyRequest().authenticated() // Security 설정을 풀고 싶으면 이 코드를 주석처리하고
-//                .anyRequest().permitAll() // 이 코드를 주석을 푸세요
+                .anyRequest().authenticated()
                 .and()
                 .apply(new JwtSecurityConfig(tokenProvider));
     }
@@ -75,9 +76,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("http://localhost:8080");
-        configuration.addAllowedOrigin("http://localhost:80");
         configuration.addAllowedOrigin("http://localhost");
-        configuration.addAllowedOrigin("http://i6a405.p.ssafy.io:80");
         configuration.addAllowedOrigin("http://i6a405.p.ssafy.io");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");

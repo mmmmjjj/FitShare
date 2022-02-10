@@ -15,8 +15,11 @@ public class LoginRes {
     @ApiModelProperty(name = "유저 ID", example = "1")
     private Long id;
 
-    @ApiModelProperty(name = "유저 토큰", example = "token값")
-    private String token;
+    @ApiModelProperty(name = "액세스 토큰", example = "token값")
+    private String accessToken;
+
+    @ApiModelProperty(name = "리프레쉬 토큰", example = "token값")
+    private String refreshToken;
 
     @ApiModelProperty(name = "유저 이름", example = "김싸피")
     private String name;
