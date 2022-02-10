@@ -2,6 +2,7 @@ package com.fitshare.backend.api.controller;
 
 
 import com.fitshare.backend.api.response.LoginRes;
+import com.fitshare.backend.api.response.TokenRes;
 import com.fitshare.backend.api.service.AuthService;
 import com.fitshare.backend.api.service.MemberService;
 import com.fitshare.backend.api.service.RedisService;
@@ -16,9 +17,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import jdk.nashorn.internal.parser.Token;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -123,13 +126,13 @@ public class AuthController {
 
     @ApiOperation(value = "토큰 재발급 요청", notes = "만료된 accessToken을 refreshToken을 통해 재발급하는 api입니다.")
     @ApiResponses({
-            @ApiResponse(code = 201, message = REFRESH_TOKEN),
-            @ApiResponse(code = 403, message = INVALID_TOKEN)
+            @ApiResponse(code = 201, message = REFRESH_TOKEN, response = TokenRes.class),
+            @ApiResponse(code = 403, message = INVALID_TOKEN, response = ErrorResponse.class)
     })
     @PostMapping(value = "/refresh")
     public ResponseEntity<BaseResponseBody> refreshToken(@RequestParam String refreshToken){
         if(!tokenProvider.validateToken(refreshToken))
-            return ResponseEntity.ok(BaseResponseBody.of(403,INVALID_TOKEN));
+            throw new AccessDeniedException(INVALID_TOKEN);
 
         return ResponseEntity.ok(BaseResponseBody.of(HttpStatus.CREATED,REFRESH_TOKEN,authService.refreshAccessToken(refreshToken)));
     }

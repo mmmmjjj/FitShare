@@ -38,7 +38,7 @@ public class JwtTokenProvider implements InitializingBean {
     public JwtTokenProvider(@org.springframework.beans.factory.annotation.Value("${jwt.secret}") String secret,
                             @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds, RedisTemplate<String,String> redisTemplate) {
         this.secret = secret;
-        this.tokenValidityInMilliseconds = tokenValidityInSeconds * 100;
+        this.tokenValidityInMilliseconds = tokenValidityInSeconds;
         this.redisTemplate = redisTemplate;
     }
 
@@ -64,7 +64,7 @@ public class JwtTokenProvider implements InitializingBean {
 
     public String createRefreshToken() {
         long now = (new Date()).getTime();
-        Date validity = new Date(now + this.tokenValidityInMilliseconds*1000);
+        Date validity = new Date(now + this.tokenValidityInMilliseconds*24*30);
 
         return Jwts.builder()
                 .signWith(key, SignatureAlgorithm.HS512)

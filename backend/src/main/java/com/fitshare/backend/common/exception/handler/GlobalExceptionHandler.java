@@ -3,7 +3,6 @@ package com.fitshare.backend.common.exception.handler;
 import com.fitshare.backend.common.exception.BusinessException;
 import com.fitshare.backend.common.exception.DuplicateException;
 import com.fitshare.backend.common.exception.InvalidException;
-import com.fitshare.backend.common.model.BaseResponseBody;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,4 +47,6 @@ public class GlobalExceptionHandler {
         ErrorCode errorCode = e.getErrorCode();
         return ResponseEntity.status(errorCode.getStatus()).body(ErrorResponse.of(errorCode));
     }
+
+
 }

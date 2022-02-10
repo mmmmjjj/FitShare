@@ -15,7 +15,7 @@ public class ClothRes {
     @ApiModelProperty(name = "옷 Id", example = "1")
     private Long clothId;
 
-    @ApiModelProperty(name = "배경 제거 이미지 경로", example = "")
-    private String imagePath;
+    @ApiModelProperty(name = "배경 제거 이미지 URL", example = "")
+    private String imageUrl;
 
 }
