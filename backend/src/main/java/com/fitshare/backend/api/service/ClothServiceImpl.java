@@ -27,7 +27,7 @@ public class ClothServiceImpl implements ClothService {
 
     private final S3ServiceImpl s3Service;
 
-    private static final String PYTHON_PATH = "img_trans.py";
+    private static final String PYTHON_PATH = "/deploy/img_trans.py";
 
     /**
      * 옷 추가
