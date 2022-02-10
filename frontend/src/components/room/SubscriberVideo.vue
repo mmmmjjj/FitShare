@@ -1,7 +1,12 @@
 <template>
   <div class="video-container" v-if="streamManager">
-    <ov-subscriber-video :stream-manager="streamManager"/>
-    <div><p>{{ state.clientData }}</p></div>
+    <div>
+      <div v-if="loading.length == (subscriber+1) && loading[subscriber] " class="spinner-border text-secondary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <ov-subscriber-video :stream-manager="streamManager"/>
+      <div v-show="!loading[subscriber]"><p>{{ state.clientData }}</p></div>
+    </div>
   </div>
 </template>
 
@@ -18,6 +23,8 @@ export default {
 
     props: {
       streamManager: Object,
+      loading: Array,
+      subscriber: Number,
     },
 
     setup (props) {
@@ -56,12 +63,15 @@ p {
 	border-bottom-left-radius: 10px;
   position: absolute;
   font-size: 16px;
-  /* top: 34px; */
-  /* left: 51.5px;
-  bottom: -0.5px; */
-
   left: 50%;
   bottom: -25px;
   transform: translate(-50%, -50%);  
+}
+
+.spinner-border {
+  margin-bottom: 20px;
+  position: absolute;
+  top: 40%;
+  left: 42%;
 }
 </style>

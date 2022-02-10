@@ -1,7 +1,12 @@
 <template>
   <div class="video-container" v-if="streamManager">
-    <ov-publisher-video :stream-manager="streamManager"/>
-    <div><p>{{ state.clientData }}</p></div>
+    <div>
+      <div v-if="loading" class="spinner-border text-secondary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <ov-publisher-video :stream-manager="streamManager"/>
+      <div v-show="!loading"><p>{{ state.clientData }}</p></div>
+    </div>
   </div>
 </template>
 
@@ -16,6 +21,7 @@ export default {
     },
     props: {
       streamManager: Object,
+      loading: Boolean,
     },
 
     setup (props) {
@@ -54,12 +60,15 @@ p {
 	border-bottom-left-radius: 10px;
   position: absolute;
   font-size: 16px;
-  /* top: 34px; */
-  /* left: 51.5px;
-  bottom: -0.5px; */
-
   left: 50%;
   bottom: -25px;
   transform: translate(-50%, -50%);  
+}
+
+.spinner-border {
+  margin-bottom: 20px;
+  position: absolute;
+  top: 45%;
+  left: 50%;
 }
 </style>

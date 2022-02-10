@@ -3,15 +3,16 @@
     <div id="session" class="" v-if="session">
       <!-- 화상화면 -->
 			<div id="video-container" class="d-flex flex-row">
-        <!-- @click="updateMainVideoStreamManager(publisher)" -->
-        <publisher-video :stream-manager="publisher"/>
-        <subscriber-video v-for="subscriber in subscribers" :key="subscriber.stream.connection.connectionId" :stream-manager="subscriber" @click="updateMainVideoStreamManager(subscriber)"/>
+        <publisher-video :stream-manager="publisher" :loading="pub"/>
+        <subscriber-video v-for="(subscriber, index) in subscribers" :key="subscriber.stream.connection.connectionId"
+        :stream-manager="subscriber" @click="updateMainVideoStreamManager(subscriber)" :loading="sub" :subscriber="index"/>
       </div>
 
       <!-- 나머지 컴포넌트 -->
       <div class="components-container d-flex flex-row">
         <group-chat class="group-chat"></group-chat>
         <div class="center">
+          <!-- <div v-if="background" class="background"></div> -->
           <div id="main-video" v-if="showMainVideo">  
             <main-video :stream-manager="mainStreamManager"/>
           </div>
@@ -66,6 +67,11 @@ export default {
         let isFitting = ref(false);
         let showMainVideo = ref(false) ; // 중앙 비디오 여부 
 
+        let background = ref(false);
+        const loading = reactive({
+          pub: true,
+          sub: [],
+        })
         const state = reactive({
           OV: undefined,
           session: undefined,
@@ -74,9 +80,8 @@ export default {
           subscribers: [], 
 
           mySessionId: '',
-          myUserName: '',  // 임시 => store에서 사용자 정보 불러오기 
+          myUserName: '',  
           shoppingMallUrl: '',
-
           isAudio: false,
           isVideo: false,
         });
@@ -110,10 +115,12 @@ export default {
         
         // 옷장과 연결 
         const overlayFitting = (clothesUrl) => {
-          if (isFitting.value) removeFilter();
+          if (isFitting.value) {
+            removeFilter()
+          }
+          background.value = true
           showMainVideo.value = false
-           
-          // faceoverlay (상의)
+          
           state.publisher.stream.applyFilter("FaceOverlayFilter")
             .then(filter => {
                 filter.execMethod(
@@ -121,7 +128,7 @@ export default {
                     {
                         "uri": clothesUrl,
                         "offsetXPercent":"-1.5F",
-                        "offsetYPercent":"0.8F",  // 하의 : 3.0F
+                        "offsetYPercent":"0.6F",  // 하의 : 3.0F
                         "widthPercent":"4.0F",
                         "heightPercent":"4.0F"
                     });
@@ -130,6 +137,7 @@ export default {
               isFitting.value = true
               state.mainStreamManager = state.publisher;
               showMainVideo.value = true
+              background.value = false
             })
             .catch(err => console.log(err));
 
@@ -151,9 +159,7 @@ export default {
 
         const removeFilter = () => {
           state.publisher.stream.removeFilter()
-            .then(() => {
-              console.log("Filter removed");
-            })
+            .then(() => console.log("Filter removed"))
             .catch(err => console.error(err));
         };
 
@@ -161,7 +167,7 @@ export default {
         const backToSite = () => {
           if (isFitting.value) removeFilter();
           isFitting.value = false;
-          showMainVideo.value = false
+          showMainVideo.value = false;
           state.mainStreamManager = state.publisher;
         };
 
@@ -179,12 +185,18 @@ export default {
           state.session.on('streamCreated', ({ stream }) => {
             const subscriber = state.session.subscribe(stream);
             state.subscribers.push(subscriber);
+            loading.sub.push(true)
+            
+            subscriber.on('streamPlaying', function () {
+              loading.sub[loading.sub.length - 1] = false
+            })
           });
 
           state.session.on('streamDestroyed', ({ stream }) => {
             const index = state.subscribers.indexOf(stream.streamManager, 0);
             if (index >= 0) {
               state.subscribers.splice(index, 1);
+              loading.sub.splice(index, 1);
             }
           });
 
@@ -209,6 +221,10 @@ export default {
               state.mainStreamManager = publisher;
               state.publisher = publisher;
               state.session.publish(publisher);
+
+              publisher.on('streamPlaying', function () {
+                loading.pub = false
+              })
             })
             .catch(error => {
                 console.log('There was an error connecting to the session:', error.code, error.message);
@@ -238,7 +254,8 @@ export default {
             .catch(err => console.log(err));
         }
 
-        const updateMainVideoStreamManager = (stream) => {  // 화상화면 클릭시 해당 화면이 메인으로 이동 
+        // 화상화면 클릭시 해당 화면이 메인으로 이동
+        const updateMainVideoStreamManager = (stream) => {   
           showMainVideo.value = false  // 추가
           state.mainStreamManager = stream;
 
@@ -260,7 +277,7 @@ export default {
         return { 
           goToMain, offAudio, offVideo, onAudio, onVideo,
           joinSession, leaveSession, updateMainVideoStreamManager, overlayFitting, backToSite, removeFilter,
-          ...toRefs(state), isFitting, showMainVideo,
+          ...toRefs(state), ...toRefs(loading), isFitting, showMainVideo, background
         }
     }
 
@@ -268,6 +285,15 @@ export default {
 </script>
 
 <style scoped>
+.background {
+  position: absolute;
+  top: 0px;
+  width: 859px;
+  height: 790px;
+  background-color: #D3E2E7;
+}
+
+/*  */
 #session {
   background-color: #D3E2E7;
 }
