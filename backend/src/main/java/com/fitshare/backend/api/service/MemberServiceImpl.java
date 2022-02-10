@@ -1,6 +1,7 @@
 package com.fitshare.backend.api.service;
 
 import com.fitshare.backend.api.response.BaseMemberRes;
+import com.fitshare.backend.common.exception.EmailDuplicatedException;
 import com.fitshare.backend.common.model.KakaoProfile;
 import com.fitshare.backend.common.model.NaverProfile;
 import com.fitshare.backend.db.entity.Member;
@@ -25,6 +26,9 @@ public class MemberServiceImpl implements MemberService  {
 
     @Override
     public Member createKakaoMember(KakaoProfile kakaoProfile) {
+
+        checkDuplicatedEmail(kakaoProfile.getKakao_account().getEmail());
+
         Member member = new Member();
 
         //카카오에서 받은 정보들로 회원 생성
@@ -38,6 +42,9 @@ public class MemberServiceImpl implements MemberService  {
 
     @Override
     public Member createNaverMember(NaverProfile naverProfile) {
+
+        checkDuplicatedEmail(naverProfile.getResponse().getEmail());
+
         Member member = new Member();
 
         //네이버에서 받은 정보들로 회원 생성
@@ -73,6 +80,10 @@ public class MemberServiceImpl implements MemberService  {
 
     @Override
     public BaseMemberRes findMemberByEmail(String email) {
-        return memberRepository.findByEmail(email);
+        return memberRepository.findActiveMemberByEmail(email);
+    }
+
+    private void checkDuplicatedEmail(String email) {
+        memberRepository.findByEmail(email).orElseThrow(EmailDuplicatedException::new);
     }
 }

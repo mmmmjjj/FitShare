@@ -14,12 +14,13 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByUid(String uid);
 
+    Optional<Member> findByEmail(String email);
+
     @Query(value = "SELECT NEW com.fitshare.backend.api.response.BaseMemberRes" +
             "( m.id, m.name, m.profileImg, m.email )" +
             "  FROM Member m" +
             " WHERE m.isActive = true" +
             "   AND m.email = :email" +
             " ORDER BY m.name")
-    BaseMemberRes findByEmail(@Param("email") String email);
-
+    BaseMemberRes findActiveMemberByEmail(@Param("email") String email);
 }

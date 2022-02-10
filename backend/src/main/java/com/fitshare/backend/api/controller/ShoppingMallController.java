@@ -1,11 +1,17 @@
 package com.fitshare.backend.api.controller;
 
+import com.fitshare.backend.api.response.ShoppingMallRes;
+import com.fitshare.backend.api.response.ShoppingRoomRes;
+import com.fitshare.backend.api.response.ShoppingRoomTokenRes;
 import com.fitshare.backend.api.service.ShoppingMallService;
 import com.fitshare.backend.api.service.ShoppingRoomService;
+import com.fitshare.backend.common.exception.handler.ErrorResponse;
 import com.fitshare.backend.common.model.BaseResponseBody;
 import com.fitshare.backend.db.entity.ShoppingMall;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +31,10 @@ public class ShoppingMallController {
     private final ShoppingMallService shoppingMallService;
 
     @ApiOperation(value = "쇼핑몰 검색", notes = "keyword 에 입력된 값이 포함된 쇼핑몰 이름 또는 쇼핑몰 url 을 검색하여 쇼핑몰 목록을 반환한다.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = SEARCH_SHOPPING_MALL, response = ShoppingMallRes.class),
+            @ApiResponse(code = 500, message = "서버 에러", response = ErrorResponse.class)
+    })
     @GetMapping("")
     public ResponseEntity<BaseResponseBody> searchShoppingMalls(@RequestParam(required = false) String keyword) {
         return ResponseEntity.ok(BaseResponseBody.of(HttpStatus.OK, SEARCH_SHOPPING_MALL, shoppingMallService.searchShoppingMalls(keyword)));

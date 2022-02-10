@@ -13,14 +13,12 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 @Slf4j
@@ -97,6 +95,8 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public NaverProfile getNaverUserInfo(String accessToken){
 
+        String apiURL = "https://openapi.naver.com/v1/nid/me";
+
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
 
@@ -109,8 +109,8 @@ public class AuthServiceImpl implements AuthService {
         HttpEntity<MultiValueMap<String,String>> naverProfileRequest = new HttpEntity<>(headers);
 
         return restTemplate.exchange(
-                "https://openapi.naver.com/v1/nid/me",
-                HttpMethod.POST,
+                apiURL,
+                HttpMethod.GET,
                 naverProfileRequest,
                 NaverProfile.class).getBody();
     }

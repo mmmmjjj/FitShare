@@ -65,7 +65,7 @@ public class ShoppingRoomServiceImpl implements ShoppingRoomService {
      **/
     @Transactional
     @Override
-    public ShoppingRoomTokenRes makeShoppingRoom(Long memberId, MakeShoppingRoomReq req) {
+    public ShoppingRoomTokenRes createShoppingRoom(Long memberId, MakeShoppingRoomReq req) {
 
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberNotFoundException(memberId));
 

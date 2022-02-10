@@ -1,36 +1,37 @@
 package com.fitshare.backend.common.model;
 
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class KakaoProfile {
-    public Long id;
-    public String connected_at;
-    public Properties properties;
-    public KakaoAccount kakao_account;
+    private Long id;
+    private String connected_at;
+    private Properties properties;
+    private KakaoAccount kakao_account;
 
-    @Data
+    @Getter
     public class Properties {
-        public String nickname;
-        public String profile_image;
-        public String thumbnail_image;
+        private String nickname;
+        private String profile_image;
+        private String thumbnail_image;
     }
 
-    @Data
+    @Getter
     public class KakaoAccount {
-        public Boolean profile_needs_agreement;
-        public Profile profile;
-        public Boolean has_email;
-        public Boolean email_needs_agreement;
-        public Boolean is_email_valid;
-        public Boolean is_email_verified;
-        public String email;
+        private Boolean profile_needs_agreement;
+        private Profile profile;
+        private Boolean has_email;
+        private Boolean email_needs_agreement;
+        private Boolean is_email_valid;
+        private Boolean is_email_verified;
+        private String email;
 
-        @Data
-        public class Profile {
-            public String nickname;
-            public String thumbnail_image_url;
-            public String profile_image_url;
-        }
+    }
+
+    @Getter
+    public class Profile {
+        private String nickname;
+        private String thumbnail_image_url;
+        private String profile_image_url;
     }
 }

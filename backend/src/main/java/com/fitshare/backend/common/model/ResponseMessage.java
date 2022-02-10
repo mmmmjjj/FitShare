@@ -5,7 +5,7 @@ public class ResponseMessage {
     }
 
     // Shopping Room
-    public static final String MAKE_SHOPPING_ROOM = "쇼핑룸 생성 성공입니다.";
+    public static final String CREATE_SHOPPING_ROOM = "쇼핑룸 생성 성공입니다.";
     public static final String ENTER_SHOPPING_ROOM = "쇼핑룸 입장 성공입니다.";
     public static final String EXIT_SHOPPING_ROOM = "쇼핑룸 나가기 성공입니다.";
     public static final String GET_SHOPPING_ROOM_LIST = "쇼핑룸 목록 조회 성공입니다.";
@@ -16,7 +16,8 @@ public class ResponseMessage {
     public static final String SEARCH_SHOPPING_MALL = "쇼핑몰 검색 성공입니다.";
 
     // Login
-    public static final String GET_ACCESS_TOKEN = "카카오 토큰 생성 성공입니다.";
+    public static final String GET_KAKAO_ACCESS_TOKEN = "카카오 토큰 생성 성공입니다.";
+    public static final String GET_NAVER_ACCESS_TOKEN = "네이버 토큰 생성 성공입니다.";
     public static final String REFRESH_TOKEN = "토큰 재발급 성공입니다";
     public static final String INVALID_TOKEN = "유효하지 않은 리프레쉬 토큰입니다.";
     public static final String LOGIN = "로그인 성공입니다.";

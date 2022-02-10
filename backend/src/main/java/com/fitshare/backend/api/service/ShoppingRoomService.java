@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ShoppingRoomService {
 
-    ShoppingRoomTokenRes makeShoppingRoom(Long memberId, MakeShoppingRoomReq req);
+    ShoppingRoomTokenRes createShoppingRoom(Long memberId, MakeShoppingRoomReq req);
 
     ShoppingRoomTokenRes enterShoppingRoom(Long memberId, Long shoppingRoomId);
 
