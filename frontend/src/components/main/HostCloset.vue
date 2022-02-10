@@ -11,15 +11,26 @@
 </template>
 
 <script>
+import { computed } from 'vue'
+import { useStore } from 'vuex'
 import HostClosetItem from './HostClosetItem.vue'
+
 export default {
   name: 'HostCloset',
 
   components: { HostClosetItem },
 
-  props: {
-    selectedShoppingRoom: Object,
-  },
+  setup() {
+    const store = useStore();
+
+    const selectedShoppingRoom = computed(() => {
+        return store.state.room.selectedShoppingRoom
+    });
+
+    return {
+     selectedShoppingRoom
+    }
+  }
   
 }
 </script>

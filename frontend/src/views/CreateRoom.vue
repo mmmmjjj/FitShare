@@ -27,26 +27,6 @@
           <p class="cnt-error" v-if="cntError">{{ cntError }}</p>
 
           <!-- 쇼핑몰 사이트 검색 -->
-          <!-- <div class="row mall-container" :class="isMall ? '' : 'mall-margin-change'">
-            <label><i class="bi bi-asterisk"></i>쇼핑몰 사이트</label>
-            <div class="dropdown-wrapper">
-              <div class="form-select" @click="isMallListVisible = !isMallListVisible">
-                <p v-if="selectedItem">{{ selectedItem.name }}</p>
-                <p v-else>쇼핑몰을 선택하세요</p>
-              </div>
-              <div v-if="isMallListVisible" class="dropdown-popover">
-                <input @keyup="searchMall()" v-model="searchQuery" class="search-mall-input" type="text" placeholder="검색하세요">
-                <span v-if="searchedMalls.length === 0"><p class="text-center">검색결과 없음</p></span>
-                <div class="options">
-                  <ul class="scroll">
-                    <li v-for="mall in searchedMalls" :key="mall.id" :value="mall.name" @click="selectItem(mall)">
-                      {{ mall.name }}
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div> -->
           <div class="row mall-container">
             <label><i class="bi bi-asterisk"></i>쇼핑몰 사이트</label>
             <div class="dropdown-wrapper">
@@ -99,34 +79,17 @@
               </span>
             </span>
           </div>
-          <!-- <div class="row private-container" :class="isPrivate ? 'private-margin-change' : ''" >
-            <label>공개범위</label>
-            <span class="form-radio">
-              <span @click="selectPublic()" class="radio-box">
-                <input class="form-check-input" type="radio" name="flexRadioDefault" checked="checked" id="public">
-                <label class="form-check-label" for="public">공개</label>
-              </span>
-              <span @click="selectPrivate()" class="radio-box">
-                <input class="form-check-input" type="radio" name="flexRadioDefault" id="private">
-                <label class="form-check-label" for="private" >비공개</label>
-              </span>
-            </span>
-          </div> -->
-
           <!-- 비밀번호 입력 -->
           <div class="row password-container" v-show="isPrivate">  
 						<label>비밀번호</label>
 						<input v-model="password" class="form-control shadow-none" type="password" placeholder="6자리 이하로 작성해주세요">
             <p class="password-error" v-if="passwordError">{{ passwordError }}</p>
 					</div>
-          
-
 					<div class="text-center">
             <button class="btn create-btn shadow-none" @click="validationCheck()">생성하기</button>
             <button class="btn shadow-none" @click="goToMain()">취소</button>
 					</div>        
 				</div>
-
 			</div>
 		</div>
   </div>
@@ -137,15 +100,17 @@ import { reactive, ref, toRefs, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex'
 import axios from 'axios'
+import { useCookies } from "vue3-cookies";
 
 export default {
   name: 'CreateRoom',
   
   setup() {
-    const router = useRouter()
-    const store = useStore()
-    // data
-    let counts = ref([1, 2, 3, 4, 5, 6])
+    const router = useRouter();
+    const store = useStore();
+    const { cookies } = useCookies();
+    
+    let counts = ref([1, 2, 3, 4, 5, 6]);
     let selectedCnt = ref(null);
     let isCntVisible = ref(false);
 
@@ -164,8 +129,8 @@ export default {
     });
 
     const state = reactive({
-      shoppingMallList: [],  // 임시!!!!!
-      isMall: false,  // ----------------찾고자 하는 쇼핑몰의 리스트 내 존재여부
+      // shoppingMallList: [],  // 임시!!!!
+      isMall: true,
       inputMallName: null,
       inputMallUrl: null,
     });
@@ -180,27 +145,26 @@ export default {
       }
     });
 
-    // select dropdown method
-    function selectCnt(cnt) {
+    // select dropdown 
+    const selectCnt = (cnt) => {
       selectedCnt.value = cnt;
       isCntVisible.value = false;
-    }
+    };
 
-    function selectItem(mall) {
+    const selectItem = (mall) => {
       selectedItem.value = mall;
       isMallListVisible.value = false;
     }
     
     // 쇼핑몰 검색
-    function searchMall() {
+   const searchMall = () => {
       axios.get(`${store.state.url}/v1/shopping-malls?keyword=${searchQuery.value}`)
         .then(res => {
           searchedMalls.value = res.data.data
-          // console.log(searchedMalls.value)
         })
     }
 
-    // 바깥영역 클릭으로 dropdown 닫기
+    // dropdown 닫기
     document.addEventListener('click', function(e){
       if (isMallListVisible.value == true) {
         if (e.target.className !== 'dropdown-popover' && e.target.className !== 'form-select' && e.target.className !== '' && e.target.className !== 'search-mall-input' ) {
@@ -222,14 +186,21 @@ export default {
       isPrivate.value = false
     };
 
+    const setToken = () => {
+      const token = cookies.get('accessToken');
+      const config = { Authorization: `Bearer ${token}`};
+      return config
+    };
+
     // 유효성 검사 
-    function validationCheck () {
+    const validationCheck = () => {
       let isValid = true
       // 인원수 
       if (!selectedCnt.value) {
         error.cntError = '인원수를 선택해주세요!';
         isValid = false;
       } else error.cntError = '';
+      
       // 쇼핑몰 확인
       if (!selectedItem.value) {
         if (!state.inputMallName || !state.inputMallUrl) {
@@ -237,6 +208,7 @@ export default {
           isValid = false;
         } else error.mallError = ''; 
       } else error.mallError = '';
+      
       // 비밀번호 확인
       if (isPrivate.value) {
         if (!password.value) {
@@ -247,23 +219,25 @@ export default {
           return;
         } else error.passwordError = '';
       }
-      if (isValid) makeShoppingRoom();  // axios통신
+      if (isValid) makeShoppingRoom();
     }
 
+    // 쇼핑룸 생성
     const makeShoppingRoom = () => {
-      let mallId = null
+      let mallId = null;
       if (selectedItem.value) {
         mallId = selectedItem.value.id
         state.inputMallName = null
         state.inputMallUrl = null
       }
       if (!isPrivate.value) password.value = null;
+      
       const roomData = {  
         customShoppingMall: !state.isMall,
         participantCount: selectedCnt.value,
-        password: password.value,  // null
+        password: password.value,
         private: isPrivate.value,  
-        shoppingMallId: mallId,  // null 
+        shoppingMallId: mallId, 
         shoppingMallName: state.inputMallName, 
         shoppingMallUrl: state.inputMallUrl,  
       };
@@ -273,25 +247,23 @@ export default {
         method : 'post',
         url: `${store.state.url}/v1/shopping-rooms/`,
         data: roomData,
-        headers: { Authorization : `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0Iiwicm9sZXMiOiJVU0VSIiwiZXhwIjoxNjQ3OTA5NTI5fQ.l1TfGZtQarYUWrLy6uI-6gFLX5CVQn62t28USVkJe0_kazLFL824YCDLrGbxx1hAhBWe5lxbtK5SArTgOP77uA` }
+        headers: setToken(),
       })
         .then(res => {
-          // console.log(res.data.data)
           const data = res.data.data
           router.push({ name: 'ShoppingRoom', params: { roomId: data.shoppingRoomId, token: data.token, mallUrl: data.shoppingRoomUrl }}) 
         })
         .catch(err => {
-          // error.mallError = '유효하지 않은 쇼핑몰입니다. 다시 입력해주세요!'
           console.log(err.response)
-          if (err.response.data.message == ' Invalid Input Value' ) {
-            error.mallError = '유효하지 않은 쇼핑몰입니다. 다시 입력해주세요!'
+          if (err.response.data.statusCode == 400) {
+            error.mallError = '유효하지 않은 쇼핑몰입니다. 다시 입력해주세요.'
           } 
         })
-    }
+    };
 
     const goToMain = () => {
       router.push({ name: 'Main' })
-    }
+    };
 
     return { 
       selectPrivate, makeShoppingRoom, goToMain, selectPublic,
@@ -304,26 +276,11 @@ export default {
 </script>
 
 <style scoped>
-/* error */
-.cnt-error {
-  color: red;
-  margin: 5px 0 0 285px;
-}
-
-.mall-error {
-  color: red;
-  margin: 5px 0 0 285px;
-}
-
-.password-error {
-  color: red;
-  margin-left: 285px;
-}
-
 .create-container {
   margin: 0px 142px 0;
   display: flex;
   justify-content: center;
+  background-color: white;
 }
 
 #new-room {
@@ -481,7 +438,6 @@ label {
   width: 530px;
   display: flex;
   flex-direction: column;
-  /* margin-top: 50px;   */
   margin-top: 44px;
 }
 
@@ -525,6 +481,21 @@ button {
   margin: 0 34px 0 0;
 }
 
+/* error */
+.cnt-error {
+  color: red;
+  margin: 5px 0 0 285px;
+}
+.mall-error {
+  color: red;
+  margin: 5px 0 0 285px;
+}
+.password-error {
+  color: red;
+  margin-left: 285px;
+}
+
+/* scroll */
 .scroll::-webkit-scrollbar {
   width: 7px;
 }

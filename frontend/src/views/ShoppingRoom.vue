@@ -21,7 +21,7 @@
           <div class="buttons">
             <!-- 가상피팅화면 전환 -->
             <button v-if="showMainVideo" class="btn shadow-none stop-fitting-btn" @click="backToSite">
-              <i class="fas fa-arrow-left"></i><p>가상피팅 종료</p>
+              <i class="fas fa-arrow-left"></i><p>쇼핑으로 돌아가기</p>
             </button>
             <!-- 기본기능 -->
             <button v-if="isAudio" class="btn shadow-none" @click="offAudio()"><i class="bi bi-mic-mute-fill"></i></button>
@@ -29,10 +29,6 @@
             <button v-if="isVideo" class="btn shadow-none" @click="offVideo()"><i class="bi bi-camera-video-off-fill"></i></button>
             <button v-if="!isVideo" class="btn shadow-none" @click="onVideo()"><i class="bi bi-camera-video-fill"></i></button>
             <input class="btn shadow-none" type="button" id="buttonLeaveSession" @click="leaveSession" value="나가기">
-            
-            <!-- overlay 테스트 -->
-            <button class="btn" @click="overlayFilter()">filter</button>
-            <!-- <button @click="removeFilter()">remove</button> -->
           </div>
         </div>
         <closet :subscribers="subscribers" @fitting="overlayFitting" class="closet"></closet>
@@ -42,10 +38,11 @@
 </template>
 
 <script>
-import { reactive, toRefs, ref } from 'vue';
+import { reactive, toRefs, ref, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useStore } from 'vuex'
 import { OpenVidu } from 'openvidu-browser';
+import { useCookies } from "vue3-cookies";
 import axios from 'axios'
 import PublisherVideo from '@/components/room/PublisherVideo.vue';
 import SubscriberVideo from '@/components/room/SubscriberVideo.vue';
@@ -61,12 +58,13 @@ export default {
     },
 
     setup () {
-        const router = useRouter()
-        const route = useRoute()
-        const store = useStore()
+        const router = useRouter();
+        const route = useRoute();
+        const store = useStore();
+        const { cookies } = useCookies();
         
-        let isFitting = ref(false)
-        let showMainVideo = ref(false)  // 중앙 비디오 여부 
+        let isFitting = ref(false);
+        let showMainVideo = ref(false) ; // 중앙 비디오 여부 
 
         const state = reactive({
           OV: undefined,
@@ -76,39 +74,39 @@ export default {
           subscribers: [], 
 
           mySessionId: '',
-          myUserName: '김싸피 12',  // 임시 => store에서 사용자 정보 불러오기 
+          myUserName: '',  // 임시 => store에서 사용자 정보 불러오기 
           shoppingMallUrl: '',
 
           isAudio: false,
           isVideo: false,
-        })
-
-        // created 
-        state.mySessionId = route.params.roomId  
-        state.shoppingMallUrl = route.params.mallUrl 
+        });
         
+        const userData = computed(() => {
+          return store.getters['login/userData']
+        });
+
         // methods        
         const goToMain = () => {
           router.push({ name: 'Main' });
-        }
+        };
         
         const offAudio = () => {
           state.publisher.publishAudio(state.isAudio);
           state.isAudio = false;
-        }
+        };
         const onAudio = () => {
           state.publisher.publishAudio(state.isAudio);
           state.isAudio = true;
-        }
+        };
 
         const offVideo = () => {
           state.publisher.publishVideo(state.isVideo);
           state.isVideo = false;
-        }
+        };
         const onVideo = () => {
           state.publisher.publishVideo(state.isVideo);
           state.isVideo = true;
-        }
+        };
         
         // 옷장과 연결 
         const overlayFitting = (clothesUrl) => {
@@ -149,23 +147,29 @@ export default {
           //               "heightPercent":"1.0F"
           //            });
           //   });
-        }
+        };
 
-        function removeFilter() {
+        const removeFilter = () => {
           state.publisher.stream.removeFilter()
             .then(() => {
               console.log("Filter removed");
             })
             .catch(err => console.error(err));
-        }
+        };
 
         // 쇼핑사이트로 전환
-        function backToSite() {
+        const backToSite = () => {
           if (isFitting.value) removeFilter();
           isFitting.value = false;
           showMainVideo.value = false
           state.mainStreamManager = state.publisher;
-        }
+        };
+
+        const setToken = () => {
+          const token = cookies.get('accessToken');
+          const config = { Authorization: `Bearer ${token}`};
+          return config
+        };
 
         // openvidu session 생성 method
         const joinSession = () => {
@@ -188,10 +192,8 @@ export default {
             console.warn(exception);
           });
           
-          // ------------- token 관련 method -----------------
           state.session.connect(route.params.token, { clientData: state.myUserName })
             .then(() => {
-              console.log('토큰 전달 후')
               let publisher = state.OV.initPublisher(undefined, {
                 audioSource: undefined, 
                 videoSource: undefined,
@@ -228,10 +230,9 @@ export default {
           axios({
             method : 'post',
             url: `${store.state.url}/v1/shopping-rooms/${state.mySessionId}`,
-            headers: { Authorization : `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0Iiwicm9sZXMiOiJVU0VSIiwiZXhwIjoxNjQ3OTA5NTI5fQ.l1TfGZtQarYUWrLy6uI-6gFLX5CVQn62t28USVkJe0_kazLFL824YCDLrGbxx1hAhBWe5lxbtK5SArTgOP77uA` }
+            headers: setToken()
           })
             .then(() => {
-              console.log('나가기 성공')
               goToMain()
             })
             .catch(err => console.log(err));
@@ -249,7 +250,11 @@ export default {
           }
         }
 
-        // created
+        // created 
+        state.mySessionId = route.params.roomId  
+        state.shoppingMallUrl = route.params.mallUrl 
+        state.myUserName = userData
+        
         joinSession() 
 
         return { 
@@ -312,19 +317,23 @@ export default {
 
 .buttons .stop-fitting-btn {
   position: absolute;
-  left: -10px;
-  top: 20%;
+  left: 20px;
+  top: 24%;
   font-size: 16px;
-  font-weight: bold;
-  height: 52px;
+  height: 38px;
   line-height: 26px;
   display: flex;
   flex-direction: row;
+  background-color: #696b6e;
+  color: white;
+  padding-top: 2px;
+  /* padding-bottom: 5px; */
 }
 
 .stop-fitting-btn i {
-  font-size: 20px;
-  margin: 5px 5px 0;
+  font-size: 18px;
+  font-weight: normal;
+  margin: 6px 10px 0 0;
 }
 
 p {

@@ -43,9 +43,11 @@ export const login = {
         //     VueCookies.remove('refreshToken');
         // },
     },
-    // getters: {
-       
-    // },
+    getters: {
+        userData(state) {
+           return state.user_name + ' ' + state.user_id
+        },
+    },
     actions: {
         getId: ({commit}, user_id) => {
             commit("SET_USER_ID", user_id);
