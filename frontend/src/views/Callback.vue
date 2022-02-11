@@ -41,7 +41,7 @@ export default {
     });
 
     const getKakaoAccount = async (kakaoToken) => {
-      let path = "https://i6a405.p.ssafy.io/api/v1/auth/kakao/login";
+      let path = "http://i6a405.p.ssafy.io:8081/api/v1/auth/kakao/login";
       await axios
         .get(path, {
           params: {
@@ -69,7 +69,7 @@ export default {
     };
 
     const getNaverAccount = async (naverToken) => {
-      let path = "https://i6a405.p.ssafy.io/api/v1/auth/naver/login";
+      let path = "http://i6a405.p.ssafy.io:8081/api/v1/auth/naver/login";
       await axios
         .get(path, {
           params: {
@@ -96,11 +96,12 @@ export default {
     };
 
     const getKakakoToken = async (kakaoCode) => {
-      let path = `https://i6a405.p.ssafy.io/api/v1/auth/kakao/token?code=${kakaoCode}`;
+      let path = `http://i6a405.p.ssafy.io:8081/api/v1/auth/kakao/token?code=${kakaoCode}`;
       await axios
         .get(path)
         .then((res) => {
           if (res.data.statusCode === 200) {
+            console.log(res);
             console.log("카카오 Access Token 생성 성공");
             getKakaoAccount(res.data.data);
           }
@@ -112,7 +113,7 @@ export default {
     };
 
     const getNaverToken = async (naverCode, naverState) => {
-      let path = `https://i6a405.p.ssafy.io/api/v1/auth/naver/token?code=${naverCode}&state=${naverState} `;
+      let path = `http://i6a405.p.ssafy.io:8081/api/v1/auth/naver/token?code=${naverCode}&state=${naverState} `;
       await axios
         .get(path)
         .then((res) => {
