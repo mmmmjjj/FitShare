@@ -1,7 +1,7 @@
 <template>
   <div>
-    <router-link to="/main">Main</router-link> |
-    <router-link to="/create">CreateRoom</router-link> |
+    <!-- <router-link to="/main">Main</router-link> |
+    <router-link to="/create">CreateRoom</router-link> | -->
     <router-view />
   </div>
 </template>

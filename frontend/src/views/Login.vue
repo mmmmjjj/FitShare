@@ -72,6 +72,7 @@ export default {
   height: 1024px;
   border: 1px solid white;
   border-radius: 30px 0 0 30px;
+  background-color: white;
 }
 #login h1 {
   padding-top: 30%;
