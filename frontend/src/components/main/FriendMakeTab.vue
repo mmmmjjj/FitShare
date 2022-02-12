@@ -19,8 +19,7 @@
 <script>
 import SearchedUsers from './SearchedUsers.vue'
 import { ref, reactive } from 'vue'
-import axios from 'axios'
-import { useCookies } from 'vue3-cookies'
+import axios from '../../api/axios'
 
 export default {
   name: 'FriendMakeTab',
@@ -32,16 +31,6 @@ export default {
       friends: []
     })
 
-    const { cookies } = useCookies() 
-
-    const setToken = () => {
-      const token = cookies.get('accessToken')
-      const config = {
-        Authorization: `Bearer ${token}`
-      }
-      return config
-    }
-
     // input에 입력하는 값
     const SearchUser = ref('');
 
@@ -50,8 +39,7 @@ export default {
       if (SearchUser.value) {
         axios({
           method: 'GET',
-          url: `http://i6a405.p.ssafy.io:8081/api/v1/members/${SearchUser.value}`,
-          headers: setToken()
+          url: `members/${SearchUser.value}`,
           })
           .then(res => {
             console.log(res)
@@ -67,7 +55,6 @@ export default {
       state,
       SearchUser,
       SearchUserEmail,
-      setToken,
     }
   }
 }

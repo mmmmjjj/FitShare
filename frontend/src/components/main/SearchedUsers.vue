@@ -23,30 +23,18 @@
 </template>
 
 <script>
-import axios from 'axios'
-import { useCookies } from 'vue3-cookies'
+import axios from '../../api/axios'
 
 export default {
   name: 'SearchedUsers',
   props: ['friends'],
   setup() {
     
-    const { cookies } = useCookies() 
-
-    const setToken = () => {
-      const token = cookies.get('accessToken')
-      const config = {
-        Authorization: `Bearer ${token}`
-      }
-      return config
-    }
-
     // 친구 요청 post
     const RequestFriend = (friends, index) => {
       axios({
         method: 'POST',
-        url: 'http://i6a405.p.ssafy.io:8081/api/v1/friends/requests',
-        headers: setToken(),
+        url: 'friends/requests',
         data: {"friendId": friends[index].id}
       })
       .then(res => {
@@ -57,7 +45,6 @@ export default {
 
     return {
       RequestFriend,
-      setToken,
     }
   }
 }

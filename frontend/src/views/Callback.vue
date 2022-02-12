@@ -27,49 +27,48 @@ export default {
     });
 
     onMounted(() => {
-      if(route.query.state){
+      if (route.query.state) {
         console.log("네이버 로그인");
         state.naverCode = route.query.code;
         state.naverState = route.query.state;
         getNaverToken(state.naverCode, state.naverState);
-      }
-      else{
+      } else {
         console.log("카카오 로그인");
         state.kakaoCode = route.query.code;
         getKakakoToken(state.kakaoCode);
       }
     });
 
+    /* 카카오 로그인 요청  */
     const getKakaoAccount = async (kakaoToken) => {
-      let path = "http://i6a405.p.ssafy.io:8081/api/v1/auth/kakao/login";
+      let path = "https://i6a405.p.ssafy.io/api/v1/auth/kakao/login";
       await axios
-        .get(path, {
+        .get(path,{
           params: {
             accessToken: kakaoToken,
           },
         })
         .then((res) => {
           if (res.data.statusCode === 201) {
-            console.log("카카오 계정 정보");
-            console.log(res);
             // Cookie에 'accessToken' 설정
             cookies.set("accessToken", res.data.data.accessToken);
-
-            store.dispatch("login/getId", res.data.data.id, { root: true });
-            store.dispatch("login/getName", res.data.data.name, { root: true });
-            store.dispatch("login/getProfileURI", res.data.data.profileURI, {
+            store.dispatch("user/setId", res.data.data.id, { root: true });
+            store.dispatch("user/setName", res.data.data.name, { root: true });
+            store.dispatch("user/setProfileURI", res.data.data.profileURI, {
               root: true,
             });
+            store.dispatch("user/setRefreshToken", res.data.data.refreshToken);
             movePage();
           }
         })
         .catch((error) => {
           console.log(error);
-        });
+        }); 
     };
 
+    /* 네이버 로그인 요청  */
     const getNaverAccount = async (naverToken) => {
-      let path = "http://i6a405.p.ssafy.io:8081/api/v1/auth/naver/login";
+      let path = "https://i6a405.p.ssafy.io/api/v1/auth/naver/user";
       await axios
         .get(path, {
           params: {
@@ -78,15 +77,14 @@ export default {
         })
         .then((res) => {
           if (res.data.statusCode === 201) {
-            console.log("네이버 계정 정보");
-            console.log(res);
             // Cookie에 'accessToken' 설정
             cookies.set("accessToken", res.data.data.accessToken);
-            store.dispatch("login/getId", res.data.data.id, { root: true });
-            store.dispatch("login/getName", res.data.data.name, { root: true });
-            store.dispatch("login/getProfileURI", res.data.data.profileURI, {
+            store.dispatch("user/setId", res.data.data.id, { root: true });
+            store.dispatch("user/setName", res.data.data.name, { root: true });
+            store.dispatch("user/setProfileURI", res.data.data.profileURI, {
               root: true,
             });
+            store.dispatch("user/setRefreshToken", res.data.data.refreshToken);
             movePage();
           }
         })
@@ -95,13 +93,15 @@ export default {
         });
     };
 
+    /* 카카오 액세스 토큰 요청  */
     const getKakakoToken = async (kakaoCode) => {
-      let path = `http://i6a405.p.ssafy.io:8081/api/v1/auth/kakao/token?code=${kakaoCode}`;
+      let path = `https://i6a405.p.ssafy.io/api/v1/auth/kakao/token?code=${kakaoCode}`;
+      
       await axios
+      // await http
         .get(path)
         .then((res) => {
           if (res.data.statusCode === 200) {
-            console.log(res);
             console.log("카카오 Access Token 생성 성공");
             getKakaoAccount(res.data.data);
           }
@@ -112,8 +112,9 @@ export default {
         });
     };
 
+    /* 네이버 액세스 토큰 요청  */
     const getNaverToken = async (naverCode, naverState) => {
-      let path = `http://i6a405.p.ssafy.io:8081/api/v1/auth/naver/token?code=${naverCode}&state=${naverState} `;
+      let path = `https://i6a405.p.ssafy.io/api/v1/auth/naver/token?code=${naverCode}&state=${naverState} `;
       await axios
         .get(path)
         .then((res) => {

@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from '../../api/axios';
 
 export const room = {
     namespaced: true,
@@ -17,12 +17,10 @@ export const room = {
       }
     },
     actions: {
-      loadShoppingRoomList({commit}, config) {
-        axios({
-          method: 'get',
-          url: 'http://i6a405.p.ssafy.io:8081/api/v1/shopping-rooms/',
-          headers: config,
-        })
+      loadShoppingRoomList({ commit }) {
+        axios.get(
+          'shopping-rooms/',
+        )
           .then(res => {
             commit('LOAD_SHOPPING_ROOM_LIST', res.data.data)
           })

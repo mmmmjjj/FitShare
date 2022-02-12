@@ -101,9 +101,7 @@
 <script>
 import { reactive, ref, toRefs, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { useStore } from 'vuex'
-import axios from 'axios'
-import { useCookies } from "vue3-cookies";
+import axios from '../api/axios'
 import Navbar from '@/components/Navbar.vue'
 
 export default {
@@ -111,8 +109,6 @@ export default {
   components: { Navbar },
   setup() {
     const router = useRouter();
-    const store = useStore();
-    const { cookies } = useCookies();
     
     let counts = ref([1, 2, 3, 4, 5, 6]);
     let selectedCnt = ref(null);
@@ -161,7 +157,7 @@ export default {
     
     // 쇼핑몰 검색
    const searchMall = () => {
-      axios.get(`${store.state.url}/v1/shopping-malls?keyword=${searchQuery.value}`)
+      axios.get(`shopping-malls?keyword=${searchQuery.value}`)
         .then(res => {
           searchedMalls.value = res.data.data
         })
@@ -187,12 +183,6 @@ export default {
 
     const selectPublic = () => {
       isPrivate.value = false
-    };
-
-    const setToken = () => {
-      const token = cookies.get('accessToken');
-      const config = { Authorization: `Bearer ${token}`};
-      return config
     };
 
     // 유효성 검사 
@@ -248,9 +238,8 @@ export default {
 
       axios({
         method : 'post',
-        url: `${store.state.url}/v1/shopping-rooms/`,
+        url: `shopping-rooms/`,
         data: roomData,
-        headers: setToken(),
       })
         .then(res => {
           const data = res.data.data

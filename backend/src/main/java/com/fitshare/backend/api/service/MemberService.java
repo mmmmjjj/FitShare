@@ -21,4 +21,6 @@ public interface MemberService {
     Member createKakaoMember(KakaoProfile kakaoProfile);
 
     Member createNaverMember(NaverProfile naverProfile);
+
+    void updateProfileImage(Member member,String imageUrl);
 }

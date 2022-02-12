@@ -63,8 +63,7 @@ import HostCloset from '../components/main/HostCloset.vue'
 import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex'
-import { useCookies } from "vue3-cookies";
-import axios from 'axios'
+import axios from '../api/axios'
 
 export default {
   name: 'Main',
@@ -79,7 +78,6 @@ export default {
   setup() {
     const router = useRouter();
     const store = useStore();
-    const { cookies } = useCookies();
     
     const status = ref(false);
     let isPrivate = ref(false);
@@ -97,23 +95,16 @@ export default {
     };
 
     // host 옷장
-     const selectedShoppingRoom = computed(() => {
+    const selectedShoppingRoom = computed(() => {
         return store.state.room.selectedShoppingRoom
     });
-
-    const setToken = () => {
-      const token = cookies.get('accessToken');
-      const config = { Authorization: `Bearer ${token}`};
-      return config
-    };
     
     // 입장하기
     const goToRoom = () => {
       axios({
         method : 'get',
         // url: `${store.state.url}/v1/shopping-rooms/77`,
-        url: `${store.state.url}/v1/shopping-rooms/${selectedShoppingRoom.value.shoppingRoomId}`,
-        headers: setToken(),
+        url: `shopping-rooms/${selectedShoppingRoom.value.shoppingRoomId}`,
       })
         .then(res => {
           const data = res.data.data 
@@ -139,7 +130,7 @@ export default {
       axios({
         method: 'post',
         // url: `${store.state.url}/v1/shopping-rooms/77/validate`,
-        url: `${store.state.url}/v1/shopping-rooms/${selectedShoppingRoom.value.shoppingRoomId}/validate`,
+        url: `shopping-rooms/${selectedShoppingRoom.value.shoppingRoomId}/validate`,
         data: { password: inputPassword.value },
       })
         .then(res => {

@@ -24,9 +24,8 @@ import { ref, reactive, computed } from 'vue'
 import FriendListTab from '@/components/main/FriendListTab.vue'
 import FriendMakeTab from '@/components/main/FriendMakeTab.vue'
 import FriendCheckTab from '@/components/main/FriendCheckTab.vue'
-import axios from 'axios'
+import axios from '../../api/axios'
 import { useStore } from 'vuex'
-import { useCookies } from 'vue3-cookies'
 
 
 export default {
@@ -37,18 +36,6 @@ export default {
     FriendCheckTab,
   },
   setup() {
-
-    // accesstoken 받아오기
-    const { cookies } = useCookies() 
-
-    const setToken = () => {
-      const token = cookies.get('accessToken')
-      const config = {
-        Authorization: `Bearer ${token}`
-      }
-      return config
-    }
-    
     const status = ref(true)
 
     const state = reactive({
@@ -66,13 +53,10 @@ export default {
 
     // 친구목록 클릭 시 친구 목록 받아오는 Axios
     const GetFriendList = () => {
-      axios({
-        method: 'GET',
-        url: 'http://i6a405.p.ssafy.io:8081/api/v1/friends',
-        headers: setToken()
-      })
+      axios.get(
+        'friends',
+        )
         .then(res => {
-          console.log(res)
           state.friendLists = res.data.data
         })
         .then(res => {
@@ -90,11 +74,9 @@ export default {
 
     // 요청확인 클릭 시 요청 목록 받아오는 Axios
     const CheckFriendRequest = () => {
-      axios({
-        method: 'GET',
-        url: 'http://i6a405.p.ssafy.io:8081/api/v1/friends/requests',
-        headers: setToken()
-      })
+      axios.get(
+        'friends/requests',
+      )
         .then(res => {
           console.log(res)
           state.checkRequests = res.data.data
@@ -108,7 +90,6 @@ export default {
       GetFriendList,
       CheckFriendRequest,
       stateFriends,
-      setToken
     }
   }
 }
@@ -160,7 +141,6 @@ input[name="tab_item"] {
 .tab_content::-webkit-scrollbar {
   width: 10px;
 }
-
 
 /* 선택 된 탭 콘텐츠를 표시 */
 #friendlist:checked ~ #friendlist_content,

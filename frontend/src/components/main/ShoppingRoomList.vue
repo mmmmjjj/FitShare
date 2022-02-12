@@ -19,14 +19,12 @@
 <script>
 import { computed } from 'vue';
 import { useStore } from 'vuex';
-import { useCookies } from "vue3-cookies";
 
 export default {
     name: 'ShoppingRoomList',
     
     setup() {
       const store = useStore();
-      const { cookies } = useCookies();
       // shoppingRoomList : [
       //   { shoppingRoomId: 1, hostName: '김싸피', maxParticipantCount: 2, participantCount: 1, isPrivate: true, shoppingMallName: 'nike', shoppingMallUrl: '..' },  // 이 외에 추가적으로
       // ],
@@ -35,15 +33,8 @@ export default {
         return store.state.room.shoppingRoomList
       });
 
-      const setToken = () => {
-        const token = cookies.get('accessToken');
-        const config = { Authorization: `Bearer ${token}`};
-        return config
-      };
-
       const loadShoppingRoomList = () => {
-        const config = setToken()
-        store.dispatch('room/loadShoppingRoomList', config)
+        store.dispatch('room/loadShoppingRoomList')
       };
       
       const selectShoppingRoom = (room) => {

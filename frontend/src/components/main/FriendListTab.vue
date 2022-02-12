@@ -28,9 +28,8 @@
 
 <script>
 import { ref, reactive, computed } from 'vue'
-import axios from 'axios'
+import axios from '../../api/axios'
 import { useStore } from "vuex";
-import { useCookies } from 'vue3-cookies'
 
 export default {
   name: 'FriendListTab',
@@ -43,17 +42,6 @@ export default {
       friendLists: [],
       friendEmail: [],
     })
-
-    // accesstoken 받아오기
-    const { cookies } = useCookies() 
-
-    const setToken = () => {
-      const token = cookies.get('accessToken')
-      const config = {
-        Authorization: `Bearer ${token}`
-      }
-      return config
-    }
 
     const SearchFriend = ref('')
 
@@ -69,8 +57,7 @@ export default {
     const DeleteFriend = (stateFriends, index) => {
       axios({
         method: 'DELETE',
-        url: `http://i6a405.p.ssafy.io:8081/api/v1/friends/${stateFriends[index].id}`,
-        headers: setToken(),
+        url: `friends/${stateFriends[index].id}`,
         data: {"friendId": stateFriends[index].id}
         })
         .then(res => {
@@ -84,8 +71,7 @@ export default {
     const GetFriendList = () => {
       axios({
         method: 'GET',
-        url: 'http://i6a405.p.ssafy.io:8081/api/v1/friends',
-        headers: setToken()
+        url: 'friends',
       })
         .then(res => {
           console.log(res)
@@ -107,8 +93,7 @@ export default {
     const SearchFriendEmail = () => {
       axios({
         method: 'GET',
-        url: `http://i6a405.p.ssafy.io:8081/api/v1/friends/${SearchFriend.value}`,
-        headers: setToken()
+        url: `friends/${SearchFriend.value}`,
       })
         .then(res => {
           console.log(res)
@@ -130,7 +115,6 @@ export default {
       DeleteFriend,
       stateFriends,
       SearchFriendEmail,
-      setToken,
     }
   }
 }

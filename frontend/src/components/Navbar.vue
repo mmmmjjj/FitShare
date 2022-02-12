@@ -6,7 +6,7 @@
       <img @click="!isVisible ? isVisible=true : isVisible=false" :src="profileImage" alt="profile image">
       <div class="dropdown" v-if="isVisible">
         <p>마이 프로필</p>
-        <p>Logout</p>
+        <p @click="logout">Logout</p>
       </div>
     </div>
   </nav>
@@ -26,7 +26,7 @@ export default {
       let isVisible = ref(false);
 
       const profileImage = computed(() => {
-        return store.state.login.user_profileURI
+        return store.state.user.user_profileURI
       });
 
       const goToMain = () => {
@@ -37,8 +37,13 @@ export default {
         router.push({ name: 'CreateRoom' }) 
       };
 
+      const logout = () => {
+        store.dispatch("user/logout", store.getters['user/refreshToken']);
+        router.push({ name: 'Login'});
+      }
+
       return {
-        isVisible, profileImage, goToMain, goToCreate
+        isVisible, profileImage, goToMain, goToCreate, logout
       }
     }
 }

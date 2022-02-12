@@ -17,24 +17,12 @@
 
 <script>
 import { reactive } from 'vue'
-import axios from 'axios'
-import { useCookies } from 'vue3-cookies'
+import axios from '../../api/axios'
 
 export default {
   name: 'FriendCheckTab',
   props: ['checkRequests'],
   setup() {
-
-    const { cookies } = useCookies() 
-
-    const setToken = () => {
-      const token = cookies.get('accessToken')
-      const config = {
-        Authorization: `Bearer ${token}`
-      }
-      return config
-    }
-
     const state = reactive({
       friends: [],
     })
@@ -42,16 +30,14 @@ export default {
     const AcceptFriend = async (checkRequests, index) => {
       const res = await axios({
         method: 'POST',
-        url: 'http://i6a405.p.ssafy.io:8081/api/v1/friends',
-        headers: setToken(),
+        url: 'friends',
         data: {"friendId": checkRequests[index].id}
       })
       console.log(res)
       
       const res1 = await axios({
         method: 'DELETE',
-        url: `http://i6a405.p.ssafy.io:8081/api/v1/friends/requests/${checkRequests[index].id}`,
-        headers: setToken()
+        url: `friends/requests/${checkRequests[index].id}`,
       })
       console.log(res1)
 
@@ -62,8 +48,7 @@ export default {
     const DeclineFriend = (checkRequests, index) => {
       axios({
         method: 'DELETE',
-        url: `http://i6a405.p.ssafy.io:8081/api/v1/friends/requests/${checkRequests[index].id}`,
-        headers: setToken()
+        url: `friends/requests/${checkRequests[index].id}`,
         })
         .then(res => {
           console.log(checkRequests[index].id)
@@ -78,7 +63,6 @@ export default {
       state,
       AcceptFriend,
       DeclineFriend,
-      setToken
     }
   }
 }

@@ -58,18 +58,21 @@ public class MemberServiceImpl implements MemberService  {
     }
 
     @Override
+    public void updateProfileImage(Member member, String imageUrl) {
+        member.setProfileImg(imageUrl);
+        memberRepository.save(member);
+    }
+
+    @Override
     public Optional<Member> findMemberByUid(String uid) {
+      
         return memberRepository.findByUid(uid);
     }
 
     @Override
     public Optional<Member> findMemberById(Long id) {
 
-        Optional<Member> member = memberRepository.findById(id);
-
-        if (member.isPresent()) return member;
-
-        return null;
+        return memberRepository.findById(id);
     }
 
     @Override
@@ -83,4 +86,5 @@ public class MemberServiceImpl implements MemberService  {
         if (member.isPresent())
             throw new EmailDuplicatedException();
     }
+
 }
