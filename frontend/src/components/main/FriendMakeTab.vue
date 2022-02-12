@@ -10,11 +10,12 @@
     >
     
     <!-- 이름, 이메일로 검색 시 나오는 users들 components -->
-    <searched-users :friends="state.friends"></searched-users>
+    <searched-users :friend="state.friend"></searched-users>
 
 
   </div>
 </template>
+
 
 <script>
 import SearchedUsers from './SearchedUsers.vue'
@@ -28,7 +29,8 @@ export default {
   },
   setup() {
     const state = reactive({
-      friends: []
+      searchedUsers: [],
+      friend: {}
     })
 
     // input에 입력하는 값
@@ -43,11 +45,11 @@ export default {
           })
           .then(res => {
             console.log(res)
-            state.friends = res.data.data
+            state.friend = res.data.data
           })
       }
       else{
-        state.friends = []
+        state.friend = {}
       }
     }
 
@@ -59,6 +61,7 @@ export default {
   }
 }
 </script>
+
 
 <style>
 .result {
