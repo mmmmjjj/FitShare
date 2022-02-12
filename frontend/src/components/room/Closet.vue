@@ -2,42 +2,56 @@
   <div id="closet">
   
     <div class="accordion" id="accordionExample">
-      <div class="accordion-item" v-for="(friend, index) in friends" :key="friend.id">
-        <h2 class="accordion-header" :id="'heading'+friend.id">
-          <button class="accordion-button" :class="{ 'collapsed': index !== 0 }" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse'+friend.id" aria-expanded="true" :aria-controls="'collapse'+friend.id" v-if="friend.id === 1">
+      <!-- 내 옷장 -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" :id="'heading'+myId">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse'+myId" aria-expanded="true" :aria-controls="'collapse'+myId" @click="getClothes(myId)">
             내 옷장
           </button>
-          <button class="accordion-button" :class="{ 'collapsed': index !== 0 }" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse'+friend.id" aria-expanded="true" :aria-controls="'collapse'+friend.id" v-if="friend.id != 1">
-            {{ friend.name }}
-          </button>
         </h2>
-        <div :id="'collapse'+friend.id" class="accordion-collapse collapse" :class="{ 'show': index === 0 }" :aria-labelledby="'heading'+friend.id" data-bs-parent="#accordionExample">
-          <div class="accordion-body" v-if="friend.id === 1">
+        <div :id="'collapse'+myId" class="accordion-collapse collapse show" :aria-labelledby="'heading'+myId" data-bs-parent="#accordionExample">
+          <div class="accordion-body">
             <div class="d-flex input-style">
               <input type="text" placeholder="이미지 Url 입력" class="img-url mt-1" v-model="ImgUrl">
-              <!-- <button @click="AddUrl" class="add-button ms-3">
-                  +
-              </button> -->
               <img src="@/assets/plus_icon.png" @click="AddUrl" alt="" class="plus-img ms-3">
             </div>
             <div class="img-box">
-              <div v-for="friend in friends" :key="friend.id">
-                <button class="btn btn-secondary" @click="$emit('fitting', friend.src)">입어보기</button>
-                <img :src="friend.src" alt="img" class="img-style">
+              <div v-for="cloth in state.clothes" :key="cloth.id">
+                <button class="btn btn-secondary" @click="$emit('fitting', cloth.imageUrl)">입어보기</button>
+                <img :src="cloth.imageUrl" alt="img" class="img-style">
               </div>
             </div>
           </div>
         </div>
       </div>
-
+      <!-- subscribers 옷장 -->
+      <div class="accordion-item" v-for="(subscribe, index) in subscribers" :key="index">
+        <h2 class="accordion-header" :id="'heading'+index">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse'+index" aria-expanded="false" :aria-controls="'collapse'+index" @click="getFriendsClothes(subscribe)">
+            {{ splitName(subscribe).split(' ')[0] }} 's 옷장
+          </button>
+        </h2>
+        <div :id="'collapse'+index" class="accordion-collapse collapse" :aria-labelledby="'heading'+index" data-bs-parent="#accordionExample">
+          <div class="accordion-body">
+            <div class="img-box">
+              <div v-for="cloth in state.friendsClothes" :key="cloth.id">
+                <button class="btn btn-secondary" @click="$emit('fitting', cloth.imageUrl)">입어보기</button>
+                <img :src="cloth.imageUrl" alt="img" class="img-style">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-
-
+    
   </div>
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, reactive, computed } from 'vue'
+import axios from 'axios'
+import { useCookies } from 'vue3-cookies'
+import { useStore } from 'vuex'
 
 export default {
   name: 'Closet',
@@ -46,37 +60,115 @@ export default {
   },
   props: {
     subscribers: Object,
+    mySessionId: String,
+    publisher: Object,
   },
   emits: ['fitting'],
-  setup() {
+  setup(props) {
     const friends = ref([
       // {id:1, name: '김싸피', src: require('@/assets/shirt.jpg')},
       {id:1, name: '김싸피', src: 'https://image.msscdn.net/images/goods_img/20200407/1388147/1388147_3_500.jpg'},
-      {id:2, name: '이싸피', src: require('@/assets/shirt.jpg')},
-      {id:3, name: '박싸피', src: require('@/assets/shirt.jpg')},
-      {id:4, name: '최싸피', src: require('@/assets/shirt.jpg')},
-      {id:5, name: '안싸피', src: require('@/assets/shirt.jpg')},
-      {id:6, name: '배싸피', src: require('@/assets/shirt.jpg')},
+      {id:2, name: '최싸피', src: 'https://image.msscdn.net/images/goods_img/20200407/1388147/1388147_3_500.jpg'},
     ])
 
     const ImgUrl = ref('')
     
     const Urls = ref('')
 
+    const state = reactive({
+      clothes: [],
+      subscribers: [],
+      clientData: computed(() => {
+        const { clientData } = getConnectionData();
+        return Number(clientData.split(' ')[1])
+      }),
+      friendsClothes: [],
+    })
+
+
+    // publisher data 객체만 추출
+    const getConnectionData = () => {
+      const { connection } = props.publisher.stream
+      return JSON.parse(connection.data);
+    }
+
+    // test
+    const splitName = (subscribe) => {
+      const { connection } = subscribe.stream
+      const parse = JSON.parse(connection.data)
+      const { clientData } =  parse
+      return clientData
+    }
+
+    const { cookies } = useCookies() 
+
+    const store = useStore()
+
+    const setToken = () => {
+      const token = cookies.get('accessToken')
+      const config = {
+        Authorization: `Bearer ${token}`
+      }
+      return config
+    }
+    
+    // 내 id store/login 에서 가져오기
+    const myId = computed(() => {
+      return Number(store.state.login.user_id)
+    })
+
+    // 옷 이미지 주소 입력 후 등록
     const AddUrl = () => {
       if(ImgUrl.value.length < 1) {
         alert('이미지 주소를 입력하세요')
       }
       else {
         alert('옷장에 추가되었습니다.')
-
+        axios({
+          method: 'POST',
+          url: `http://i6a405.p.ssafy.io:8081/api/v1/clothes`,
+          headers: setToken(),
+          data: {"imageUrl": ImgUrl.value, "shoppingRoomId": props.mySessionId}
+          })
+          .then(res => {
+            console.log(res)
+            // state.clothes = res.data.data
+            friends.value = res.data.data
+          })
         ImgUrl.value = ''
       }
+    }
+
+    // mySessionId번 방의 내 memberId(myId) 의 옷 리스트 GET 요청
+    const getClothes = (myId) => {
+      axios({
+        method: 'GET',
+        url: `http://i6a405.p.ssafy.io:8081/api/v1/clothes/${props.mySessionId}/${myId}`,
+        headers: setToken(),
+      })
+      .then(res => {
+        console.log(res)
+        state.clothes = res.data.data
+      })
+    }
+
+    const getFriendsClothes = (subscribe) => {
+      state.friendsClothes = []
+      axios({
+        method: 'GET',
+        url: `http://i6a405.p.ssafy.io:8081/api/v1/clothes/${props.mySessionId}/${splitName(subscribe).split(' ')[1]}`,
+        headers: setToken()
+      })
+      .then(res => {
+        console.log(res)
+        state.friendsClothes = res.data.data
+      })
     }
 
     const fitting = () => {
 
     }
+
 
     return {
       friends,
@@ -84,6 +176,11 @@ export default {
       AddUrl,
       Urls,
       fitting,
+      setToken,
+      getClothes,
+      state,
+      myId,
+      getConnectionData, splitName, getFriendsClothes
     }
   }
 }
@@ -155,5 +252,10 @@ export default {
   background-color: #FDFAF3;
   border-radius: 10px;
   box-shadow: inset 0px 0px 5px white;
+}
+
+.clth-style {
+  width: 300px;
+  height: 300px;;
 }
 </style>

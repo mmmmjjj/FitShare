@@ -75,6 +75,7 @@ export default {
   },
 
   setup() {
+
     const router = useRouter();
     const store = useStore();
     
@@ -156,6 +157,7 @@ export default {
       status, selectedShoppingRoom, isPrivate, inputPassword, errorMessage, alert,
       OpenTab,CloseTab,
       goToRoom, checkPassword, closeModal,
+      setToken,
     }
   }
 }

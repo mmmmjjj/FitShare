@@ -122,11 +122,13 @@ export default {
     let isPrivate = ref(false);
     let password = ref(null);
     
+
     const error = reactive({
       cntError: null,
       mallError: null,
       passwordError: null,
     });
+
 
     const state = reactive({
       isMall: true,
