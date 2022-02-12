@@ -157,7 +157,6 @@ export default {
       status, selectedShoppingRoom, isPrivate, inputPassword, errorMessage, alert,
       OpenTab,CloseTab,
       goToRoom, checkPassword, closeModal,
-      setToken,
     }
   }
 }

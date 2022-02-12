@@ -49,9 +49,8 @@
 
 <script>
 import { ref, reactive, computed } from 'vue'
-import axios from 'axios'
-import { useCookies } from 'vue3-cookies'
 import { useStore } from 'vuex'
+import axios from '../../api/axios'
 
 export default {
   name: 'Closet',
@@ -100,21 +99,11 @@ export default {
       return clientData
     }
 
-    const { cookies } = useCookies() 
-
     const store = useStore()
-
-    const setToken = () => {
-      const token = cookies.get('accessToken')
-      const config = {
-        Authorization: `Bearer ${token}`
-      }
-      return config
-    }
     
     // 내 id store/login 에서 가져오기
     const myId = computed(() => {
-      return Number(store.state.login.user_id)
+      return Number(store.state.user.user_id)
     })
 
     // 옷 이미지 주소 입력 후 등록
@@ -126,8 +115,7 @@ export default {
         alert('옷장에 추가되었습니다.')
         axios({
           method: 'POST',
-          url: `http://i6a405.p.ssafy.io:8081/api/v1/clothes`,
-          headers: setToken(),
+          url: `clothes`,
           data: {"imageUrl": ImgUrl.value, "shoppingRoomId": props.mySessionId}
           })
           .then(res => {
@@ -143,8 +131,7 @@ export default {
     const getClothes = (myId) => {
       axios({
         method: 'GET',
-        url: `http://i6a405.p.ssafy.io:8081/api/v1/clothes/${props.mySessionId}/${myId}`,
-        headers: setToken(),
+        url: `clothes/${props.mySessionId}/${myId}`,
       })
       .then(res => {
         console.log(res)
@@ -156,8 +143,7 @@ export default {
       state.friendsClothes = []
       axios({
         method: 'GET',
-        url: `http://i6a405.p.ssafy.io:8081/api/v1/clothes/${props.mySessionId}/${splitName(subscribe).split(' ')[1]}`,
-        headers: setToken()
+        url: `clothes/${props.mySessionId}/${splitName(subscribe).split(' ')[1]}`,
       })
       .then(res => {
         console.log(res)
@@ -176,7 +162,6 @@ export default {
       AddUrl,
       Urls,
       fitting,
-      setToken,
       getClothes,
       state,
       myId,

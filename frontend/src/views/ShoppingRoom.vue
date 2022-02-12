@@ -48,7 +48,7 @@
           </div>
         </div>
 
-        <closet :subscribers="subscribers" :my-session-id="mySessionId" :publisher="publisher" @fitting="overlayFitting" class="closet"></closet>
+        <closet :subscribers="subscribers" :my-session-id="mySessionId" :publisher="publisher" @fitting="overlayFilter" class="closet"></closet>
 
       </div>
 		</div>
