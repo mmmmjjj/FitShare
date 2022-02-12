@@ -234,11 +234,10 @@ export default {
         shoppingMallName: state.inputMallName, 
         shoppingMallUrl: state.inputMallUrl,  
       };
-      console.log(roomData)
 
       axios({
         method : 'post',
-        url: `shopping-rooms/`,
+        url: 'shopping-rooms/',
         data: roomData,
       })
         .then(res => {

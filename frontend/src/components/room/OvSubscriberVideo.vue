@@ -22,6 +22,5 @@ video {
   margin: 20px 30px 0;
 	border-radius: 10px;
 	cursor: pointer;
-	/* line-height: 130px; */
 }
 </style>

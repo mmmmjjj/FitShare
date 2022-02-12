@@ -3,16 +3,16 @@
     <div id="session" class="" v-if="session">
       <!-- 화상화면 -->
 			<div id="video-container" class="d-flex flex-row">
-        <publisher-video :stream-manager="publisher" :loading="pub"/>
+        <publisher-video :stream-manager="publisher" :loading="pub" @click="updateMainVideoStreamManager(publisher)"/>
         <subscriber-video v-for="(subscriber, index) in subscribers" :key="subscriber.stream.connection.connectionId"
-        :stream-manager="subscriber" @click="updateMainVideoStreamManager(subscriber)" :loading="sub" :subscriber="index"/>
+          :stream-manager="subscriber" :loading="sub" :subscriber="index"
+          @click="updateMainVideoStreamManager(subscriber)"
+        />
       </div>
-
       <!-- 나머지 컴포넌트 -->
       <div class="components-container d-flex flex-row">
         <group-chat class="group-chat"></group-chat>
         <div class="center">
-          <!-- <div v-if="background" class="background"></div> -->
           <div id="main-video" v-if="showMainVideo">  
             <main-video :stream-manager="mainStreamManager"/>
           </div>
@@ -20,9 +20,9 @@
           
           <!-- 화상회의 버튼 -->
           <div class="buttons">
-            <!-- 가상피팅화면 전환 -->
+            <!-- 가상피팅화면 종료 -->
             <button v-if="showMainVideo" class="btn shadow-none stop-fitting-btn" @click="backToSite">
-              <i class="fas fa-arrow-left"></i><p>쇼핑으로 돌아가기</p>
+              <i class="fas fa-arrow-left"></i><p>피팅 종료하기</p>
             </button>
             <!-- 기본기능 -->
             <button v-if="isAudio" class="btn shadow-none" @click="offAudio()"><i class="bi bi-mic-mute-fill"></i></button>
@@ -30,9 +30,24 @@
             <button v-if="isVideo" class="btn shadow-none" @click="offVideo()"><i class="bi bi-camera-video-off-fill"></i></button>
             <button v-if="!isVideo" class="btn shadow-none" @click="onVideo()"><i class="bi bi-camera-video-fill"></i></button>
             <input class="btn shadow-none" type="button" id="buttonLeaveSession" @click="leaveSession" value="나가기">
+            <!-- 필터 change -->
+            <div v-if="radioSelect" class="radio-box">
+              <div @click="changeFilter('top')">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" checked="checked" id="top">
+                <label class="form-check-label" for="top">상의</label>
+              </div>
+              <div @click="changeFilter('bottoms')">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="bottom">
+                <label class="form-check-label" for="bottom" >하의</label>
+              </div>
+              <div @click="changeFilter('hat')">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="hat">
+                <label class="form-check-label" for="hat">모자</label>
+              </div>
+            </div>
           </div>
         </div>
-        <closet :subscribers="subscribers" @fitting="overlayFitting" class="closet"></closet>
+        <closet :subscribers="subscribers" @fitting="overlayFilter" class="closet"></closet>
       </div>
 		</div>
   </div>
@@ -41,7 +56,7 @@
 <script>
 import { reactive, toRefs, ref, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { useStore } from 'vuex'
+import { useStore } from 'vuex';
 import { OpenVidu } from 'openvidu-browser';
 import axios from '../api/axios'
 import PublisherVideo from '@/components/room/PublisherVideo.vue';
@@ -62,10 +77,11 @@ export default {
         const route = useRoute();
         const store = useStore();
         
+        let clothesUrl = ref('');
         let isFitting = ref(false);
         let showMainVideo = ref(false) ; // 중앙 비디오 여부 
+        let radioSelect = ref(false);
 
-        let background = ref(false);
         const loading = reactive({
           pub: true,
           sub: [],
@@ -85,7 +101,7 @@ export default {
         });
         
         const userData = computed(() => {
-          return store.getters['login/userData']
+          return store.getters['user/userData']
         });
 
         // methods        
@@ -112,49 +128,75 @@ export default {
         };
         
         // 옷장과 연결 
-        const overlayFitting = (clothesUrl) => {
-          if (isFitting.value) {
-            removeFilter()
-          }
-          background.value = true
-          showMainVideo.value = false
+        const overlayFilter = (url) => {
+          clothesUrl.value = url
+          radioSelect.value = false
+          if (isFitting.value) removeFilter();
           
           state.publisher.stream.applyFilter("FaceOverlayFilter")
             .then(filter => {
                 filter.execMethod(
                     "setOverlayedImage",
                     {
-                        "uri": clothesUrl,
+                        "uri": clothesUrl.value,
                         "offsetXPercent":"-1.5F",
-                        "offsetYPercent":"0.6F",  // 하의 : 3.0F
+                        "offsetYPercent":"1.0F", 
                         "widthPercent":"4.0F",
                         "heightPercent":"4.0F"
                     });
             })
             .then(() => {
-              isFitting.value = true
               state.mainStreamManager = state.publisher;
+              isFitting.value = true
               showMainVideo.value = true
-              background.value = false
+              radioSelect.value = true
             })
             .catch(err => console.log(err));
-
-          // faceoverlay 모자
-          // state.publisher.stream.applyFilter("FaceOverlayFilter")
-          //   .then(filter => {
-          //       filter.execMethod(
-          //           "setOverlayedImage",
-          //           {
-          //               // aws 이미지 주소 사용 예정
-          //               "uri": "http://files.openvidu.io/img/mario-wings.png",
-          //               "offsetXPercent":"-0.2F",
-          //               "offsetYPercent":"-0.8F",
-          //               "widthPercent":"1.3F",
-          //               "heightPercent":"1.0F"
-          //            });
-          //   });
         };
 
+        const changeFilter = (type) => {
+          removeFilter()
+          state.publisher.stream.applyFilter("FaceOverlayFilter")
+            .then(filter => {
+                if (type == 'top') {
+                  filter.execMethod(
+                    "setOverlayedImage",
+                    {
+                        "uri": clothesUrl.value,
+                        "offsetXPercent":"-1.5F",
+                        "offsetYPercent":"1.0F",
+                        "widthPercent":"4.0F",
+                        "heightPercent":"4.0F"
+                     });
+                } else if (type == 'bottoms') {
+                  filter.execMethod(
+                    "setOverlayedImage",
+                    {
+                        "uri": clothesUrl.value,
+                        "offsetXPercent":"-0.8F",
+                        "offsetYPercent":"3.8F",
+                        "widthPercent":"2.4F",
+                        "heightPercent":"4.0F"
+                     });
+                } else {
+                  filter.execMethod(
+                    "setOverlayedImage",
+                    {
+                        "uri": clothesUrl.value,
+                        "offsetXPercent":"-0.1F",
+                        "offsetYPercent":"-0.8F",
+                        "widthPercent":"1.1F",
+                        "heightPercent":"0.9F"
+                     });
+                } 
+            })
+            .then(() => {
+              isFitting.value = true
+              state.mainStreamManager = state.publisher;
+            })
+        };
+
+        // filter 제거 
         const removeFilter = () => {
           state.publisher.stream.removeFilter()
             .then(() => console.log("Filter removed"))
@@ -165,8 +207,8 @@ export default {
         const backToSite = () => {
           if (isFitting.value) removeFilter();
           isFitting.value = false;
+          radioSelect.value = false; 
           showMainVideo.value = false;
-          state.mainStreamManager = state.publisher;
         };
 
         // openvidu session 생성 method
@@ -179,11 +221,13 @@ export default {
             state.subscribers.push(subscriber);
             loading.sub.push(true)
             
+            // video 실행시 로딩 스피너 제거 
             subscriber.on('streamPlaying', function () {
               loading.sub[loading.sub.length - 1] = false
             })
           });
 
+          // stream 제거시 => subscribers, 로딩 index 제거  
           state.session.on('streamDestroyed', ({ stream }) => {
             const index = state.subscribers.indexOf(stream.streamManager, 0);
             if (index >= 0) {
@@ -196,6 +240,7 @@ export default {
             console.warn(exception);
           });
           
+          // session 연결
           state.session.connect(route.params.token, { clientData: state.myUserName })
             .then(() => {
               let publisher = state.OV.initPublisher(undefined, {
@@ -247,15 +292,8 @@ export default {
 
         // 화상화면 클릭시 해당 화면이 메인으로 이동
         const updateMainVideoStreamManager = (stream) => {   
-          showMainVideo.value = false  // 추가
           state.mainStreamManager = stream;
-
           if (!showMainVideo.value) showMainVideo.value = true;
-          if (isFitting.value) { 
-            removeFilter()
-            isFitting.value = false  
-            console.log('피팅 종료')
-          }
         }
 
         // created 
@@ -266,9 +304,9 @@ export default {
         joinSession() 
 
         return { 
-          goToMain, offAudio, offVideo, onAudio, onVideo,
-          joinSession, leaveSession, updateMainVideoStreamManager, overlayFitting, backToSite, removeFilter,
-          ...toRefs(state), ...toRefs(loading), isFitting, showMainVideo, background
+          goToMain, offAudio, offVideo, onAudio, onVideo, overlayFilter, changeFilter, removeFilter, backToSite,
+          joinSession, leaveSession, updateMainVideoStreamManager,
+          ...toRefs(state), ...toRefs(loading), isFitting, showMainVideo, clothesUrl, radioSelect,
         }
     }
 
@@ -284,7 +322,6 @@ export default {
   background-color: #D3E2E7;
 }
 
-/*  */
 #session {
   background-color: #D3E2E7;
 }
@@ -293,8 +330,7 @@ export default {
   justify-content: center;
   background-color: #D3E2E7;
   height: 185px;
-  /* 임시 */
-  /* border-bottom: 1px solid white;   */
+  border-bottom: 3px solid #8ABDBE;  
 }
 
 .video-row {
@@ -304,12 +340,12 @@ export default {
 .components-container {
   display: flex;
   justify-content: space-between;
-  /* position: relative; */
+  border-bottom: 3px solid #8ABDBE;
 }
 
 .group-chat, .closet {
   width: 290px;
-  height: 839px;
+  height: 849px;
   background-color: white;
 }
 
@@ -344,7 +380,6 @@ export default {
   background-color: #696b6e;
   color: white;
   padding-top: 2px;
-  /* padding-bottom: 5px; */
 }
 
 .stop-fitting-btn i {
@@ -373,4 +408,26 @@ p {
 i {
   font-size: 30px;
 }
+
+/* 필터 change */
+.radio-box {
+  display: flex;
+  position: absolute;
+  top: 16px;
+  right: 22px;
+  height: 40px;
+  line-height: 40px;
+  color: #363738;
+}
+
+.radio-box input {
+  margin: 13px 8px 0 20px;
+  cursor: pointer;
+}
+
+.radio-box label {
+  font-size: 18px;
+  cursor: pointer;
+}
+
 </style>

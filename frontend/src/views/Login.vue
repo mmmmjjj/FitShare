@@ -31,6 +31,7 @@
         </div>
 
         <div id="naver">
+
           <a href="https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=skkqxLCLHDQrwOlhytTS&redirect_uri=https://i6a405.p.ssafy.io/callback&state=1234">
             <img
               src="https://static.nid.naver.com/oauth/big_g.PNG?version=js-2.0.0"
