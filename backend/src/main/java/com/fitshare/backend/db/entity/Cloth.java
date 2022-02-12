@@ -22,9 +22,6 @@ public class Cloth extends CreatedTimeEntity {
     private RoomParticipant roomParticipant;
 
     @Column
-    private String shoppingMallUrl;
-
-    @Column
     private String clothUrl;
 
     @Column
