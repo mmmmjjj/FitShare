@@ -1,7 +1,7 @@
 package com.fitshare.backend.api.controller;
 
 import com.fitshare.backend.api.request.MakeShoppingRoomReq;
-import com.fitshare.backend.api.response.ShoppingRoomPasswordReq;
+import com.fitshare.backend.api.request.ShoppingRoomPasswordReq;
 import com.fitshare.backend.api.response.ShoppingRoomRes;
 import com.fitshare.backend.api.response.ShoppingRoomTokenRes;
 import com.fitshare.backend.api.service.ShoppingRoomService;
@@ -77,7 +77,7 @@ public class ShoppingRoomController {
         return ResponseEntity.ok(BaseResponseBody.of(HttpStatus.OK, EXIT_SHOPPING_ROOM));
     }
 
-    @ApiOperation(value = "쇼핑몰 목록", notes = "사용자의 친구가 라이브 중인 쇼핑몰 목록을 반환한다.")
+    @ApiOperation(value = "쇼핑룸 목록", notes = "사용자의 친구가 라이브 중인 쇼핑룸 목록을 반환한다.")
     @ApiResponses({
             @ApiResponse(code = 200, message = GET_SHOPPING_ROOM_LIST, response = ShoppingRoomRes.class),
             @ApiResponse(code = 401, message = "권한 인증 오류", response = ErrorResponse.class),

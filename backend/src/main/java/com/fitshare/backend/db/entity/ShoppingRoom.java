@@ -49,6 +49,9 @@ public class ShoppingRoom extends BaseTimeEntity {
     @Column
     private Boolean isCustomShoppingMall;
 
+    @Column
+    private String sessionId;
+
     @JsonIgnore
     @OneToMany(mappedBy = "shoppingRoom")
     List<RoomParticipant> roomParticipants = new ArrayList<>();

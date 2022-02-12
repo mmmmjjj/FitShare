@@ -1,5 +1,6 @@
 package com.fitshare.backend.api.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class ShoppingRoomRes {
+
+    @ApiModelProperty(name = "호스트 Id", example = "1")
+    private Long hostId;
 
     @ApiModelProperty(name = "호스트 이름", example = "홍길동")
     private String hostName;
@@ -32,4 +36,18 @@ public class ShoppingRoomRes {
 
     @ApiModelProperty(name = "입장한 인원", example = "1")
     private Long participantCount;
+
+    @JsonIgnore
+    private String sessionId;
+
+    public ShoppingRoomRes(Long hostId, String hostName, Long shoppingRoomId, String shoppingMallName, String shoppingMallUrl, Boolean isPrivate, int maxParticipantCount, String sessionId) {
+        this.hostId = hostId;
+        this.hostName = hostName;
+        this.shoppingRoomId = shoppingRoomId;
+        this.shoppingMallName = shoppingMallName;
+        this.shoppingMallUrl = shoppingMallUrl;
+        this.isPrivate = isPrivate;
+        this.maxParticipantCount = maxParticipantCount;
+        this.sessionId = sessionId;
+    }
 }

@@ -1,4 +1,4 @@
-package com.fitshare.backend.api.response;
+package com.fitshare.backend.api.request;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
