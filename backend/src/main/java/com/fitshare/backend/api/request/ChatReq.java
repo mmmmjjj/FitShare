@@ -1,6 +1,7 @@
 package com.fitshare.backend.api.request;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -11,5 +12,8 @@ public class ChatReq {
 
     // 전송한 메시지 내용
     private String message;
+
+    // 메시지 전송 시각
+    private String createdTime;
 
 }
