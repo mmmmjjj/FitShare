@@ -68,7 +68,7 @@ export default {
 
     /* 네이버 로그인 요청  */
     const getNaverAccount = async (naverToken) => {
-      let path = "https://i6a405.p.ssafy.io/api/v1/auth/naver/user";
+      let path = "https://i6a405.p.ssafy.io/api/v1/auth/naver/login";
       await axios
         .get(path, {
           params: {
