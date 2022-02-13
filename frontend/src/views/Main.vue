@@ -18,42 +18,40 @@
         </button>
         <div v-if="status">
           <friend class="tab-box" @close-tab="CloseTab"></friend>
-          <button class="close-btn" @click="CloseTab">
-            <img class="close-img" src="@/assets/close-icon.png" alt="close-img">
-          </button>
+          <button type="button" class="btn-close" @click="CloseTab"></button>
         </div>
-      </div>
 
-      <!-- 비밀번호 모달 -->
-      <div class="modal overlay" :class="isPrivate ? 'show-modal' : 'hide-modal'" tabindex="-1">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <!-- <div class="modal-header">
-              <p class="modal-title fw-bold">비공개 쇼핑룸</p>
-              <button type="button" class="btn-close shadow-none ms-2 me-1" data-bs-dismiss="modal" @click="closeModal"></button>
-            </div> -->
-            <div class="modal-header pt-3 pb-0">
-              <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" @click="closeModal"></button>
-            </div>
-            <i class="fas fa-lock text-center my-3"></i>
-            <div class="modal-body">
-              <!-- <p class="title ms-6 fw-bold fs-5">비공개 쇼핑룸</p> -->
-              <input type="password" v-model="inputPassword" placeholder="비밀번호를 입력해주세요">
-              <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
-              <span class="d-flex justify-content-center">
-                <button class="btn shadow-none" @click="checkPassword">입장하기</button>              
-                <button class="btn shadow-none" @click="closeModal" data-bs-dismiss="modal">취 소</button>
-              </span>
+        <!-- 비밀번호 모달 -->
+        <div class="modal overlay" :class="isPrivate ? 'show-modal' : 'hide-modal'" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <!-- <div class="modal-header">
+                <p class="modal-title fw-bold">비공개 쇼핑룸</p>
+                <button type="button" class="btn-close shadow-none ms-2 me-1" data-bs-dismiss="modal" @click="closeModal"></button>
+              </div> -->
+              <div class="modal-header pt-3 pb-0">
+                <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" @click="closeModal"></button>
+              </div>
+              <i class="fas fa-lock text-center my-3"></i>
+              <div class="modal-body">
+                <!-- <p class="title ms-6 fw-bold fs-5">비공개 쇼핑룸</p> -->
+                <input type="password" v-model="inputPassword" placeholder="비밀번호를 입력해주세요">
+                <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+                <span class="d-flex justify-content-center">
+                  <button class="btn shadow-none" @click="checkPassword">입장하기</button>              
+                  <button class="btn shadow-none" @click="closeModal" data-bs-dismiss="modal">취 소</button>
+                </span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <!-- Alert 알람 -->
-      <div v-if="alert" class="alert alert-warning" role="alert">
-        <i class="bi bi-exclamation-triangle-fill"></i>인원수가 초과된 쇼핑룸입니다. 다른 쇼핑룸을 이용해주세요!
+        <!-- Alert 알람 -->
+        <div v-if="alert" class="alert alert-warning" role="alert">
+          <i class="bi bi-exclamation-triangle-fill"></i>인원수가 초과된 쇼핑룸입니다. 다른 쇼핑룸을 이용해주세요!
+        </div>
       </div>
     </div>
-    </div>
+  </div>
 </template>
 
 <script>
@@ -332,9 +330,10 @@ i {
   width: 100px;
   height: 100px;
   border-radius: 50px;
-  position: relative;
-  left: 1095px;
-  bottom: 49px;
+  border: none;
+  position: fixed;
+  right: 120px;
+  bottom: 20px;
   background-color: #8ABDBE;
 }
 
@@ -349,28 +348,18 @@ i {
 /* 친구버튼 클릭시 나오는 tab style */
 .tab-box {
   top: 300px;
-  left: 1100px;
+  right: 20px;
+  bottom: 10px;
   position: fixed;
   z-index: 2;
 }
 
-/* 닫기 이미지 style */
-.close-img {
-  width: 30px;
-  height: 30px;
-  top: 265px;
-  position: fixed;
-  left: 1100px;
-}
-
-.close-btn {
+.btn-close {
   width: 30px;
   height: 30px;
   border-radius: 25px;
   position: fixed;
   top: 265px;
-  left: 1100px;
+  right: 380px;
 }
-
-
 </style>
