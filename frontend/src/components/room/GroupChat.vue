@@ -1,34 +1,31 @@
 <template>
   <div class="container">
-    <label><b>Group chat</b></label>
+    <div>
+      <span id="chatLogo"><b>Chat</b></span>
+      <span></span>
+    </div>
     <div>
       <textarea
         name=""
         id="textarea"
-        class="col"
+        class="border-3 border-light rounded"
         cols="30"
         rows="10"
         :value="state.textarea"
         disabled
-      ></textarea>
+      >
+      </textarea>
     </div>
     <div>
-      <label for="message">Your Message</label>
       <input
         type="text"
-        class="border-2 border-slid rounded border-gray-600 w-full p-2"
+        class="border-2 border-dark rounded"
         id="message"
         v-model="state.message"
+        placeholder="Message를 입력해주세요"
         @keyup.enter="sendMessage()"
         autofocus
       />
-      <button
-        class="border-2 border-slid rounded border-gray-600 w-full p-2"
-        type="button"
-        @click="sendMessage()"
-      >
-        전송
-      </button>
     </div>
   </div>
 </template>
@@ -50,7 +47,7 @@ export default {
 
     onMounted(() => {
       connect();
-    })
+    });
 
     const state = reactive({
       roomId: 0,
@@ -58,7 +55,6 @@ export default {
       message: "",
       textarea: "",
       connected: false,
-      currentTime: "",
     });
 
     state.roomId = route.params.roomId; // 쇼핑룸 생성 시 쇼핑룸 id 가져오기
@@ -73,15 +69,21 @@ export default {
     const sockJs = new SockJS("http://i6a405.p.ssafy.io:8081/api/v1/chat");
     const stomp = Stomp.over(sockJs);
 
-    const now = () => {
-      let date = new Date();
-      if (date.getHours() > 12) {
-        state.currentTime =
-          "오후 " + (date.getHours() - 12) + ":" + date.getMinutes();
+    const dateFormatChange = (date) => {
+      let changedDate = new Date(date);
+      // console.log(changedDate.getHours() + changedDate.getMinutes());
+      if (changedDate.getHours() > 12) {
+        return (
+          "오후 " +
+          pad(changedDate.getHours() - 12) +
+          ":" +
+          pad(changedDate.getMinutes())
+        );
       } else {
-        state.currentTime = "오전 " + date.getHours() + ":" + date.getMinutes();
+        return (
+          "오전 " + pad(changedDate.getHours()) + ":" + pad(changedDate.getMinutes())
+        );
       }
-      return state.currentTime;
     };
 
     // 연결
@@ -100,7 +102,7 @@ export default {
               "[" +
               receiveMsgBody.senderName +
               "] " +
-              receiveMsgBody.createdTime +
+              dateFormatChange(receiveMsgBody.createdTime) +
               "\n" +
               receiveMsgBody.message +
               "\n";
@@ -113,18 +115,50 @@ export default {
         };
       });
     };
-    // };
+
+    const koreaTime = () => {
+      const now = new Date();
+      let temp =
+        now.getFullYear() +
+        "-" +
+        pad(now.getMonth() + 1) +
+        "-" +
+        pad(now.getDate()) +
+        "T" +
+        pad(now.getHours()) +
+        ":" +
+        pad(now.getMinutes()) +
+        ":" +
+        pad(now.getSeconds()) +
+        "." +
+        (now.getMilliseconds() / 1000).toFixed(3).slice(2, 5) +
+        "Z";
+      return temp;
+    };
+
+    const pad = (number) => {
+      if (number < 10) {
+        return "0" + number;
+      }
+      return number;
+    };
 
     // 메세지를 보냈을 때
-    const sendMessage = () => {
+    const sendMessage = async () => {
       // message의 값이 있고 연결된 상태라면
       if (state.message !== "" && state.connected) {
+        console.log("szfdz");
+        console.log(koreaTime());
         let sendMsg = {
           senderName: state.userName,
           message: state.message,
-          createdTime: now(),
+          createdTime: koreaTime(),
         };
-        stomp.send(`/app/rooms/${state.roomId}`, headers, JSON.stringify(sendMsg));
+        await stomp.send(
+          `/app/rooms/${state.roomId}`,
+          headers,
+          JSON.stringify(sendMsg)
+        );
         state.message = "";
       }
     };
@@ -135,7 +169,9 @@ export default {
       headers,
       connect,
       sendMessage,
-      now,
+      dateFormatChange,
+      koreaTime,
+      pad,
     };
   },
 };
@@ -143,10 +179,17 @@ export default {
 
 <style scoped>
 #container {
-  display: none;
+}
+#chatLogo {
+  font-size: 24px;
 }
 #textarea {
-  height: 700px;
+  height: 70vh;
   resize: none;
+  background-color: #d3e2e7;
+  color: gray;
+}
+#message {
+  width: 100%;
 }
 </style>
