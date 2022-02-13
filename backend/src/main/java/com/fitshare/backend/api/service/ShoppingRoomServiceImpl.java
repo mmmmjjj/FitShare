@@ -4,14 +4,8 @@ import com.fitshare.backend.api.request.MakeShoppingRoomReq;
 import com.fitshare.backend.api.response.ShoppingRoomRes;
 import com.fitshare.backend.api.response.ShoppingRoomTokenRes;
 import com.fitshare.backend.common.exception.*;
-import com.fitshare.backend.db.entity.Member;
-import com.fitshare.backend.db.entity.RoomParticipant;
-import com.fitshare.backend.db.entity.ShoppingMall;
-import com.fitshare.backend.db.entity.ShoppingRoom;
-import com.fitshare.backend.db.repository.MemberRepository;
-import com.fitshare.backend.db.repository.RoomParticipantRepository;
-import com.fitshare.backend.db.repository.ShoppingMallRepository;
-import com.fitshare.backend.db.repository.ShoppingRoomRepository;
+import com.fitshare.backend.db.entity.*;
+import com.fitshare.backend.db.repository.*;
 import io.openvidu.java.client.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -201,7 +195,7 @@ public class ShoppingRoomServiceImpl implements ShoppingRoomService {
             token = session.createConnection(getConnectionProperties(role)).getToken();
 
             // 세션에 입장한 유저 id 저장
-            redisService.setSessionParticipant(session.getSessionId(), String.valueOf(memberId));
+            redisService.setData(session.getSessionId(), memberId);
         } catch (OpenViduJavaClientException | OpenViduHttpException e) {
             e.printStackTrace();
         }

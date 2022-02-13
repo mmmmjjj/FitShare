@@ -35,13 +35,15 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        // 기본 Broker 사용
-        // destination header가 /topic 으로 시작하는 메시지를 Broker로 라우트한다.
-        // SUBSCRIBE frame일 때 사용된다
-        registry.enableSimpleBroker("/topic");
+        // destination header가 /queue, /topic 으로 시작하는 메시지를 기본 Broker로 routing
+        // /queue: point-to-pint messaging, /topic: pub-sub messaging
+        // SUBSCRIBE frame일 때 사용
+        registry.enableSimpleBroker("/queue", "/topic");
         // destination header가 /app 으로 시작하는 메시지는 Controller의 @MessageMapping 메서드로 mapping
-        // SEND frame일 때 사용된다
+        // SEND frame일 때 사용
         registry.setApplicationDestinationPrefixes("/app");
+        // client가 메시지를 순서대로 수신
+        registry.setPreservePublishOrder(true);
     }
 
     @Override
@@ -51,18 +53,15 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
                 StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
-                System.out.println("command : " + accessor.getCommand());
-
                 if (StompCommand.CONNECT.equals(accessor.getCommand()) ||
                         StompCommand.SUBSCRIBE.equals(accessor.getCommand()) ||
-                        StompCommand.SEND.equals(accessor.getCommand()) ||
-                        StompCommand.MESSAGE.equals(accessor.getCommand())
+                        StompCommand.SEND.equals(accessor.getCommand())
                 ) {
                     String token = accessor.getFirstNativeHeader("Authorization").substring(7);
                     if (StringUtils.hasText(token) && tokenProvider.validateToken(token)) {
                         Authentication authentication = tokenProvider.getAuthentication(token);
                         SecurityContextHolder.getContext().setAuthentication(authentication);
-//                        message = getNewMessage(message);
+                        accessor.setUser(authentication);
                     }
                 }
 
@@ -70,32 +69,4 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             }
         });
     }
-
-//    private Message<?> getNewMessage(Message<?> message) {
-//        Message newMessage = null;
-//        String payloadString = new String((byte[]) message.getPayload());
-//
-//        if (payloadString.isEmpty()) {
-//            return message;
-//        }
-//
-//        Long id = JwtUtil.getCurrentId().orElse(null);
-//
-//        JSONParser jsonParser = new JSONParser();
-//        JSONObject payloadObject = null;
-//        try {
-//            payloadObject = (JSONObject) jsonParser.parse(payloadString);
-//            payloadString = payloadObject.toJSONString();
-//            newMessage = MessageBuilder.createMessage(payloadString.getBytes(), message.getHeaders());
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-//
-//        String newPayloadString = new String((byte[]) newMessage.getPayload());
-//
-//        return newMessage;
-//    }
-
-    // TODO: buffer size 설정
-    // TODO: 클라이언트 연결이 끊겼을 때 재연결 코드 작성
 }

@@ -1,13 +1,12 @@
 package com.fitshare.backend.db.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Getter
-@Setter
 @Entity
+@NoArgsConstructor
 @Table(name = "private_chat")
 public class PrivateChat extends CreatedTimeEntity {
 
@@ -28,4 +27,12 @@ public class PrivateChat extends CreatedTimeEntity {
 
         @Column
         private Boolean isChecked;
+
+        @Builder
+        public PrivateChat(Member sender, Member receiver, String message) {
+                this.sender = sender;
+                this.receiver = receiver;
+                this.message = message;
+                this.isChecked = false;
+        }
 }

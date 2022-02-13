@@ -2,16 +2,12 @@ package com.fitshare.backend.api.service;
 
 import com.fitshare.backend.api.response.TokenRes;
 import com.fitshare.backend.common.auth.JwtTokenProvider;
-import com.fitshare.backend.common.model.KakaoProfile;
-import com.fitshare.backend.common.model.NaverProfile;
-import com.fitshare.backend.common.model.RoleType;
+import com.fitshare.backend.common.model.*;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
+import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
@@ -135,7 +131,7 @@ public class AuthServiceImpl implements AuthService {
     // refreshToken으로 accessToken 재발급
     public TokenRes refreshAccessToken(String refreshToken) {
 
-        String id = redisService.getData(refreshToken);
+        String id = (String) redisService.getData(refreshToken);
 
         return new TokenRes(tokenProvider.createToken(id,RoleType.USER),refreshToken);
     }

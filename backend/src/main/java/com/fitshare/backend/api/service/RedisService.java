@@ -4,21 +4,20 @@ import java.util.Set;
 
 public interface RedisService {
 
-    void setData(String token, String id);
+    void setData(String key, Object value);
 
-    String getData(String token);
+    Object getData(String key);
 
-    void delData(String token);
+    void delData(String key);
 
-    void setDataExpire(String token,String id,long duration);
+    void setDataExpire(String key, Object value, long duration);
 
-    Long getExpire(String token);
+    Long getExpire(String key);
 
-    void setSessionParticipant(String sessionId, String memberId);
-
-    Set<String> getSessionParticipants(String sessionId);
+    Set<Object> getSessionParticipants(String sessionId);
 
     void delSessionParticipant(String sessionId, String memberId);
 
     Long getSessionParticipantCount(String sessionId);
+
 }
