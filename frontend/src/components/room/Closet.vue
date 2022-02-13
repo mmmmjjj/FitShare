@@ -15,8 +15,9 @@
               <input type="text" placeholder="이미지 Url 입력" class="img-url mt-1" v-model="ImgUrl">
               <img src="@/assets/plus_icon.png" @click="AddUrl" alt="" class="plus-img ms-3">
             </div>
-            <div class="img-box">
-              <div v-for="cloth in state.clothes" :key="cloth.id">
+            <div class="img-box mt-2">
+              <div v-for="(cloth, index) in state.clothes" :key="cloth.clothId">
+                <button class="delete-btn" @click="deleteCloth(state.clothes, index)"><img src="@/assets/close-icon.png" alt=""></button>
                 <button class="btn btn-secondary" @click="$emit('fitting', cloth.imageUrl)">입어보기</button>
                 <img :src="cloth.imageUrl" alt="img" class="img-style">
               </div>
@@ -47,7 +48,7 @@
   </div>
 </template>
 
-<script>
+<script scoped>
 import { ref, reactive, computed } from 'vue'
 import { useStore } from 'vuex'
 import axios from '../../api/axios'
@@ -64,12 +65,6 @@ export default {
   },
   emits: ['fitting'],
   setup(props) {
-    const friends = ref([
-      // {id:1, name: '김싸피', src: require('@/assets/shirt.jpg')},
-      {id:1, name: '김싸피', src: 'https://image.msscdn.net/images/goods_img/20200407/1388147/1388147_3_500.jpg'},
-      {id:2, name: '최싸피', src: 'https://image.msscdn.net/images/goods_img/20200407/1388147/1388147_3_500.jpg'},
-    ])
-
     const ImgUrl = ref('')
     
     const Urls = ref('')
@@ -91,7 +86,7 @@ export default {
       return JSON.parse(connection.data);
     }
 
-    // test
+    // subscriber data 추출
     const splitName = (subscribe) => {
       const { connection } = subscribe.stream
       const parse = JSON.parse(connection.data)
@@ -120,8 +115,10 @@ export default {
           })
           .then(res => {
             console.log(res)
-            // state.clothes = res.data.data
-            friends.value = res.data.data
+            state.clothes.push(res.data.data)
+          })
+          .catch(res => {
+            console.log(res)
           })
         ImgUrl.value = ''
       }
@@ -136,6 +133,7 @@ export default {
       .then(res => {
         console.log(res)
         state.clothes = res.data.data
+        console.log(state.clothes)
       })
     }
 
@@ -151,13 +149,24 @@ export default {
       })
     }
 
+    // 내 옷 삭제
+    const deleteCloth = (clothes, index) => {
+      axios({
+        method: 'DELETE',
+        url: `clothes/${clothes[index].clothId}`
+      })
+      .then(res => {
+        console.log(res)
+        clothes.splice(index, 1)
+      })
+    }
+
     const fitting = () => {
 
     }
 
 
     return {
-      friends,
       ImgUrl,
       AddUrl,
       Urls,
@@ -165,7 +174,7 @@ export default {
       getClothes,
       state,
       myId,
-      getConnectionData, splitName, getFriendsClothes
+      getConnectionData, splitName, getFriendsClothes, deleteCloth
     }
   }
 }
@@ -215,8 +224,19 @@ export default {
 
 .img-box .btn {
   position: relative;
-  left: 110px;
-  top: 200px;
+  left: 80px;
+  top: 190px;
+}
+
+.delete-btn {
+  background-color: white; 
+  color: black;
+  border: none;
+}
+
+.delete-btn img {
+  width: 30px;
+  height: 30px;
 }
 
 .img-box {
