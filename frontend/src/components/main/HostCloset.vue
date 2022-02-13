@@ -1,34 +1,45 @@
 <template>
-  <div>
-    <div class="container">
-      <div class="host-name fw-bold">
-        {{ selectedShoppingRoom.hostName }}님의 옷장 
-      </div>
-      <!-- 옷장에서 옷 가져오기 -->
-      <host-closet-item class="host-closet-item"></host-closet-item>
-    </div>
+  <div class="host-closet">
+    <h2 class="host-name fw-bold">
+      {{ selectedShoppingRoom.hostName }}님의 옷장 
+    </h2>
+    <host-closet-item :host-clothes="hostClothes" class="host-closet-item"></host-closet-item>
   </div>
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'  
 import { useStore } from 'vuex'
+import axios from '@/api/axios'
 import HostClosetItem from './HostClosetItem.vue'
 
 export default {
   name: 'HostCloset',
-
   components: { HostClosetItem },
 
   setup() {
     const store = useStore();
+    let hostClothes = ref([]) 
+    
+    const hostCloset = () => {
+      console.log(selectedShoppingRoom.value.hostId)
+      axios.get(`clothes/${selectedShoppingRoom.value.shoppingRoomId}/${selectedShoppingRoom.value.hostId}`)
+        .then(res => {
+          hostClothes.value = res.data.data
+        })
+        .catch(err => console.log(err))
+    }
 
     const selectedShoppingRoom = computed(() => {
         return store.state.room.selectedShoppingRoom
     });
 
+    watch(selectedShoppingRoom, () => {
+      hostCloset()
+    });
+
     return {
-     selectedShoppingRoom
+     selectedShoppingRoom, hostCloset, hostClothes
     }
   }
   
@@ -47,15 +58,18 @@ export default {
 
 .host-name {
   font-size: 20px;
+  font-weight: bold;
+  padding: 30px 43px;
+  margin: 0;
 }
 
 .host-closet-item {
-  margin-top: 44px;
-  height: 463px;
-  /* background-color: beige; */
+  padding: 0 20px 14px;
+  height: 505px;
   overflow-y: scroll;
   overflow-x: hidden;
 }
+
 .host-closet-item::-webkit-scrollbar {
   width: 7px;
   /* background-color: beige; */
