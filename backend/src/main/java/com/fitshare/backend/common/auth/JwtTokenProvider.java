@@ -5,10 +5,8 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -28,7 +26,6 @@ import java.util.stream.Collectors;
 public class JwtTokenProvider implements InitializingBean {
 
     private static final String AUTHORITIES_KEY = "roles";
-    private final RedisTemplate<String, String> redisTemplate;
 
     private Key key;
     private final String secret;
@@ -36,10 +33,9 @@ public class JwtTokenProvider implements InitializingBean {
     private final long tokenValidityInMilliseconds;
 
     public JwtTokenProvider(@org.springframework.beans.factory.annotation.Value("${jwt.secret}") String secret,
-                            @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds, RedisTemplate<String,String> redisTemplate) {
+                            @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds) {
         this.secret = secret;
         this.tokenValidityInMilliseconds = tokenValidityInSeconds;
-        this.redisTemplate = redisTemplate;
     }
 
 
@@ -53,7 +49,7 @@ public class JwtTokenProvider implements InitializingBean {
         Claims claims = Jwts.claims().setSubject(id);
         claims.put(AUTHORITIES_KEY, roleType);
         long now = (new Date()).getTime();
-        Date validity = new Date(now + this.tokenValidityInMilliseconds);
+        Date validity = new Date(now + this.tokenValidityInMilliseconds*6);
 
         return Jwts.builder()
                 .setClaims(claims)

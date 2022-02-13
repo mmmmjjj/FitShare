@@ -7,6 +7,7 @@ import com.fitshare.backend.api.service.AuthService;
 import com.fitshare.backend.api.service.MemberService;
 import com.fitshare.backend.api.service.RedisService;
 import com.fitshare.backend.common.auth.JwtTokenProvider;
+import com.fitshare.backend.common.exception.RefreshInvalidException;
 import com.fitshare.backend.common.exception.handler.ErrorResponse;
 import com.fitshare.backend.common.model.BaseResponseBody;
 import com.fitshare.backend.common.model.KakaoProfile;
@@ -138,7 +139,7 @@ public class AuthController {
     @PostMapping(value = "/refresh")
     public ResponseEntity<BaseResponseBody> refreshToken(@RequestParam String refreshToken){
         if(!tokenProvider.validateToken(refreshToken))
-            throw new AccessDeniedException(INVALID_TOKEN);
+            throw new RefreshInvalidException();
 
         return ResponseEntity.ok(BaseResponseBody.of(HttpStatus.CREATED,REFRESH_TOKEN,authService.refreshAccessToken(refreshToken)));
     }
