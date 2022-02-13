@@ -87,8 +87,8 @@
               <input v-model="password" class="form-control shadow-none" type="password" placeholder="6자리 이하로 작성해주세요">
               <p class="password-error" v-if="passwordError">{{ passwordError }}</p>
             </div>
-            <div class="text-center">
-              <button class="btn create-btn shadow-none" @click="validationCheck()">생성하기</button>
+            <div class="button-box">
+              <button class="btn shadow-none" @click="validationCheck()">생성하기</button>
               <button class="btn shadow-none" @click="goToMain()">취소</button>
             </div>        
           </div>
@@ -409,7 +409,7 @@ label {
 .form-radio {
   display: flex;
   flex-direction: row;
-  margin-right: 192px;
+  margin-right: 115px;
   width: 350px;
 }
 
@@ -419,13 +419,13 @@ label {
 }
 
 .form-radio input {
-  margin: 9px 18px 5px 76px;
+  margin: 9px 18px 5px 0;
 }
 
 .form-radio label {
   font-size: 20px;
   width: 60px;
-  margin: 0;
+  margin-right: 73px;
   cursor: pointer;
 }
 
@@ -464,16 +464,20 @@ label {
   text-align: start;
 }
 
+.button-box {
+  /* display: flex;
+  justify-content: space-between; */
+
+  text-align: center;
+}
+
 button {
   width: 330px;
   height: 50px;
   flex-grow: 0;
+  margin: 0 15px;
   border-radius: 12px;
   border: solid 2px #000;
-}
-
-.create-btn {
-  margin: 0 34px 0 0;
 }
 
 /* error */

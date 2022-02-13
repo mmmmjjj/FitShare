@@ -62,6 +62,7 @@ export default {
   background-color: #FDFAF3;
   border-radius: 16px;
   padding: 0;
+  margin-bottom: 20px;
 }
 
 h2 {

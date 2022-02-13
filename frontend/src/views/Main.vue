@@ -1,57 +1,59 @@
 <template>
   <div>
     <Navbar/>
-    <div class="container">
-      <!-- 쇼핑룸, host옷장 -->
-      <div class="row">
-        <shopping-room-list></shopping-room-list>
-        <div class="host-container">
-          <host-closet class="host-closet"></host-closet>
-          <button class="btn shadow-none" @click="selectedShoppingRoom.isPrivate ? isPrivate=true : goToRoom()">입장하기</button>
+    <div id="container">
+      <div class="container-box">
+        <!-- 쇼핑룸, host옷장 -->
+        <div class="row">
+          <shopping-room-list></shopping-room-list>
+          <div class="host-container">
+            <host-closet class="host-closet"></host-closet>
+            <button class="btn shadow-none" @click="selectedShoppingRoom.isPrivate ? isPrivate=true : goToRoom()">입장하기</button>
+          </div>
         </div>
-      </div>
 
-      <!-- 버튼 클릭 시 친구 아이콘 html / css tab 버전 -->
-      <button class="friend-btn" @click="OpenTab">
-        <img class="friend_icon" src="@/assets/friend_icon.png" alt="friend_icon">
-      </button>
-      <div v-if="status">
-        <friend class="tab-box" @close-tab="CloseTab"></friend>
-        <button class="close-btn" @click="CloseTab">
-          <img class="close-img" src="@/assets/close-icon.png" alt="close-img">
+        <!-- 버튼 클릭 시 친구 아이콘 html / css tab 버전 -->
+        <button class="friend-btn" @click="OpenTab">
+          <img class="friend_icon" src="@/assets/friend_icon.png" alt="friend_icon">
         </button>
+        <div v-if="status">
+          <friend class="tab-box" @close-tab="CloseTab"></friend>
+          <button class="close-btn" @click="CloseTab">
+            <img class="close-img" src="@/assets/close-icon.png" alt="close-img">
+          </button>
+        </div>
       </div>
-    </div>
 
-    <!-- 비밀번호 모달 -->
-    <div class="modal overlay" :class="isPrivate ? 'show-modal' : 'hide-modal'" tabindex="-1">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <!-- <div class="modal-header">
-            <p class="modal-title fw-bold">비공개 쇼핑룸</p>
-            <button type="button" class="btn-close shadow-none ms-2 me-1" data-bs-dismiss="modal" @click="closeModal"></button>
-          </div> -->
-          <div class="modal-header pt-3 pb-0">
-            <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" @click="closeModal"></button>
-          </div>
-          <i class="fas fa-lock text-center my-3"></i>
-          <div class="modal-body">
-            <!-- <p class="title ms-6 fw-bold fs-5">비공개 쇼핑룸</p> -->
-            <input type="password" v-model="inputPassword" placeholder="비밀번호를 입력해주세요">
-            <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
-            <span class="d-flex justify-content-center">
-              <button class="btn shadow-none" @click="checkPassword">입장하기</button>              
-              <button class="btn shadow-none" @click="closeModal" data-bs-dismiss="modal">취 소</button>
-            </span>
+      <!-- 비밀번호 모달 -->
+      <div class="modal overlay" :class="isPrivate ? 'show-modal' : 'hide-modal'" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <!-- <div class="modal-header">
+              <p class="modal-title fw-bold">비공개 쇼핑룸</p>
+              <button type="button" class="btn-close shadow-none ms-2 me-1" data-bs-dismiss="modal" @click="closeModal"></button>
+            </div> -->
+            <div class="modal-header pt-3 pb-0">
+              <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" @click="closeModal"></button>
+            </div>
+            <i class="fas fa-lock text-center my-3"></i>
+            <div class="modal-body">
+              <!-- <p class="title ms-6 fw-bold fs-5">비공개 쇼핑룸</p> -->
+              <input type="password" v-model="inputPassword" placeholder="비밀번호를 입력해주세요">
+              <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+              <span class="d-flex justify-content-center">
+                <button class="btn shadow-none" @click="checkPassword">입장하기</button>              
+                <button class="btn shadow-none" @click="closeModal" data-bs-dismiss="modal">취 소</button>
+              </span>
+            </div>
           </div>
         </div>
       </div>
+      <!-- Alert 알람 -->
+      <div v-if="alert" class="alert alert-warning" role="alert">
+        <i class="bi bi-exclamation-triangle-fill"></i>인원수가 초과된 쇼핑룸입니다. 다른 쇼핑룸을 이용해주세요!
+      </div>
     </div>
-    <!-- Alert 알람 -->
-    <div v-if="alert" class="alert alert-warning" role="alert">
-      <i class="bi bi-exclamation-triangle-fill"></i>인원수가 초과된 쇼핑룸입니다. 다른 쇼핑룸을 이용해주세요!
     </div>
-  </div>
 </template>
 
 <script>
@@ -180,24 +182,27 @@ export default {
   }
 }
 
-
 .alert i {
   font-size: 16px;
   margin-right: 20px;
 }
 
-.container {
-  width: 1156px;
-  height: 775px;
+#container {
+  display: flex;
+  justify-content: center;
+}
+
+.container-box {
+  width: 1200px;
   position: relative;
   padding: 0;
-  margin: 87px 153px 89px 142px;
+  margin: 80px 153px 0 142px;
 }
 
 .row {
   display: flex;
   justify-content: space-between;
-  width: 1150px;
+  /* width: 1150px; */
 }
 
 .host-container {

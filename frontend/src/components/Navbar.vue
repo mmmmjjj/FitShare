@@ -51,15 +51,15 @@ export default {
 
 <style scoped>
 nav {
-  height: 73px;
+  height: 60px;
   border-bottom: 3px solid #8ABDBE;
   justify-content: space-between;
   padding-top: 3px;
 }
 
 nav > img {
-  width: 230px;
-  height: 55px;
+  width: 190px;
+  height: 45px;
   margin: 3px 0 0 40px;
   cursor: pointer;
 }
@@ -67,12 +67,12 @@ nav > img {
 .nav-end {
   display: flex;
   flex-direction: row;
-  line-height: 66px;
+  line-height: 60px;
 }
 
 .create {
   font-weight: bold;
-  font-size: 24px;
+  font-size: 20px;
   color: rgb(66, 65, 65);
   cursor: pointer;
 }
@@ -81,42 +81,43 @@ nav > img {
   border: 2px solid #EDEEF2;
   border-radius: 16px;
   margin: 2px 45px 0 60px;
-  width: 60px;
+  width: 50px;
+  height: 50px;
   cursor: pointer;
 }
 
 .dropdown {
   position: absolute;
-  top: 74px;
-  right: 5px;
-  width: 141px;
-  height: 110px;
-  font-size: 20px;
-  background-color: white;
+  top: 62px;
+  right: 10px;
+  width: 120px;
+  height: 90px;
+  font-size: 16px;
+  background-color: rgba(255, 255, 255, 0.658);
   border: 1px solid lightgray;
   border-radius: 5px;
-  box-shadow: 4px 4px 4px rgb(207, 206, 206)
+  box-shadow: 3px 3px 3px rgb(207, 206, 206)
 }
 
-.dropdown:after{
+/* .dropdown:after{
   content: '';
   position: absolute;
   border-style: solid;
   border-width: 0 11px 15px;
-  border-color: #FFFFFF transparent;;
+  border-color: #ffffff93 transparent;
   display: block;
   width: 0;
   z-index: 1;
   top: -8px;
-  left: 60px;
-}
+  left: 47px;
+} */
 
 p { 
-  height: 55px;
+  height: 45px;
   margin-bottom: 0px;
   text-align: center;
   cursor: pointer;
-  line-height: 55px;
+  line-height: 45px;
 }
 
 p:hover {

@@ -15,10 +15,6 @@ export default {
     },
 
     setup() {
-      // document.cookie = "safeCookie1=foo; SameSite=Lax"
-      // document.cookie = "safeCookie2=foo"
-      // document.cookie = "crossCookie=bar; SameSite=None; Secure";
-      
       document.cookie = "SameSite=None; Secure"
       
       // document.cookie = 'cookie1=value1; SameSite=Lax';
@@ -31,10 +27,17 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+div {
+  position: relative;
+  width: 100%;
+}
 
 iframe {
+  position: absolute;
   background-color: white;
+  width: 100%;
+  height: 100%;
 }
 
 .site::-webkit-scrollbar {

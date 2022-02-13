@@ -52,16 +52,17 @@ export default {
 
 p {
   display: inline-block;
-	/* background: #f8f8f8a8; */
 	padding-left: 5px;
 	padding-right: 5px;
 	color: black;
 	font-weight: bold;
 	border-bottom-left-radius: 10px;
   position: absolute;
-  font-size: 16px;
+  /* font-size: 16px; */
+  font-size: 1.6vh;
+
   left: 50%;
-  bottom: -25px;
+  bottom: -23px;
   transform: translate(-50%, -50%);  
 }
 
