@@ -3,6 +3,8 @@ package com.fitshare.backend.api.request;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 public class ChatReq {
@@ -14,6 +16,6 @@ public class ChatReq {
     private String message;
 
     // 메시지 전송 시각
-    private String createdTime;
+    private LocalDateTime createdTime;
 
 }
