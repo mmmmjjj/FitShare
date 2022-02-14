@@ -25,4 +25,7 @@ public class ShoppingRoomTokenRes {
 
     @ApiModelProperty(name = "쇼핑룸 입장 토큰", example = "token")
     private String token;
+
+    @ApiModelProperty(name = "호스트 Id", example = "1")
+    private Long hostId;
 }

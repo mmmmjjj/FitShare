@@ -76,6 +76,11 @@ public class RedisServiceImpl implements RedisService {
         setOperations.remove(sessionId, memberId);
     }
 
+    @Override
+    public void delSession(String sessionId) {
+        setOperations.pop(sessionId, getSessionParticipantCount(sessionId));
+    }
+
     // 세션에 참여하고 있는 유저 수
     @Override
     public Long getSessionParticipantCount(String sessionId) {
