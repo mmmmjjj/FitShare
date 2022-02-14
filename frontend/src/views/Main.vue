@@ -304,7 +304,7 @@ i {
   border: none;
   position: fixed;
   right: 120px;
-  bottom: 20px;
+  bottom: 50px;
   background-color: #8ABDBE;
 }
 
@@ -318,16 +318,20 @@ i {
 
 /* 친구버튼 클릭시 나오는 tab style */
 .tab-box {
-  top: 300px;
-  right: 20px;
-  bottom: 10px;
+  right: 120px;
+  bottom: 50px;
   position: fixed;
   z-index: 2;
 }
 
 .friend-close {
   position: fixed;
-  top: 265px;
-  right: 380px;
+  bottom: 614px;
+  right: 486px;
+  z-index: 3;
+}
+
+#Main {
+  overflow-x: hidden;
 }
 </style>
