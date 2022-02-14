@@ -87,6 +87,8 @@ public class ShoppingRoomServiceImpl implements ShoppingRoomService {
         // host member 참여자 DB에 저장
         roomParticipantRepository.save(new RoomParticipant(shoppingRoom, member));
 
+        log.info("{} member create {} session", memberId, shoppingRoom.getSessionId());
+
         return new ShoppingRoomTokenRes(shoppingRoom.getId(), shoppingRoom.getShoppingMallName(), shoppingRoom.getShoppingMallUrl(), sessionToken, shoppingRoom.getHost().getId());
     }
 
@@ -114,6 +116,8 @@ public class ShoppingRoomServiceImpl implements ShoppingRoomService {
             roomParticipantRepository.save(new RoomParticipant(shoppingRoom, member));
         }
 
+        log.info("{} member enter {} session", memberId, session.getSessionId());
+
         return new ShoppingRoomTokenRes(shoppingRoomId, shoppingRoom.getShoppingMallName(), shoppingRoom.getShoppingMallUrl(), sessionToken, shoppingRoom.getHost().getId());
     }
 
@@ -134,6 +138,8 @@ public class ShoppingRoomServiceImpl implements ShoppingRoomService {
         redisService.delSessionParticipant(shoppingRoom.getSessionId(), String.valueOf(memberId));
 
         if (redisService.getSessionParticipantCount(shoppingRoom.getSessionId()) == 0) {
+            log.info("All participants in {} session exit");
+
             updateShoppingRoomStatus(shoppingRoomId, false);
         } else {
             // 호스트가 방을 나가면 세션 종료
@@ -142,6 +148,8 @@ public class ShoppingRoomServiceImpl implements ShoppingRoomService {
                     session.close();
                     redisService.delSession(session.getSessionId());
                     updateShoppingRoomStatus(shoppingRoomId, false);
+
+                    log.info("Host participant in {} session exit");
                 } catch (OpenViduJavaClientException | OpenViduHttpException e) {
                     e.printStackTrace();
                 }
@@ -182,6 +190,8 @@ public class ShoppingRoomServiceImpl implements ShoppingRoomService {
         Session session = null;
         try {
             session = this.openVidu.createSession();
+
+            log.info("create Session {}", session.getSessionId());
         } catch (OpenViduJavaClientException | OpenViduHttpException e) {
             e.printStackTrace();
         }
@@ -189,6 +199,8 @@ public class ShoppingRoomServiceImpl implements ShoppingRoomService {
     }
 
     private Session getSession(String sessionId) {
+        log.info("get Session {}", sessionId);
+
         Session session = null;
         try {
             openVidu.fetch();
@@ -204,6 +216,7 @@ public class ShoppingRoomServiceImpl implements ShoppingRoomService {
 
     private String getSessionToken(Long memberId, Session session, OpenViduRole role) {
         log.info("getSessionToken 호출 - {} member, {} session.id", memberId, session.getSessionId());
+
         String token = "";
         try {
             // 세션 입장 토큰 생성
