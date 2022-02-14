@@ -23,7 +23,11 @@
           <div class="viewer">
             <!-- <group-chat class="group-chat"></group-chat> -->
             <!-- 메인 화면 -->
-            <main-video id="main-video" v-if="showMainVideo" :stream-manager="mainStreamManager" />
+            <main-video
+              id="main-video"
+              v-if="showMainVideo"
+              :stream-manager="mainStreamManager"
+            />
             <!-- 쇼핑사이트 -->
             <shopping-site
               v-show="!showMainVideo"
@@ -31,82 +35,108 @@
               class="shopping-site"
             ></shopping-site>
             <!-- 옷장 접기 -->
-            <details>
-              <summary>
-                <i class="bi bi-arrow-bar-left" v-if="clickStatus" @click="changeClickStatus"></i>
-                <i class="bi bi-arrow-bar-right closeIcon" v-if="clickStatus === false" @click="changeClickStatus"></i>
-              </summary>
-              <closet
-                :subscribers="subscribers"
-                :my-session-id="mySessionId"
-                :publisher="publisher"
-                @fitting="overlayFilter"
-                class="closet"
-              ></closet>
-            </details>
+            <closet
+              :subscribers="subscribers"
+              :my-session-id="mySessionId"
+              :publisher="publisher"
+              @fitting="overlayFilter"
+              class="closet"
+              v-if="clickStatus === false"
+            ></closet>
           </div>
           <!-- 버튼 -->
-          <div class="buttons" :class="!clickStatus ? 'buttons-center' : ''">
+          <div class="buttons" :class="buttons - center">
             <!-- 가상피팅화면 종료 -->
-            <button v-if="showMainVideo" class="btn shadow-none stop-fitting-btn" @click="backToSite">
+            <button
+              v-if="showMainVideo"
+              class="btn shadow-none stop-fitting-btn"
+              @click="backToSite"
+            >
               <i class="fas fa-arrow-left"></i>
               <p>피팅 종료하기</p>
             </button>
             <!-- 기본 기능 -->
-            <button v-if="isAudio" class="btn shadow-none" @click="changeAudio()">
+            <button
+              v-if="isAudio"
+              class="btn shadow-none"
+              @click="changeAudio()"
+            >
               <i class="bi bi-mic-mute-fill"></i>
             </button>
-            <button v-if="!isAudio" class="btn shadow-none" @click="changeAudio()">
+            <button
+              v-if="!isAudio"
+              class="btn shadow-none"
+              @click="changeAudio()"
+            >
               <i class="bi bi-mic-fill"></i>
             </button>
-            <button v-if="isVideo" class="btn shadow-none" @click="changeVideo()">
+            <button
+              v-if="isVideo"
+              class="btn shadow-none"
+              @click="changeVideo()"
+            >
               <i class="bi bi-camera-video-off-fill"></i>
             </button>
-            <button v-if="!isVideo" class="btn shadow-none" @click="changeVideo()">
+            <button
+              v-if="!isVideo"
+              class="btn shadow-none"
+              @click="changeVideo()"
+            >
               <i class="bi bi-camera-video-fill"></i>
             </button>
             <input
               class="btn shadow-none"
               type="button"
               id="buttonLeaveSession"
-              data-bs-toggle="modal"
-              data-bs-target="#leaveSessionConfirm"
+              @click="leaveSession"
               value="나가기"
             />
-            <div class="modal fade" id="leaveSessionConfirm">
-              <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title">쇼핑룸 종료</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <p>쇼핑룸을 나가시겠습니까?</p>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @click="leaveSession">
-                      나가기
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
+
             <!-- 필터 change -->
             <div v-if="isFitting && showMainVideo" class="radio-box">
               <div @click="changeFilter('top')">
-                <input class="form-check-input" type="radio" name="flexRadioDefault" checked="checked" id="top" />
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="flexRadioDefault"
+                  checked="checked"
+                  id="top"
+                />
                 <label class="form-check-label" for="top">상의</label>
               </div>
               <div @click="changeFilter('bottoms')">
-                <input class="form-check-input" type="radio" name="flexRadioDefault" id="bottom" />
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="flexRadioDefault"
+                  id="bottom"
+                />
                 <label class="form-check-label" for="bottom">하의</label>
               </div>
               <div @click="changeFilter('hat')">
-                <input class="form-check-input" type="radio" name="flexRadioDefault" id="hat" />
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="flexRadioDefault"
+                  id="hat"
+                />
                 <label class="form-check-label" for="hat">모자</label>
               </div>
             </div>
+            <button
+              class="btn shadow-none right"
+              v-if="clickStatus"
+              @click="changeClickStatus"
+            >
+              <img src="@/assets/closed_closet.png" alt="" class="closetBtn" />
+            </button>
+            <button
+              class="btn shadow-none right"
+              v-if="clickStatus === false"
+              @click="changeClickStatus"
+            >
+              <img src="@/assets/opened_closet.png" alt="" class="closetBtn" />
+            </button>
           </div>
         </div>
       </div>
@@ -163,12 +193,14 @@ export default {
       hostId: null,
       isAudio: false,
       isVideo: false,
-
+      closetClass: "closet",
       clickStatus: true,
     });
 
     const changeClickStatus = () => {
       state.clickStatus = !state.clickStatus;
+      if (state.clickStatus) state.closetClass = "closet blocked";
+      else state.closetClass = "closet";
     };
 
     const userData = computed(() => {
@@ -323,7 +355,11 @@ export default {
           });
         })
         .catch((error) => {
-          console.log("There was an error connecting to the session:", error.code, error.message);
+          console.log(
+            "There was an error connecting to the session:",
+            error.code,
+            error.message
+          );
         });
 
       window.addEventListener("beforeunload", leaveSession);
@@ -441,6 +477,10 @@ export default {
   background-color: white;
 }
 
+.blocked {
+  display: block;
+}
+
 #main-video {
   position: relative;
   width: 100%;
@@ -490,6 +530,12 @@ export default {
 p {
   margin-bottom: 0;
   margin-top: 3px;
+}
+
+.closetBtn {
+  vertical-align: middle;
+  width: 44px;
+  height: auto;
 }
 
 .buttons .btn {
