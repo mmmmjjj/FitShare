@@ -1,17 +1,18 @@
 <template>
-  <div class="host-closet">
-    <h2 class="host-name fw-bold">
-      {{ selectedShoppingRoom.hostName }}님의 옷장 
+  <div>
+    <h2 v-if="selectedShoppingRoom" class="host-name fw-bold">
+      {{ selectedShoppingRoom.hostName }}님의 옷장
     </h2>
-    <host-closet-item :host-clothes="hostClothes" class="host-closet-item"></host-closet-item>
+    <h2 v-else class="host-name fw-bold">옷장</h2>
+    <host-closet-item v-if="selectedShoppingRoom" :host-clothes="hostClothes" class="host-closet-item"></host-closet-item>
   </div>
 </template>
 
 <script>
-import { computed, ref, watch } from 'vue'  
-import { useStore } from 'vuex'
-import axios from '@/api/axios'
-import HostClosetItem from './HostClosetItem.vue'
+import { computed, ref, watch } from 'vue';
+import { useStore } from 'vuex';
+import axios from '@/api/axios';
+import HostClosetItem from './HostClosetItem.vue';
 
 export default {
   name: 'HostCloset',
@@ -19,19 +20,20 @@ export default {
 
   setup() {
     const store = useStore();
-    let hostClothes = ref([]) 
+    let hostClothes = ref([]);
     
     const hostCloset = () => {
-      console.log(selectedShoppingRoom.value.hostId)
-      axios.get(`clothes/${selectedShoppingRoom.value.shoppingRoomId}/${selectedShoppingRoom.value.hostId}`)
-        .then(res => {
-          hostClothes.value = res.data.data
-        })
-        .catch(err => console.log(err))
+      if (selectedShoppingRoom.value) {
+        axios.get(`clothes/${selectedShoppingRoom.value.shoppingRoomId}/${selectedShoppingRoom.value.hostId}`)
+          .then(res => {
+            hostClothes.value = res.data.data
+          })
+          .catch(err => console.log(err))
+      }
     }
 
     const selectedShoppingRoom = computed(() => {
-        return store.state.room.selectedShoppingRoom
+      return store.state.room.selectedShoppingRoom
     });
 
     watch(selectedShoppingRoom, () => {
@@ -47,20 +49,29 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  width: 457px;
-  height: 535px;
-  padding: 0px;
-  position: relative;
-  top: 30px;
-  background-color: white;
-}
-
 .host-name {
   font-size: 20px;
   font-weight: bold;
   padding: 30px 43px;
   margin: 0;
+}
+
+.fa-times {
+  font-size: 70px;
+  font-weight: normal;
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  transform: translate(-50%, -50%);
+}
+
+.message {
+  font-size: 20px;
+  width: 300px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .host-closet-item {
@@ -72,15 +83,12 @@ export default {
 
 .host-closet-item::-webkit-scrollbar {
   width: 7px;
-  /* background-color: beige; */
-}
-.host-closet-item::-webkit-scrollbar-thumb {
-  background-color: #2f3542;
-  border-radius: 10px;
 }
 .host-closet-item::-webkit-scrollbar-track {
-  background-color: #FDFAF3;
+  background-color: transparent;
+}
+.host-closet-item::-webkit-scrollbar-thumb {
   border-radius: 10px;
-  box-shadow: inset 0px 0px 5px white;
+  background-color: #2f3542;
 }
 </style>
