@@ -3,23 +3,32 @@
     <div id="session" v-if="session">
       <!-- 컴포넌트 -->
       <div class="components-container">
-        <group-chat class="group-chat"></group-chat>
-        <div class="center">
-          <!-- 화상화면 -->
-          <div id="video-container" class="d-flex flex-row">
-            <publisher-video :stream-manager="publisher" :loading="pub" @click="updateMainVideoStreamManager(publisher)"/>
-            <subscriber-video v-for="(subscriber, index) in subscribers" :key="subscriber.stream.connection.connectionId"
-              :stream-manager="subscriber" :loading="sub" :subscriber="index"
-              @click="updateMainVideoStreamManager(subscriber)"
-            />
+        <!-- 화상화면 -->
+        <div id="video-container">
+          <publisher-video :stream-manager="publisher" :loading="pub" @click="updateMainVideoStreamManager(publisher)"/>
+          <subscriber-video v-for="(subscriber, index) in subscribers" :key="subscriber.stream.connection.connectionId"
+            :stream-manager="subscriber" :loading="sub" :subscriber="index"
+            @click="updateMainVideoStreamManager(subscriber)"
+          />
+        </div>
+        <div class="content">
+          <div class="viewer">
+            <!-- <group-chat class="group-chat"></group-chat> -->
+            <!-- 메인 화면 -->
+            <main-video id="main-video" v-if="showMainVideo" :stream-manager="mainStreamManager"/>
+            <!-- 쇼핑사이트 -->
+            <shopping-site v-show="!showMainVideo" :shopping-mall-url="shoppingMallUrl" class="shopping-site"></shopping-site>
+            <!-- 옷장 접기 -->
+            <details>
+              <summary>
+                <i class="bi bi-arrow-bar-left" v-if="clickStatus" @click="changeClickStatus"></i>
+                <i class="bi bi-arrow-bar-right closeIcon" v-if="clickStatus === false" @click="changeClickStatus"></i>
+              </summary>
+              <closet :subscribers="subscribers" :my-session-id="mySessionId" :publisher="publisher" @fitting="overlayFilter" class="closet"></closet>
+            </details>
           </div>
-          <!-- 메인 화면 -->
-          <div id="main-video" v-if="showMainVideo">  
-            <main-video :stream-manager="mainStreamManager"/>
-          </div>
-          <!-- 쇼핑사이트 -->
-          <shopping-site v-if="!showMainVideo" :shopping-mall-url="shoppingMallUrl" class="shopping-site"></shopping-site>
-          <div class="buttons">
+          <!-- 버튼 -->
+          <div class="buttons" :class="!clickStatus ? 'buttons-center' : ''">
             <!-- 가상피팅화면 종료 -->
             <button v-if="showMainVideo" class="btn shadow-none stop-fitting-btn" @click="backToSite">
               <i class="fas fa-arrow-left"></i><p>피팅 종료하기</p>
@@ -47,15 +56,6 @@
             </div>
           </div>
         </div>
-        
-        <!-- 옷장 접기 -->
-        <details>
-          <summary>
-            <i class="bi bi-arrow-bar-left" v-if="clickStatus" @click="changeClickStatus"></i>
-            <i class="bi bi-arrow-bar-right closeIcon" v-if="clickStatus === false" @click="changeClickStatus"></i>
-          </summary>
-          <closet :subscribers="subscribers" :my-session-id="mySessionId" :publisher="publisher" @fitting="overlayFilter" class="closet"></closet>
-        </details>
 
       </div>
 		</div>
@@ -63,22 +63,22 @@
 </template>
 
 <script>
-import { reactive, toRefs, ref, computed } from 'vue';
+import { reactive, toRefs, ref, computed, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useStore } from 'vuex';
 import { OpenVidu } from 'openvidu-browser';
-import axios from '../api/axios'
+import axios from '../api/axios';
 import PublisherVideo from '@/components/room/PublisherVideo.vue';
 import SubscriberVideo from '@/components/room/SubscriberVideo.vue';
 import MainVideo from '@/components/room/MainVideo.vue';
 import ShoppingSite from '@/components/room/ShoppingSite.vue';
 import Closet from '@/components/room/Closet.vue';
-import GroupChat from '@/components/room/GroupChat.vue';
+// import GroupChat from '@/components/room/GroupChat.vue';
 
 export default {
     name: 'ShoppingRoom',
     components: {
-      PublisherVideo, SubscriberVideo, MainVideo, ShoppingSite, Closet, GroupChat
+      PublisherVideo, SubscriberVideo, MainVideo, ShoppingSite, Closet, 
     },
 
     setup () {
@@ -89,7 +89,6 @@ export default {
         let clothesUrl = ref('');
         let isFitting = ref(false);
         let showMainVideo = ref(false) ; // fitting 비디오 
-        // let radioSelect = ref(false);
 
         const loading = reactive({
           pub: true,
@@ -105,6 +104,7 @@ export default {
           mySessionId: '',
           myUserName: '',  
           shoppingMallUrl: '',
+          hostId: null,
           isAudio: false,
           isVideo: false,
 
@@ -139,7 +139,6 @@ export default {
         // 입어보기 버튼의 filter 적용
         const overlayFilter = (url) => {
           clothesUrl.value = url
-          // radioSelect.value = false
           if (isFitting.value) removeFilter();
           
           state.publisher.stream.applyFilter("FaceOverlayFilter")
@@ -158,7 +157,6 @@ export default {
               state.mainStreamManager = state.publisher;
               isFitting.value = true
               showMainVideo.value = true
-              // radioSelect.value = true
             })
             .catch(err => console.log(err));
         };
@@ -216,7 +214,6 @@ export default {
         const backToSite = () => {
           if (isFitting.value) removeFilter();
           isFitting.value = false;
-          // radioSelect.value = false; 
           showMainVideo.value = false;
         };
 
@@ -231,8 +228,9 @@ export default {
             loading.sub.push(true)
             
             // video 실행시 로딩 스피너 제거 
-            subscriber.on('streamPlaying', function () {
-              loading.sub[loading.sub.length - 1] = false
+            subscriber.on('streamPlaying', () => {
+              const index = state.subscribers.indexOf(stream.streamManager, 0);
+              loading.sub[index] = false
             })
           });
 
@@ -279,6 +277,12 @@ export default {
           window.addEventListener('beforeunload', leaveSession);
         }
 
+        // 화상화면 클릭시 메인 화면 전환
+        const updateMainVideoStreamManager = (stream) => {   
+          state.mainStreamManager = stream;
+          if (!showMainVideo.value) showMainVideo.value = true;
+        }
+
         const leaveSession = () => {
           if (state.session) state.session.disconnect();
           state.session = undefined;
@@ -289,26 +293,25 @@ export default {
 
           window.removeEventListener('beforeunload', leaveSession);
 
-          axios({
-            method : 'post',
-            url: `shopping-rooms/${state.mySessionId}`,
-          })
-            .then(() => {
-              goToMain()
-            })
+          axios.post(`shopping-rooms/${state.mySessionId}`)
+            .then(() => goToMain())
             .catch(err => console.log(err));
         }
 
-        // 화상화면 클릭시 메인 화면 전환
-        const updateMainVideoStreamManager = (stream) => {   
-          state.mainStreamManager = stream;
-          if (!showMainVideo.value) showMainVideo.value = true;
-        }
+        watch(state.subscribers, () => {
+          const userId = store.state.user.user_id
+          if (state.hostId == userId) {
+            return;
+          } else {
+            if (state.subscribers.length == 0) goToMain();
+          }
+        }) 
 
         // created 
         state.mySessionId = route.params.roomId  
         state.shoppingMallUrl = route.params.mallUrl 
         state.myUserName = userData
+        state.hostId = route.params.hostId
         
         joinSession() 
 
@@ -316,7 +319,6 @@ export default {
           goToMain, changeAudio, changeVideo, overlayFilter, changeFilter, removeFilter, backToSite,
           joinSession, leaveSession, updateMainVideoStreamManager,
           ...toRefs(state), ...toRefs(loading), isFitting, showMainVideo, clothesUrl, changeClickStatus,
-          // radioSelect
         }
     }
 
@@ -337,53 +339,63 @@ export default {
 }
 
 #video-container {
+  display: flex;
+  flex-direction: column;
   justify-content: center;
-  background-color: #D3E2E7;
-  height: 15vh;
-  /* border-bottom: 3px solid #8ABDBE;   */
-}
-
-.video-row {
-  flex-direction: row;
+  align-items: center;
+  background-color: #8ABDBE;
+  /* height: 91vh; */
+  width: 220px;
+  height: 100vh;
 }
 
 .components-container {
   display: flex;
-  justify-content: space-between;
+  flex-direction: row;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.viewer {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
 }
 
 .group-chat, .closet {
   min-width: 290px;
   width: 29vh;
-  /* ------------------------------ */
-  height: 92.3vh;
+  height: 91vh;
   margin: 0;
   background-color: white;
 }
 
-.center {
-  position: relative;
-  width: 100%;
-  /* ------------------------------- */
-  height: 100vh;  
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.center #main-video {
+#main-video {
   position: relative;
   width: 100%;
 }
 
 .shopping-site {
-  height: 77.1vh;
-  margin-bottom: 6px;
+  height: 91vh;
 }
 
 .buttons {
-  width: 860px;
-  height: 7vh;
+  width: 900px;
+  height: 70px;
+  line-height: 70px;
+  text-align: center;
+  position: relative;
+}
+
+.buttons-center {
+  width: 900px;
+  left: -10%;
+  height: 70px;
   line-height: 70px;
   text-align: center;
   position: relative;

@@ -20,6 +20,7 @@
       </div>
     </div>
     <div v-else class="info-message">
+      <i class="fas fa-store"></i>
       <h4>라이브 중인 <span>쇼핑룸</span>이 없습니다.</h4>
       <h5>친구를 추가하거나 쇼핑룸을 생성해주세요.</h5>
     </div>
@@ -65,13 +66,15 @@ export default {
   border-radius: 16px;
   padding: 0;
   margin-bottom: 20px;
+  position: relative;
 }
 
 h2 {
-  font-size: 20px;
+  font-size: 28px;
   font-weight: bold;
   padding: 30px 43px;
   margin: 0;
+  /* color: #1B4D50; */
 }
 
 .row {
@@ -103,6 +106,7 @@ h2 {
   border-radius: 10px;
   border: 3px solid #D3E2E7;
   cursor: pointer;
+  background-color: white;
 
   background-repeat : no-repeat;
   background-size : contain;
@@ -168,7 +172,16 @@ h2 {
 }
 
 .info-message {
-  margin-top: 200px;
+  margin-top: 240px;
+}
+
+.info-message i {
+  position: absolute;
+  left: 50%;
+  top: 28%;
+  transform: translate(-50%, 0);
+  font-size: 80px;
+  color: #1B4D50;
 }
 
 h4, h5 {
@@ -176,7 +189,7 @@ h4, h5 {
   font-weight: bold;
 }
 
-h4 span {
+h4 > span {
   color: #f2af46;
 }
 

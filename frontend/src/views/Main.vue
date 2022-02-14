@@ -108,7 +108,7 @@ export default {
       axios.get(`shopping-rooms/${selectedShoppingRoom.value.shoppingRoomId}`)
         .then(res => {
           const data = res.data.data 
-          router.push({ name: 'ShoppingRoom', params: { roomId: data.shoppingRoomId, token: data.token, mallUrl: data.shoppingRoomUrl }}) 
+          router.push({ name: 'ShoppingRoom', params: { roomId: data.shoppingRoomId, token: data.token, mallUrl: data.shoppingRoomUrl, hostId: data.hostId }}) 
         })
         .catch(err => {
           console.log(err.response)
@@ -326,9 +326,6 @@ i {
 }
 
 .friend-close {
-  width: 30px;
-  height: 30px;
-  border-radius: 25px;
   position: fixed;
   top: 265px;
   right: 380px;

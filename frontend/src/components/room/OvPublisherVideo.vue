@@ -18,10 +18,8 @@ export default {
 
 <style scoped>
 video {
-  /* height: 135px;
-  margin: 20px 30px 0; */
-	height: 13vh;
-	margin: 11px 30px 0;
+	width: 160px;
+	margin: 5px 30px;
 	border-radius: 10px;
 	cursor: pointer;
 }

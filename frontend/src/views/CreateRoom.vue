@@ -237,14 +237,10 @@ export default {
         shoppingMallUrl: state.inputMallUrl,  
       };
 
-      axios({
-        method : 'post',
-        url: 'shopping-rooms/',
-        data: roomData,
-      })
+      axios.post('shopping-rooms/', roomData)
         .then(res => {
           const data = res.data.data
-          router.push({ name: 'ShoppingRoom', params: { roomId: data.shoppingRoomId, token: data.token, mallUrl: data.shoppingRoomUrl }}) 
+          router.push({ name: 'ShoppingRoom', params: { roomId: data.shoppingRoomId, token: data.token, mallUrl: data.shoppingRoomUrl, hostId: data.hostId }}) 
         })
         .catch(err => {
           console.log(err.response)
