@@ -184,7 +184,7 @@ export default {
   font-size: 24px;
 }
 #textarea {
-  height: 70vh;
+  height: 82vh;
   resize: none;
   background-color: #d3e2e7;
   color: gray;

@@ -57,15 +57,16 @@ p {
   display: inline-block;
 	padding-left: 5px;
 	padding-right: 5px;
-	color: black;
-	font-weight: bold;
-	border-bottom-left-radius: 10px;
+	color: white;
   position: absolute;
+	/* font-weight: bold; */
+	/* border-bottom-left-radius: 10px; */
   /* font-size: 16px; */
-  font-size: 1.6vh;
+  font-size: 1.4vh;
+  
   left: 50%;
-  bottom: -23px;
-  transform: translate(-50%, -50%);  
+  bottom: -17px;
+  transform: translate(-50%, -50%); 
 }
 
 .spinner-border {

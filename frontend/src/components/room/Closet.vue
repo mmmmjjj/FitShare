@@ -182,7 +182,7 @@ export default {
 
 <style scoped>
 #closet {
-  border: solid black;
+  
 }
 
 .head-style {

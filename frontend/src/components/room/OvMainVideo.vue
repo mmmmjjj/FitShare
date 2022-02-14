@@ -23,10 +23,10 @@ export default {
 <style scoped>
 video {
   /* width: 859px; */
-	width: 100%;
 	/* height: 780px; */
-	height: 73vh;
-	padding: 40px 0px 10px;
+	width: 100%;
+	height: 77.3vh;
+	padding: 20px 0px 0;
   background-color: #D3E2E7;
 }
 </style>

@@ -8,7 +8,12 @@
           <shopping-room-list></shopping-room-list>
           <div class="host-container">
             <host-closet class="host-closet"></host-closet>
-            <button class="btn shadow-none" @click="selectedShoppingRoom.isPrivate ? isPrivate=true : goToRoom()">입장하기</button>
+            <button class="btn shadow-none" 
+              v-if="selectedShoppingRoom" 
+              @click="selectedShoppingRoom.isPrivate ? isPrivate=true : goToRoom()"
+            >
+              입장하기
+            </button>
           </div>
         </div>
 
@@ -18,23 +23,18 @@
         </button>
         <div v-if="status">
           <friend class="tab-box" @close-tab="CloseTab"></friend>
-          <button type="button" class="btn-close" @click="CloseTab"></button>
+          <button type="button" class="btn-close friend-close" @click="CloseTab"></button>
         </div>
 
         <!-- 비밀번호 모달 -->
         <div class="modal overlay" :class="isPrivate ? 'show-modal' : 'hide-modal'" tabindex="-1">
           <div class="modal-dialog">
             <div class="modal-content">
-              <!-- <div class="modal-header">
-                <p class="modal-title fw-bold">비공개 쇼핑룸</p>
-                <button type="button" class="btn-close shadow-none ms-2 me-1" data-bs-dismiss="modal" @click="closeModal"></button>
-              </div> -->
               <div class="modal-header pt-3 pb-0">
                 <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" @click="closeModal"></button>
               </div>
               <i class="fas fa-lock text-center my-3"></i>
               <div class="modal-body">
-                <!-- <p class="title ms-6 fw-bold fs-5">비공개 쇼핑룸</p> -->
                 <input type="password" v-model="inputPassword" placeholder="비밀번호를 입력해주세요">
                 <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
                 <span class="d-flex justify-content-center">
@@ -55,18 +55,17 @@
 </template>
 
 <script>
-import Navbar from '@/components/Navbar.vue'
-import Friend from '@/components/main/Friend.vue'
-import ShoppingRoomList from '@/components/main/ShoppingRoomList.vue'
-import HostCloset from '../components/main/HostCloset.vue'
-import { ref, computed, watch } from 'vue'
+import Navbar from '@/components/Navbar.vue';
+import Friend from '@/components/main/Friend.vue';
+import ShoppingRoomList from '@/components/main/ShoppingRoomList.vue';
+import HostCloset from '../components/main/HostCloset.vue';
+import { ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { useStore } from 'vuex'
-import axios from '../api/axios'
+import { useStore } from 'vuex';
+import axios from '../api/axios';
 
 export default {
   name: 'Main',
-  
   components: { 
     Navbar,
     Friend,
@@ -75,7 +74,6 @@ export default {
   },
 
   setup() {
-
     const router = useRouter();
     const store = useStore();
     
@@ -83,7 +81,7 @@ export default {
     let isPrivate = ref(false);
     let inputPassword = ref(null);  
     let errorMessage = ref('');
-    let alert = ref(false)
+    let alert = ref(false);
 
     const OpenTab = () => {
       status.value = true
@@ -107,35 +105,23 @@ export default {
         return;
       }
 
-      axios({
-        method : 'get',
-        url: `shopping-rooms/${selectedShoppingRoom.value.shoppingRoomId}`,
-      })
+      axios.get(`shopping-rooms/${selectedShoppingRoom.value.shoppingRoomId}`)
         .then(res => {
           const data = res.data.data 
           router.push({ name: 'ShoppingRoom', params: { roomId: data.shoppingRoomId, token: data.token, mallUrl: data.shoppingRoomUrl }}) 
         })
         .catch(err => {
           console.log(err.response)
-          if (err.response.status == 403) {
-            alert.value = true
-          }
+          if (err.response.status == 403) alert.value = true;
         })
     }
     
     watch(alert, () => {
-      if (alert.value) {
-        console.log('시작')
-        setTimeout(() => alert.value = false, 3000)
-      }
+      if (alert.value) setTimeout(() => alert.value = false, 3000);
     });
     
     const checkPassword = () => {
-      axios({
-        method: 'post',
-        url: `shopping-rooms/${selectedShoppingRoom.value.shoppingRoomId}/validate`,
-        data: { password: inputPassword.value },
-      })
+      axios.post(`shopping-rooms/${selectedShoppingRoom.value.shoppingRoomId}/validate`, { password: inputPassword.value })
         .then(res => {
           const data = res.data.data;
           if (data) { 
@@ -155,8 +141,7 @@ export default {
 
     return {
       status, selectedShoppingRoom, isPrivate, inputPassword, errorMessage, alert,
-      OpenTab,CloseTab,
-      goToRoom, checkPassword, closeModal,
+      OpenTab,CloseTab, goToRoom, checkPassword, closeModal,
     }
   }
 }
@@ -200,7 +185,6 @@ export default {
 .row {
   display: flex;
   justify-content: space-between;
-  /* width: 1150px; */
 }
 
 .host-container {
@@ -223,12 +207,11 @@ export default {
   background-color: #75b3b4;
 }
 
-/* host 옷장 style */
+/* host 옷장 */
 .host-closet {
   width: 543px;
   height: 595px;
   background-color: #FDFAF3;
-  /* left: 582px; */
   z-index: 0;
   position: relative;
   border-radius: 16px;
@@ -261,12 +244,8 @@ export default {
 
 i {
   font-size: 70px;
-  color: #1B4D50;
+  color: #ad1d4e;
   margin-top: 0;
-  /*  */
-  /* width: 400px;
-  margin-left: 43px;
-  margin-top: 15px; */
 }
 
 .modal-body {
@@ -288,13 +267,6 @@ i {
 }
 
 .modal-body button {
-  /* width: 100px;
-  margin: 25px 10px 15px;
-  border: 3px solid #FDFAF3;
-  border-radius: 10px;
-  font-weight: bold;
-  color: #FDFAF3; */
-  /*  */
   width: 100px;
   margin: 25px 10px 20px;
   border-radius: 10px;
@@ -305,7 +277,6 @@ i {
 .modal-body button:hover {
   color: white;
   background-color: #898b8f;
-  /* border: 3px solid #1B4D50; */
 }
 
 .error-message {
@@ -354,7 +325,7 @@ i {
   z-index: 2;
 }
 
-.btn-close {
+.friend-close {
   width: 30px;
   height: 30px;
   border-radius: 25px;

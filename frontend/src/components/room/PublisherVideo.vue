@@ -54,15 +54,16 @@ p {
   display: inline-block;
 	padding-left: 5px;
 	padding-right: 5px;
-	color: black;
-	font-weight: bold;
-	border-bottom-left-radius: 10px;
+  background-color: rgba(211, 211, 211, 0.767);
+	color: white;
+	/* font-weight: bold; */
+	/* border-bottom-left-radius: 10px; */
   position: absolute;
   /* font-size: 16px; */
-  font-size: 1.6vh;
-
+  font-size: 1.4vh;
+  
   left: 50%;
-  bottom: -23px;
+  bottom: -19px;
   transform: translate(-50%, -50%);  
 }
 
