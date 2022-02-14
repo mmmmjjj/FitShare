@@ -9,14 +9,15 @@ import java.time.LocalDateTime;
 @ApiModel("ChatResponse")
 @Getter
 @Setter
+@NoArgsConstructor
 @AllArgsConstructor
 public class PrivateChatRes {
 
-    @ApiModelProperty(name = "메시지를 보낸 사람")
-    private BaseMemberRes sender;
+    @ApiModelProperty(name = "메시지를 보낸 사람 고유 Id", example = "1")
+    private Long senderId;
 
-    @ApiModelProperty(name = "메시지를 받은 사람")
-    private BaseMemberRes receiver;
+    @ApiModelProperty(name = "메시지를 받은 사람 고유 Id", example = "2")
+    private Long receiverId;
 
     @ApiModelProperty(name = "메시지 내용", example = "hello")
     private String message;

@@ -39,4 +39,8 @@ public class ResponseMessage {
     public static final String ADD_FRIEND_REQUEST = "친구 요청 성공입니다.";
     public static final String GET_FRIEND_REQUEST_LIST = "친구 요청 목록 조회 성공입니다.";
     public static final String DELETE_FRIEND_REQUEST = "친구 요청 삭제 성공입니다.";
+
+    // Chat
+    public static final String GET_CHAT_LIST = "채팅 목록 조회 성공입니다.";
+    public static final String CHECK_CHAT = "채팅 읽음여부 업데이트 성공입니다.";
 }

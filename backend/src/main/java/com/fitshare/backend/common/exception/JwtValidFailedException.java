@@ -6,7 +6,7 @@ public class JwtValidFailedException extends RuntimeException {
         super("토큰 생성을 실패했습니다.");
     }
 
-    private JwtValidFailedException(String message) {
+    public JwtValidFailedException(String message) {
         super(message);
     }
 }

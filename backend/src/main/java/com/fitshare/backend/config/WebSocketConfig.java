@@ -1,6 +1,7 @@
 package com.fitshare.backend.config;
 
 import com.fitshare.backend.common.auth.JwtTokenProvider;
+import com.fitshare.backend.common.exception.JwtValidFailedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -62,6 +63,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                         Authentication authentication = tokenProvider.getAuthentication(token);
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                         accessor.setUser(authentication);
+                    } else {
+                        throw new JwtValidFailedException("Token invalid");
                     }
                 }
 

@@ -7,6 +7,6 @@ import lombok.Setter;
 @Setter
 public class PrivateChatReq extends ChatReq {
 
-    private Long receiverId;
+    private String receiverId;
 
 }

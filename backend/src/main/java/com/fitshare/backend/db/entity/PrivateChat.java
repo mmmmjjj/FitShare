@@ -1,14 +1,16 @@
 package com.fitshare.backend.db.entity;
 
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
 @NoArgsConstructor
 @Table(name = "private_chat")
-public class PrivateChat extends CreatedTimeEntity {
+public class PrivateChat {
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,11 +30,17 @@ public class PrivateChat extends CreatedTimeEntity {
         @Column
         private Boolean isChecked;
 
+        @Column
+        @CreatedDate
+        private LocalDateTime createdTime;
+
         @Builder
-        public PrivateChat(Member sender, Member receiver, String message) {
+        public PrivateChat(Member sender, Member receiver, String message, LocalDateTime createdTime) {
                 this.sender = sender;
                 this.receiver = receiver;
                 this.message = message;
                 this.isChecked = false;
+                this.createdTime = createdTime;
         }
+
 }

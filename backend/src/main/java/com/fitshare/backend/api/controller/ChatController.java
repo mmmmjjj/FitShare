@@ -26,8 +26,8 @@ public class ChatController {
     // 개인 메시지 전송
     @MessageMapping("/messages")
     public void sendPrivateMessage(Principal principal, PrivateChatReq privateChatReq) {
-        chatService.addPrivateChat(Long.valueOf(principal.getName()), privateChatReq);
-        messagingTemplate.convertAndSendToUser(String.valueOf(privateChatReq.getReceiverId()), "/queue/messages", privateChatReq);
+        chatService.addPrivateChatInRedis(Long.valueOf(principal.getName()), privateChatReq);
+        messagingTemplate.convertAndSendToUser(privateChatReq.getReceiverId(), "/queue/messages", privateChatReq);
     }
 
 }
