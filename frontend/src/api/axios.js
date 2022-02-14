@@ -39,6 +39,7 @@ http.interceptors.response.use((response) => response, async (error) => {
       return axios(originalRequest)
     }
   }
+  throw error
 })
   
 export default http;
