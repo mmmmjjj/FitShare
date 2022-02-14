@@ -1,12 +1,12 @@
 package com.fitshare.backend.api.service;
 
-import com.fitshare.backend.api.response.PrivateChatRes;
 import com.fitshare.backend.db.entity.PrivateChat;
 import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Service;
 
-import java.time.*;
-import java.util.*;
+import java.time.Duration;
+import java.time.LocalTime;
+import java.util.Map;
 
 @Service
 public class RedisServiceImpl implements RedisService {
@@ -25,63 +25,39 @@ public class RedisServiceImpl implements RedisService {
     }
 
     // 키-벨류 설정
+    @Override
     public void setData(String key, Object value) {
         if (value instanceof String) {
             valueOperations.set(key, value, Duration.ofSeconds(EXPIRE_TIME));
         } else if (value instanceof Long) {
             setOperations.add(key, String.valueOf(value));
         } else if (value instanceof PrivateChat) {
-            // key : chat_senderId_receiverId_createdTime
+            // key : chat_senderId_receiverId
             PrivateChat privateChat = (PrivateChat) value;
-            hashOperations.put(key, "sender_id", String.valueOf(privateChat.getSender().getId()));
-            hashOperations.put(key, "receiver_id", String.valueOf(privateChat.getReceiver().getId()));
-            hashOperations.put(key, "message", privateChat.getMessage());
-            hashOperations.put(key, "created_time", String.valueOf(privateChat.getCreatedTime()));
+            hashOperations.put(key, String.valueOf(privateChat.getCreatedTime()), privateChat.getMessage());
 
             String shadowKey = "shadowkey:" + key;
-            valueOperations.set(shadowKey, "", getSecondsUntilTomorrow());
+            if (redisTemplate.getExpire(shadowKey) <= 0) {
+                valueOperations.set(shadowKey, "", getSecondsUntilTomorrow());
+            }
         }
     }
 
     // 키값으로 벨류 가져오기
+    @Override
     public Object getData(String key) {
         return valueOperations.get(key);
     }
 
-    // 키값으로 hash 벨류 가져오기
-    public Object getHashData(String key, String hashKey) {
-        return hashOperations.get(key, hashKey);
-    }
-
-    // 와일드카드 키값으로 hash 벨류 리스트 가져오기
-    public List<?> getHashDataList(String keyPattern) {
-        Set<String> keys = redisTemplate.keys(keyPattern);
-        List<PrivateChatRes> values = new ArrayList<>();
-
-        if (keyPattern.startsWith("chat_")) {
-            for (String key : keys) {
-                PrivateChatRes privateChatRes = new PrivateChatRes();
-
-                String temp = (String) getHashData(key, "sender_id");
-                privateChatRes.setSenderId(Long.valueOf(temp));
-
-                temp = (String) getHashData(key, "receiver_id");
-                privateChatRes.setReceiverId(Long.valueOf(temp));
-
-                temp = (String) getHashData(key, "message");
-                privateChatRes.setMessage(temp);
-
-                temp = (String) getHashData(key, "created_time");
-                privateChatRes.setCreatedTime(LocalDateTime.parse(temp));
-
-                values.add(privateChatRes);
-            }
-        }
-
-        return values;
+    // 키값으로 hashkey, value HashMap 가져오기
+    @Override
+    public Map<?, ?> getEntries(String key) {
+        Map<?, ?> entries = hashOperations.entries(key);
+        return entries;
     }
 
     // 키-벨류 삭제
+    @Override
     public void delData(String key) {
         redisTemplate.delete(key);
     }

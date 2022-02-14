@@ -1,6 +1,6 @@
 package com.fitshare.backend.api.service;
 
-import java.util.List;
+import java.util.Map;
 
 public interface RedisService {
 
@@ -8,9 +8,7 @@ public interface RedisService {
 
     Object getData(String key);
 
-    Object getHashData(String key, String sender_id);
-
-    List<?> getHashDataList(String key);
+    Map<?, ?> getEntries(String key);
 
     void delData(String key);
 

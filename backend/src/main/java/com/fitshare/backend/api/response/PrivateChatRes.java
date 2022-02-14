@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @ApiModel("ChatResponse")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class PrivateChatRes {

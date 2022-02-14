@@ -35,7 +35,7 @@ public class ChatRestController {
     @PatchMapping(value = "/check")
     public ResponseEntity<BaseResponseBody> checkChat(@RequestBody FriendReq friendReq) {
         Long memberId = JwtUtil.getCurrentId().orElseThrow(() -> new AccessDeniedException("Access denied"));
-        chatService.checkChat(memberId, friendReq.getFriendId());
+        chatService.checkChatList(memberId, friendReq.getFriendId());
         return ResponseEntity.ok(BaseResponseBody.of(HttpStatus.OK, CHECK_CHAT));
     }
 
