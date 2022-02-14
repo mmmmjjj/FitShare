@@ -18,10 +18,10 @@
         <span id="span">간편 로그인</span><br />
 
         <div id="imageButton">
-          
           <div id="kakao">
             <a
-              href="https://kauth.kakao.com/oauth/authorize?client_id=9596c9c79f92bc2d9fbdeacfee238961&redirect_uri=http://localhost:8080/callback&response_type=code">
+              href="https://kauth.kakao.com/oauth/authorize?client_id=9596c9c79f92bc2d9fbdeacfee238961&redirect_uri=http://localhost:8080/callback&response_type=code"
+            >
               <img
                 src="//k.kakaocdn.net/14/dn/btqCn0WEmI3/nijroPfbpCa4at5EIsjyf0/o.jpg"
                 alt="kakao_login_image"
@@ -31,14 +31,14 @@
         </div>
 
         <div id="naver">
-
-          <a href="https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=skkqxLCLHDQrwOlhytTS&redirect_uri=https://i6a405.p.ssafy.io/callback&state=1234">
+          <a
+            href="https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=skkqxLCLHDQrwOlhytTS&redirect_uri=https://i6a405.p.ssafy.io/callback&state=1234"
+          >
             <img
               src="https://static.nid.naver.com/oauth/big_g.PNG?version=js-2.0.0"
               alt="naver_login_image"
             />
           </a>
-          
         </div>
       </div>
     </div>
@@ -46,9 +46,15 @@
 </template>
 
 <script>
+import { useStore } from "vuex";
+import { useCookies } from "vue3-cookies";
 export default {
   name: "Login",
   setup() {
+    const store = useStore();
+    const { cookies } = useCookies();
+    store.dispatch("user/initUser");
+    cookies.remove("accessToken");
   },
 };
 </script>
@@ -87,7 +93,7 @@ export default {
   font-size: 24px;
   font-weight: bold;
 }
-#kakao{
+#kakao {
   margin-bottom: 10px;
 }
 #logo {

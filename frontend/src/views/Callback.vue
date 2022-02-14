@@ -43,7 +43,7 @@ export default {
     const getKakaoAccount = async (kakaoToken) => {
       let path = "https://i6a405.p.ssafy.io/api/v1/auth/kakao/login";
       await axios
-        .get(path,{
+        .get(path, {
           params: {
             accessToken: kakaoToken,
           },
@@ -63,7 +63,7 @@ export default {
         })
         .catch((error) => {
           console.log(error);
-        }); 
+        });
     };
 
     /* 네이버 로그인 요청  */
@@ -85,6 +85,7 @@ export default {
               root: true,
             });
             store.dispatch("user/setRefreshToken", res.data.data.refreshToken);
+            store.dispatch("user/setIsLogin", true);
             movePage();
           }
         })
@@ -96,9 +97,9 @@ export default {
     /* 카카오 액세스 토큰 요청  */
     const getKakakoToken = async (kakaoCode) => {
       let path = `https://i6a405.p.ssafy.io/api/v1/auth/kakao/token?code=${kakaoCode}`;
-      
+
       await axios
-      // await http
+        // await http
         .get(path)
         .then((res) => {
           if (res.data.statusCode === 200) {
