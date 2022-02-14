@@ -1,13 +1,21 @@
-<template> 
+<template>
   <div id="session">
     <div id="session" v-if="session">
       <!-- 컴포넌트 -->
       <div class="components-container">
         <!-- 화상화면 -->
         <div id="video-container">
-          <publisher-video :stream-manager="publisher" :loading="pub" @click="updateMainVideoStreamManager(publisher)"/>
-          <subscriber-video v-for="(subscriber, index) in subscribers" :key="subscriber.stream.connection.connectionId"
-            :stream-manager="subscriber" :loading="sub" :subscriber="index"
+          <publisher-video
+            :stream-manager="publisher"
+            :loading="pub"
+            @click="updateMainVideoStreamManager(publisher)"
+          />
+          <subscriber-video
+            v-for="(subscriber, index) in subscribers"
+            :key="subscriber.stream.connection.connectionId"
+            :stream-manager="subscriber"
+            :loading="sub"
+            :subscriber="index"
             @click="updateMainVideoStreamManager(subscriber)"
           />
         </div>
@@ -15,314 +23,371 @@
           <div class="viewer">
             <!-- <group-chat class="group-chat"></group-chat> -->
             <!-- 메인 화면 -->
-            <main-video id="main-video" v-if="showMainVideo" :stream-manager="mainStreamManager"/>
+            <main-video id="main-video" v-if="showMainVideo" :stream-manager="mainStreamManager" />
             <!-- 쇼핑사이트 -->
-            <shopping-site v-show="!showMainVideo" :shopping-mall-url="shoppingMallUrl" class="shopping-site"></shopping-site>
+            <shopping-site
+              v-show="!showMainVideo"
+              :shopping-mall-url="shoppingMallUrl"
+              class="shopping-site"
+            ></shopping-site>
             <!-- 옷장 접기 -->
             <details>
               <summary>
                 <i class="bi bi-arrow-bar-left" v-if="clickStatus" @click="changeClickStatus"></i>
                 <i class="bi bi-arrow-bar-right closeIcon" v-if="clickStatus === false" @click="changeClickStatus"></i>
               </summary>
-              <closet :subscribers="subscribers" :my-session-id="mySessionId" :publisher="publisher" @fitting="overlayFilter" class="closet"></closet>
+              <closet
+                :subscribers="subscribers"
+                :my-session-id="mySessionId"
+                :publisher="publisher"
+                @fitting="overlayFilter"
+                class="closet"
+              ></closet>
             </details>
           </div>
           <!-- 버튼 -->
           <div class="buttons" :class="!clickStatus ? 'buttons-center' : ''">
             <!-- 가상피팅화면 종료 -->
             <button v-if="showMainVideo" class="btn shadow-none stop-fitting-btn" @click="backToSite">
-              <i class="fas fa-arrow-left"></i><p>피팅 종료하기</p>
+              <i class="fas fa-arrow-left"></i>
+              <p>피팅 종료하기</p>
             </button>
             <!-- 기본 기능 -->
-            <button v-if="isAudio" class="btn shadow-none" @click="changeAudio()"><i class="bi bi-mic-mute-fill"></i></button>
-            <button v-if="!isAudio" class="btn shadow-none" @click="changeAudio()"><i class="bi bi-mic-fill"></i></button>
-            <button v-if="isVideo" class="btn shadow-none" @click="changeVideo()"><i class="bi bi-camera-video-off-fill"></i></button>
-            <button v-if="!isVideo" class="btn shadow-none" @click="changeVideo()"><i class="bi bi-camera-video-fill"></i></button>
-            <input class="btn shadow-none" type="button" id="buttonLeaveSession" @click="leaveSession" value="나가기">
+            <button v-if="isAudio" class="btn shadow-none" @click="changeAudio()">
+              <i class="bi bi-mic-mute-fill"></i>
+            </button>
+            <button v-if="!isAudio" class="btn shadow-none" @click="changeAudio()">
+              <i class="bi bi-mic-fill"></i>
+            </button>
+            <button v-if="isVideo" class="btn shadow-none" @click="changeVideo()">
+              <i class="bi bi-camera-video-off-fill"></i>
+            </button>
+            <button v-if="!isVideo" class="btn shadow-none" @click="changeVideo()">
+              <i class="bi bi-camera-video-fill"></i>
+            </button>
+            <input
+              class="btn shadow-none"
+              type="button"
+              id="buttonLeaveSession"
+              data-bs-toggle="modal"
+              data-bs-target="#leaveSessionConfirm"
+              value="나가기"
+            />
+            <div class="modal fade" id="leaveSessionConfirm">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">쇼핑룸 종료</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p>쇼핑룸을 나가시겠습니까?</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @click="leaveSession">
+                      나가기
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
             <!-- 필터 change -->
             <div v-if="isFitting && showMainVideo" class="radio-box">
               <div @click="changeFilter('top')">
-                <input class="form-check-input" type="radio" name="flexRadioDefault" checked="checked" id="top">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" checked="checked" id="top" />
                 <label class="form-check-label" for="top">상의</label>
               </div>
               <div @click="changeFilter('bottoms')">
-                <input class="form-check-input" type="radio" name="flexRadioDefault" id="bottom">
-                <label class="form-check-label" for="bottom" >하의</label>
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="bottom" />
+                <label class="form-check-label" for="bottom">하의</label>
               </div>
               <div @click="changeFilter('hat')">
-                <input class="form-check-input" type="radio" name="flexRadioDefault" id="hat">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="hat" />
                 <label class="form-check-label" for="hat">모자</label>
               </div>
             </div>
           </div>
         </div>
-
       </div>
-		</div>
+    </div>
   </div>
 </template>
 
 <script>
-import { reactive, toRefs, ref, computed, watch } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { useStore } from 'vuex';
-import { OpenVidu } from 'openvidu-browser';
-import axios from '../api/axios';
-import PublisherVideo from '@/components/room/PublisherVideo.vue';
-import SubscriberVideo from '@/components/room/SubscriberVideo.vue';
-import MainVideo from '@/components/room/MainVideo.vue';
-import ShoppingSite from '@/components/room/ShoppingSite.vue';
-import Closet from '@/components/room/Closet.vue';
+import { reactive, toRefs, ref, computed, watch } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useStore } from "vuex";
+import { OpenVidu } from "openvidu-browser";
+import axios from "../api/axios";
+import PublisherVideo from "@/components/room/PublisherVideo.vue";
+import SubscriberVideo from "@/components/room/SubscriberVideo.vue";
+import MainVideo from "@/components/room/MainVideo.vue";
+import ShoppingSite from "@/components/room/ShoppingSite.vue";
+import Closet from "@/components/room/Closet.vue";
 // import GroupChat from '@/components/room/GroupChat.vue';
 
 export default {
-    name: 'ShoppingRoom',
-    components: {
-      PublisherVideo, SubscriberVideo, MainVideo, ShoppingSite, Closet, 
-    },
+  name: "ShoppingRoom",
+  components: {
+    PublisherVideo,
+    SubscriberVideo,
+    MainVideo,
+    ShoppingSite,
+    Closet,
+  },
 
-    setup () {
-        const router = useRouter();
-        const route = useRoute();
-        const store = useStore();
-        
-        let clothesUrl = ref('');
-        let isFitting = ref(false);
-        let showMainVideo = ref(false) ; // fitting 비디오 
+  setup() {
+    const router = useRouter();
+    const route = useRoute();
+    const store = useStore();
 
-        const loading = reactive({
-          pub: true,
-          sub: [],
+    let clothesUrl = ref("");
+    let isFitting = ref(false);
+    let showMainVideo = ref(false); // fitting 비디오
+
+    const loading = reactive({
+      pub: true,
+      sub: [],
+    });
+    const state = reactive({
+      OV: undefined,
+      session: undefined,
+      mainStreamManager: undefined,
+      publisher: undefined,
+      subscribers: [],
+
+      mySessionId: "",
+      myUserName: "",
+      shoppingMallUrl: "",
+      hostId: null,
+      isAudio: false,
+      isVideo: false,
+
+      clickStatus: true,
+    });
+
+    const changeClickStatus = () => {
+      state.clickStatus = !state.clickStatus;
+    };
+
+    const userData = computed(() => {
+      return store.getters["user/userData"];
+    });
+
+    // methods
+    const goToMain = () => {
+      router.push({ name: "Main" });
+    };
+
+    const changeAudio = () => {
+      state.publisher.publishAudio(state.isAudio);
+      let audio = state.isAudio ? false : true;
+      state.isAudio = audio;
+    };
+
+    const changeVideo = () => {
+      state.publisher.publishVideo(state.isVideo);
+      let video = state.isVideo ? false : true;
+      state.isVideo = video;
+    };
+
+    // 입어보기 버튼의 filter 적용
+    const overlayFilter = (url) => {
+      clothesUrl.value = url;
+      if (isFitting.value) removeFilter();
+
+      state.publisher.stream
+        .applyFilter("FaceOverlayFilter")
+        .then((filter) => {
+          filter.execMethod("setOverlayedImage", {
+            uri: clothesUrl.value,
+            offsetXPercent: "-1.5F",
+            offsetYPercent: "0.6F",
+            widthPercent: "4.0F",
+            heightPercent: "4.0F",
+          });
         })
-        const state = reactive({
-          OV: undefined,
-          session: undefined,
-          mainStreamManager: undefined,
-          publisher: undefined,  
-          subscribers: [], 
+        .then(() => {
+          state.mainStreamManager = state.publisher;
+          isFitting.value = true;
+          showMainVideo.value = true;
+        })
+        .catch((err) => console.log(err));
+    };
 
-          mySessionId: '',
-          myUserName: '',  
-          shoppingMallUrl: '',
-          hostId: null,
-          isAudio: false,
-          isVideo: false,
-
-          clickStatus: true
-        });
-
-        const changeClickStatus = () => {
-          state.clickStatus = !state.clickStatus;
-        }
-        
-        const userData = computed(() => {
-          return store.getters['user/userData']
-        });
-
-        // methods        
-        const goToMain = () => {
-          router.push({ name: 'Main' });
-        };
-        
-        const changeAudio = () => {
-          state.publisher.publishAudio(state.isAudio);
-          let audio = (state.isAudio) ? false : true ;
-          state.isAudio = audio;
-        };
-
-        const changeVideo = () => {
-          state.publisher.publishVideo(state.isVideo);
-          let video = (state.isVideo) ? false : true ;
-          state.isVideo = video;
-        };
-
-        // 입어보기 버튼의 filter 적용
-        const overlayFilter = (url) => {
-          clothesUrl.value = url
-          if (isFitting.value) removeFilter();
-          
-          state.publisher.stream.applyFilter("FaceOverlayFilter")
-            .then(filter => {
-                filter.execMethod(
-                    "setOverlayedImage",
-                    {
-                        "uri": clothesUrl.value,
-                        "offsetXPercent":"-1.5F",
-                        "offsetYPercent":"0.6F",
-                        "widthPercent":"4.0F",
-                        "heightPercent":"4.0F"
-                    });
-            })
-            .then(() => {
-              state.mainStreamManager = state.publisher;
-              isFitting.value = true
-              showMainVideo.value = true
-            })
-            .catch(err => console.log(err));
-        };
-
-        const changeFilter = (type) => {
-          removeFilter()
-          state.publisher.stream.applyFilter("FaceOverlayFilter")
-            .then(filter => {
-                if (type == 'top') {
-                  filter.execMethod(
-                    "setOverlayedImage",
-                    {
-                        "uri": clothesUrl.value,
-                        "offsetXPercent":"-1.5F",
-                        "offsetYPercent":"0.6F",
-                        "widthPercent":"4.0F",
-                        "heightPercent":"4.2F"
-                     });
-                } else if (type == 'bottoms') {
-                  filter.execMethod(
-                    "setOverlayedImage",
-                    {
-                        "uri": clothesUrl.value,
-                        "offsetXPercent":"-1.6F",
-                        "offsetYPercent":"3.2F",
-                        "widthPercent":"4.3F",
-                        "heightPercent":"4.0F"
-                     });
-                } else {
-                  filter.execMethod(
-                    "setOverlayedImage",
-                    {
-                        "uri": clothesUrl.value,
-                        "offsetXPercent":"-0.2F",
-                        "offsetYPercent":"-0.7F",
-                        "widthPercent":"1.3F",
-                        "heightPercent":"1.1F"
-                     });
-                } 
-            })
-            .then(() => {
-              isFitting.value = true
-              state.mainStreamManager = state.publisher;
-            })
-        };
-
-        // filter 제거 
-        const removeFilter = () => {
-          state.publisher.stream.removeFilter()
-            .then(() => console.log("Filter removed"))
-            .catch(err => console.error(err));
-        };
-
-        // 쇼핑사이트로 전환
-        const backToSite = () => {
-          if (isFitting.value) removeFilter();
-          isFitting.value = false;
-          showMainVideo.value = false;
-        };
-
-        // openvidu session 생성 method
-        const joinSession = () => {
-          state.OV = new OpenVidu();
-          state.session = state.OV.initSession();
-
-          state.session.on('streamCreated', ({ stream }) => {
-            const subscriber = state.session.subscribe(stream);
-            state.subscribers.push(subscriber);
-            loading.sub.push(true)
-            
-            // video 실행시 로딩 스피너 제거 
-            subscriber.on('streamPlaying', () => {
-              const index = state.subscribers.indexOf(stream.streamManager, 0);
-              loading.sub[index] = false
-            })
-          });
-
-          // stream 제거시 => subscribers, 로딩 index 제거  
-          state.session.on('streamDestroyed', ({ stream }) => {
-            const index = state.subscribers.indexOf(stream.streamManager, 0);
-            if (index >= 0) {
-              state.subscribers.splice(index, 1);
-              loading.sub.splice(index, 1);
-            }
-          });
-
-          state.session.on('exception', ({ exception }) => {
-            console.warn(exception);
-          });
-          
-          // session 연결
-          state.session.connect(route.params.token, { clientData: state.myUserName })
-            .then(() => {
-              let publisher = state.OV.initPublisher(undefined, {
-                audioSource: undefined, 
-                videoSource: undefined,
-                publishAudio: true,  	
-                publishVideo: true,  	
-                resolution: '640x480',  
-                frameRate: 30,			
-                insertMode: 'APPEND',	
-                mirror: false,
-              });
-              
-              publisher.subscribeToRemote();
-              state.mainStreamManager = publisher;
-              state.publisher = publisher;
-              state.session.publish(publisher);
-
-              publisher.on('streamPlaying', function () {
-                loading.pub = false
-              })
-            })
-            .catch(error => {
-                console.log('There was an error connecting to the session:', error.code, error.message);
+    const changeFilter = (type) => {
+      removeFilter();
+      state.publisher.stream
+        .applyFilter("FaceOverlayFilter")
+        .then((filter) => {
+          if (type == "top") {
+            filter.execMethod("setOverlayedImage", {
+              uri: clothesUrl.value,
+              offsetXPercent: "-1.5F",
+              offsetYPercent: "0.6F",
+              widthPercent: "4.0F",
+              heightPercent: "4.2F",
             });
-
-          window.addEventListener('beforeunload', leaveSession);
-        }
-
-        // 화상화면 클릭시 메인 화면 전환
-        const updateMainVideoStreamManager = (stream) => {   
-          state.mainStreamManager = stream;
-          if (!showMainVideo.value) showMainVideo.value = true;
-        }
-
-        const leaveSession = () => {
-          if (state.session) state.session.disconnect();
-          state.session = undefined;
-          state.mainStreamManager = undefined;
-          state.publisher = undefined;
-          state.subscribers = [];
-          state.OV = undefined;
-
-          window.removeEventListener('beforeunload', leaveSession);
-
-          axios.post(`shopping-rooms/${state.mySessionId}`)
-            .then(() => goToMain())
-            .catch(err => console.log(err));
-        }
-
-        watch(state.subscribers, () => {
-          const userId = store.state.user.user_id
-          if (state.hostId == userId) {
-            return;
+          } else if (type == "bottoms") {
+            filter.execMethod("setOverlayedImage", {
+              uri: clothesUrl.value,
+              offsetXPercent: "-1.6F",
+              offsetYPercent: "3.2F",
+              widthPercent: "4.3F",
+              heightPercent: "4.0F",
+            });
           } else {
-            if (state.subscribers.length == 0) goToMain();
+            filter.execMethod("setOverlayedImage", {
+              uri: clothesUrl.value,
+              offsetXPercent: "-0.2F",
+              offsetYPercent: "-0.7F",
+              widthPercent: "1.3F",
+              heightPercent: "1.1F",
+            });
           }
-        }) 
+        })
+        .then(() => {
+          isFitting.value = true;
+          state.mainStreamManager = state.publisher;
+        });
+    };
 
-        // created 
-        state.mySessionId = route.params.roomId  
-        state.shoppingMallUrl = route.params.mallUrl 
-        state.myUserName = userData
-        state.hostId = route.params.hostId
-        
-        joinSession() 
+    // filter 제거
+    const removeFilter = () => {
+      state.publisher.stream
+        .removeFilter()
+        .then(() => console.log("Filter removed"))
+        .catch((err) => console.error(err));
+    };
 
-        return { 
-          goToMain, changeAudio, changeVideo, overlayFilter, changeFilter, removeFilter, backToSite,
-          joinSession, leaveSession, updateMainVideoStreamManager,
-          ...toRefs(state), ...toRefs(loading), isFitting, showMainVideo, clothesUrl, changeClickStatus,
+    // 쇼핑사이트로 전환
+    const backToSite = () => {
+      if (isFitting.value) removeFilter();
+      isFitting.value = false;
+      showMainVideo.value = false;
+    };
+
+    // openvidu session 생성 method
+    const joinSession = () => {
+      state.OV = new OpenVidu();
+      state.session = state.OV.initSession();
+
+      state.session.on("streamCreated", ({ stream }) => {
+        const subscriber = state.session.subscribe(stream);
+        state.subscribers.push(subscriber);
+        loading.sub.push(true);
+
+        // video 실행시 로딩 스피너 제거
+        subscriber.on("streamPlaying", () => {
+          const index = state.subscribers.indexOf(stream.streamManager, 0);
+          loading.sub[index] = false;
+        });
+      });
+
+      // stream 제거시 => subscribers, 로딩 index 제거
+      state.session.on("streamDestroyed", ({ stream }) => {
+        const index = state.subscribers.indexOf(stream.streamManager, 0);
+        if (index >= 0) {
+          state.subscribers.splice(index, 1);
+          loading.sub.splice(index, 1);
         }
-    }
+      });
 
-}
+      state.session.on("exception", ({ exception }) => {
+        console.warn(exception);
+      });
+
+      // session 연결
+      state.session
+        .connect(route.params.token, { clientData: state.myUserName })
+        .then(() => {
+          let publisher = state.OV.initPublisher(undefined, {
+            audioSource: undefined,
+            videoSource: undefined,
+            publishAudio: true,
+            publishVideo: true,
+            resolution: "640x480",
+            frameRate: 30,
+            insertMode: "APPEND",
+            mirror: false,
+          });
+
+          publisher.subscribeToRemote();
+          state.mainStreamManager = publisher;
+          state.publisher = publisher;
+          state.session.publish(publisher);
+
+          publisher.on("streamPlaying", function () {
+            loading.pub = false;
+          });
+        })
+        .catch((error) => {
+          console.log("There was an error connecting to the session:", error.code, error.message);
+        });
+
+      window.addEventListener("beforeunload", leaveSession);
+    };
+
+    // 화상화면 클릭시 메인 화면 전환
+    const updateMainVideoStreamManager = (stream) => {
+      state.mainStreamManager = stream;
+      if (!showMainVideo.value) showMainVideo.value = true;
+    };
+
+    const leaveSession = () => {
+      if (state.session) state.session.disconnect();
+      state.session = undefined;
+      state.mainStreamManager = undefined;
+      state.publisher = undefined;
+      state.subscribers = [];
+      state.OV = undefined;
+
+      window.removeEventListener("beforeunload", leaveSession);
+
+      axios
+        .post(`shopping-rooms/${state.mySessionId}`)
+        .then(() => goToMain())
+        .catch((err) => console.log(err));
+    };
+
+    watch(state.subscribers, () => {
+      const userId = store.state.user.user_id;
+      if (state.hostId == userId) {
+        return;
+      } else {
+        if (state.subscribers.length == 0) goToMain();
+      }
+    });
+
+    // created
+    state.mySessionId = route.params.roomId;
+    state.shoppingMallUrl = route.params.mallUrl;
+    state.myUserName = userData;
+    state.hostId = route.params.hostId;
+
+    joinSession();
+
+    return {
+      goToMain,
+      changeAudio,
+      changeVideo,
+      overlayFilter,
+      changeFilter,
+      removeFilter,
+      backToSite,
+      joinSession,
+      leaveSession,
+      updateMainVideoStreamManager,
+      ...toRefs(state),
+      ...toRefs(loading),
+      isFitting,
+      showMainVideo,
+      clothesUrl,
+      changeClickStatus,
+    };
+  },
+};
 </script>
 
 <style scoped>
@@ -331,11 +396,11 @@ export default {
   top: 0px;
   width: 859px;
   height: 790px;
-  background-color: #D3E2E7;
+  background-color: #d3e2e7;
 }
 
 #session {
-  background-color: #D3E2E7;
+  background-color: #d3e2e7;
 }
 
 #video-container {
@@ -343,7 +408,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: #8ABDBE;
+  background-color: #8abdbe;
   /* height: 91vh; */
   width: 220px;
   height: 100vh;
@@ -367,7 +432,8 @@ export default {
   width: 100%;
 }
 
-.group-chat, .closet {
+.group-chat,
+.closet {
   min-width: 290px;
   width: 29vh;
   height: 91vh;
@@ -426,7 +492,7 @@ p {
   margin-top: 3px;
 }
 
-.buttons .btn {  
+.buttons .btn {
   margin: 0 5px 0;
   cursor: pointer;
 }
