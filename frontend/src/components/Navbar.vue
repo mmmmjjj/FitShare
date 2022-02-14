@@ -1,12 +1,12 @@
 <template>
-  <nav class="nav">
+  <nav class="navbar">
     <img @click="goToMain" src="@/assets/logo.png" alt="Fit Share Logo">
     <div class="nav-end">
       <div class="create" @click="goToCreate">쇼핑룸 생성</div>
+      <div class="username">{{ userName }}님</div>
       <img @click="!isVisible ? isVisible=true : isVisible=false" :src="profileImage" alt="profile image">
       <div class="dropdown" v-if="isVisible">
-        <p>마이 프로필</p>
-        <p @click="logout">Logout</p>
+        <p @click="logout">로그아웃</p>
       </div>
     </div>
   </nav>
@@ -29,6 +29,10 @@ export default {
         return store.state.user.user_profileURI
       });
 
+      const userName = computed(() => {
+        return store.state.user.user_name
+      })
+
       const goToMain = () => {
         router.push({ name: 'Main' }) 
       };
@@ -43,7 +47,7 @@ export default {
       }
 
       return {
-        isVisible, profileImage, goToMain, goToCreate, logout
+        isVisible, profileImage, userName, goToMain, goToCreate, logout
       }
     }
 }
@@ -52,15 +56,17 @@ export default {
 <style scoped>
 nav {
   height: 60px;
-  border-bottom: 3px solid #8ABDBE;
   justify-content: space-between;
+  align-items: center;
   padding-top: 3px;
+  border-bottom: 3px solid #8ABDBE;
+  background-color: #1B4D50;
 }
 
 nav > img {
   width: 190px;
   height: 45px;
-  margin: 3px 0 0 40px;
+  margin-left: 40px;
   cursor: pointer;
 }
 
@@ -72,15 +78,30 @@ nav > img {
 
 .create {
   font-weight: bold;
-  font-size: 20px;
-  color: rgb(66, 65, 65);
+  font-size: 18px;
+  color: #1B4D50;
   cursor: pointer;
+  background-color: #fdfaf3b9;
+  border-radius: 10px;
+  width: 120px;
+  height: 42px;
+  line-height: 42px;
+  text-align: center;
+  margin-top: 6px;
+}
+
+.username {
+  color: #f5ead2;
+  font-weight: bold;
+  height: 42px;
+  line-height: 57px;
+  margin-left: 40px;
 }
 
 .nav-end img {
   border: 2px solid #EDEEF2;
   border-radius: 16px;
-  margin: 2px 45px 0 60px;
+  margin: 2px 45px 0 20px;
   width: 50px;
   height: 50px;
   cursor: pointer;
@@ -91,7 +112,7 @@ nav > img {
   top: 62px;
   right: 10px;
   width: 120px;
-  height: 90px;
+  height: 51px;
   font-size: 16px;
   background-color: rgba(255, 255, 255, 0.658);
   border: 1px solid lightgray;
@@ -99,20 +120,7 @@ nav > img {
   box-shadow: 3px 3px 3px rgb(207, 206, 206)
 }
 
-/* .dropdown:after{
-  content: '';
-  position: absolute;
-  border-style: solid;
-  border-width: 0 11px 15px;
-  border-color: #ffffff93 transparent;
-  display: block;
-  width: 0;
-  z-index: 1;
-  top: -8px;
-  left: 47px;
-} */
-
-p { 
+.dropdown p { 
   height: 45px;
   margin-bottom: 0px;
   text-align: center;
@@ -120,7 +128,7 @@ p {
   line-height: 45px;
 }
 
-p:hover {
+.dropdown p:hover {
   color: #81b5b6;
 }
 
