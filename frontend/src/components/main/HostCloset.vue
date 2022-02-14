@@ -4,7 +4,7 @@
       {{ selectedShoppingRoom.hostName }}님의 옷장
     </h2>
     <h2 v-else class="host-name fw-bold">옷장</h2>
-    <host-closet-item v-if="selectedShoppingRoom" :host-clothes="hostClothes" class="host-closet-item"></host-closet-item>
+    <host-closet-item :host-clothes="hostClothes" class="host-closet-item"></host-closet-item>
   </div>
 </template>
 
@@ -50,7 +50,7 @@ export default {
 
 <style scoped>
 .host-name {
-  font-size: 20px;
+  font-size: 28px;
   font-weight: bold;
   padding: 30px 43px;
   margin: 0;

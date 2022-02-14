@@ -7,7 +7,7 @@
     </div>
     <div v-else class="d-flex flex-column">
       <i class="fas fa-tshirt"></i>
-      <p>친구의 옷장이 비어 있습니다.</p>
+      <h5>친구의 옷장이 비어 있습니다.</h5>
     </div>
   </div>
 
@@ -40,8 +40,8 @@ i {
   color: #1B4D50;
 }
 
-p {
-  font-size: 20px;
+h5 {
+  /* font-size: 20px; */
   font-weight: bold;
 }
 </style>
