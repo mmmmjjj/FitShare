@@ -1,11 +1,11 @@
 <template>
   <div class="room-container">
-   <h2>Live</h2>
-   <div v-if="shoppingRoomList.length" class="row">
-      <div id="room" class="room col-6" :class="index % 2 ? 'room-right' : 'room-left'" 
+    <h2><i class="bi bi-record2-fill me-1"></i>Live</h2>
+    <div v-if="shoppingRoomList.length" class="row">
+      <div id="room" class="room col-6" v-for="(room, index) in shoppingRoomList" :key="index"
+        :class="[(index % 2 ? 'room-right' : 'room-left'), (index == clicked ? 'room-clicked' : '')]" 
         :style="{ 'background-image': `url(${require(`@/assets/shopping_${index % 5 + 1}.png`)})` }"
-        v-for="(room, index) in shoppingRoomList" :key="index" 
-        @click="selectShoppingRoom(room)"
+        @click="selectShoppingRoom(room, index)"
       >
         <div class="participant">
           <i class="bi bi-eye me-1"></i> {{room.participantCount}} / {{room.maxParticipantCount}}
@@ -28,31 +28,35 @@
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useStore } from 'vuex';
 
 export default {
     name: 'ShoppingRoomList',
+    
     setup() {
       const store = useStore();
 
+      const clicked = ref(0);
+
       const shoppingRoomList = computed(() => {
-        return store.state.room.shoppingRoomList
+        return store.state.room.shoppingRoomList;
       });
 
       const loadShoppingRoomList = () => {
-        store.dispatch('room/loadShoppingRoomList')
+        store.dispatch('room/loadShoppingRoomList');
       };
       
-      const selectShoppingRoom = (room) => {
-        store.dispatch('room/selectedRoom', room)
+      const selectShoppingRoom = (room, index) => {
+        store.dispatch('room/selectedRoom', room);
+        clicked.value = index;
       };
 
       // created
-      loadShoppingRoomList()
+      loadShoppingRoomList();
 
       return {
-        shoppingRoomList, selectShoppingRoom,
+        shoppingRoomList, selectShoppingRoom, clicked
       }
     }
 }
@@ -72,20 +76,20 @@ export default {
 h2 {
   font-size: 28px;
   font-weight: bold;
-  padding: 30px 43px;
+  padding: 30px 45px;
   margin: 0;
-  /* color: #1B4D50; */
+  color: red;
 }
 
 .row {
   width: 543px;
-  height: 691px;
+  height: 680px;
   overflow-y: scroll;
   padding: 0 43px 0 43px;
   margin: 0;
 }
 
-/* 스크롤 */
+/* scroll */
 .row::-webkit-scrollbar {
   width: 7px;
 }
@@ -94,26 +98,29 @@ h2 {
 }
 .row::-webkit-scrollbar-thumb {
   border-radius: 10px;
-  background-color: #2f3542;
+  background-color: #B0D8DA;
 }
 
 .room {
   position: relative;
   padding: 0;
-  margin-bottom: 45px;
+  margin-bottom: 42px;
   width: 205px;
   height: 297px;  
   border-radius: 10px;
   border: 3px solid #D3E2E7;
   cursor: pointer;
   background-color: white;
-
   background-repeat : no-repeat;
   background-size : contain;
   background-position: 0 20%;
 }
 
 .room:hover {
+  box-shadow: 1px 1px 15px rgb(207, 206, 206);
+}
+
+.room-clicked {
   box-shadow: 1px 1px 15px rgb(207, 206, 206);
 }
 

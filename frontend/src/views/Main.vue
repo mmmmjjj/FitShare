@@ -16,7 +16,6 @@
             </button>
           </div>
         </div>
-
         <!-- 버튼 클릭 시 친구 아이콘 html / css tab 버전 -->
         <button class="friend-btn" @click="OpenTab">
           <img class="friend_icon" src="@/assets/friend_icon.png" alt="friend_icon">
@@ -25,7 +24,6 @@
           <friend class="tab-box" @close-tab="CloseTab"></friend>
           <button type="button" class="btn-close friend-close" @click="CloseTab"></button>
         </div>
-
         <!-- 비밀번호 모달 -->
         <div class="modal overlay" :class="isPrivate ? 'show-modal' : 'hide-modal'" tabindex="-1">
           <div class="modal-dialog">
@@ -45,10 +43,10 @@
             </div>
           </div>
         </div>
-        <!-- Alert 알람 -->
-        <div v-if="alert" class="alert alert-warning" role="alert">
-          <i class="bi bi-exclamation-triangle-fill"></i>인원수가 초과된 쇼핑룸입니다. 다른 쇼핑룸을 이용해주세요!
-        </div>
+      </div>
+      <!-- Alert 알람 -->
+      <div v-if="alert" class="alert alert-warning" role="alert">
+        <i class="bi bi-exclamation-triangle-fill"></i>인원수가 초과된 쇼핑룸입니다. 다른 쇼핑룸을 이용해주세요!
       </div>
     </div>
   </div>
@@ -84,16 +82,16 @@ export default {
     let alert = ref(false);
 
     const OpenTab = () => {
-      status.value = true
+      status.value = true;
     };
 
     const CloseTab = () => {
-      status.value = false
+      status.value = false;
     };
 
     // host 옷장
     const selectedShoppingRoom = computed(() => {
-        return store.state.room.selectedShoppingRoom
+        return store.state.room.selectedShoppingRoom;
     });
     
     // 입장하기
@@ -101,20 +99,20 @@ export default {
       const maxCnt = selectedShoppingRoom.value.maxParticipantCount;
       const cnt = selectedShoppingRoom.value.participantCount;
       if (maxCnt <= cnt) {
-        alert.value = true
+        alert.value = true;
         return;
       }
 
       axios.get(`shopping-rooms/${selectedShoppingRoom.value.shoppingRoomId}`)
         .then(res => {
-          const data = res.data.data 
-          router.push({ name: 'ShoppingRoom', params: { roomId: data.shoppingRoomId, token: data.token, mallUrl: data.shoppingRoomUrl, hostId: data.hostId }}) 
+          const data = res.data.data;
+          router.push({ name: 'ShoppingRoom', params: { roomId: data.shoppingRoomId, token: data.token, mallUrl: data.shoppingRoomUrl, hostId: data.hostId }}); 
         })
         .catch(err => {
-          console.log(err.response)
+          console.log(err);
           if (err.response.status == 403) alert.value = true;
         })
-    }
+    };
     
     watch(alert, () => {
       if (alert.value) setTimeout(() => alert.value = false, 3000);
@@ -125,19 +123,19 @@ export default {
         .then(res => {
           const data = res.data.data;
           if (data) { 
-            goToRoom()
+            goToRoom();
           } else {
-            errorMessage.value = '비밀번호가 일치하지 않습니다.'
+            errorMessage.value = '비밀번호가 일치하지 않습니다.';
           }
         })
-        .catch(err => console.log(err.response))
+        .catch(err => console.log(err));
     }
 
     const closeModal = () => {
       isPrivate.value = false;
       inputPassword.value = null;
       if (errorMessage.value) errorMessage.value = '';
-    }
+    };
 
     return {
       status, selectedShoppingRoom, isPrivate, inputPassword, errorMessage, alert,
@@ -150,18 +148,18 @@ export default {
 <style scoped>
 .alert {
   position: absolute;
-  top: 80px;
-  right: 5px;
+  top: 70px;
+  right: 220px;
   padding: 16px 20px;
   animation: slide 0.4s;
 }
 
 @keyframes slide {
   from{
-    right: -200px;
+    right: 0px;  
   }
   to{
-    right: 5px;
+    right: 220px;
   }
 }
 

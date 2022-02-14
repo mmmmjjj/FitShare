@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { reactive, computed } from 'vue'
+import { reactive, computed } from 'vue';
 import OvPublisherVideo from './OvPublisherVideo.vue';
 
 export default {
@@ -17,6 +17,7 @@ export default {
     components: {
       OvPublisherVideo,
     },
+    
     props: {
       streamManager: Object,
       loading: Boolean,
@@ -26,7 +27,7 @@ export default {
       const state = reactive({
         clientData: computed(() => {
           const { clientData } = getConnectionData();
-          return clientData.split(' ')[0]
+          return clientData.split(' ')[0];
         })
       })
 

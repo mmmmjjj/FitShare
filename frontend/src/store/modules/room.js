@@ -9,25 +9,23 @@ export const room = {
 
     mutations: {
       LOAD_SHOPPING_ROOM_LIST(state, roomList) {
-        state.shoppingRoomList = roomList
-        state.selectedShoppingRoom = roomList[0]
+        state.shoppingRoomList = roomList;
+        state.selectedShoppingRoom = roomList[0];
       },
       SELECTED_ROOM(state, room) {
-        state.selectedShoppingRoom = room
+        state.selectedShoppingRoom = room;
       }
     },
     actions: {
       loadShoppingRoomList({ commit }) {
-        axios.get(
-          'shopping-rooms/',
-        )
+        axios.get('shopping-rooms/')
           .then(res => {
-            commit('LOAD_SHOPPING_ROOM_LIST', res.data.data)
+            commit('LOAD_SHOPPING_ROOM_LIST', res.data.data);
           })
           .catch(err => console.log(err));
       },
       selectedRoom({commit}, room) {
-        commit('SELECTED_ROOM', room)
+        commit('SELECTED_ROOM', room);
       }
     },
     getters: {

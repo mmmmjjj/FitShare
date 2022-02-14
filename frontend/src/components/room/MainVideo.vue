@@ -23,7 +23,7 @@ export default {
       const state = reactive({
         clientData: computed(() => {
           const { clientData } = getConnectionData();
-          return clientData.split(' ')[0]
+          return clientData.split(' ')[0];
         })
       })
 

@@ -289,7 +289,7 @@ export default {
     const removeFilter = () => {
       state.publisher.stream
         .removeFilter()
-        .then(() => console.log("Filter removed"))
+        .then(() => {})
         .catch((err) => console.error(err));
     };
 
@@ -444,8 +444,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: #8abdbe;
-  /* height: 91vh; */
+  background-color: #8ABDBE;
   width: 220px;
   height: 100vh;
 }

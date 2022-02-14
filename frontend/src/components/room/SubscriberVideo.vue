@@ -9,12 +9,11 @@
 </template>
 
 <script>
-import { reactive, computed } from 'vue'
+import { reactive, computed } from 'vue';
 import OvSubscriberVideo from './OvSubscriberVideo.vue';
 
 export default {
     name: 'SubscriberVideo',
-
     components: {
       OvSubscriberVideo,
     },
@@ -29,7 +28,7 @@ export default {
       const state = reactive({
         clientData: computed(() => {
           const { clientData } = getConnectionData();
-          return clientData.split(' ')[0]
+          return clientData.split(' ')[0];
         })
       })
 

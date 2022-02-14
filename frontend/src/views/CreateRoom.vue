@@ -1,96 +1,95 @@
 <template>
   <div>
     <Navbar/>
-    <div class="create-container">
-      <div id="new-room"> 
-        <div id="dialog" class="vertical-center">
-          <div class="d-flex flex-row title">
-            <i class="bi bi-house-door me-4"></i>
-            <h1>New Room</h1>
-          </div>
-          <div class="form-group position-relative">
-            <!-- 입장가능 인원 -->
-            <div class="row">
-              <label class="counts"><i class="bi bi-asterisk"></i>입장 가능 인원</label>
-              <div class="dropdown-wrapper">
-                <div class="form-select" @click="isCntVisible = !isCntVisible">  <!-- :class="isFocused ? 'focus-outline': '' " , changeOutline() -->
-                  <p v-if="selectedCnt">{{ selectedCnt }}</p>
-                  <p v-else>인원수를 선택하세요</p>
-                </div>
-                <div v-show="isCntVisible" class="dropdown-popover">
-                  <div class="options">
-                    <ul class="scroll cnt-ul">
-                      <li v-for="(cnt, index) in counts" :key="index" :value="cnt" @click="selectCnt(cnt)">{{ cnt }}</li>
-                    </ul>
+    <div id="container">
+      <div class="create-container">
+        <div id="new-room"> 
+          <div id="dialog" class="vertical-center">
+            <div class="d-flex flex-row title">
+              <i class="bi bi-house-door me-4"></i>
+              <h1>New Room</h1>
+            </div>
+            <div class="form-group position-relative">
+              <!-- 입장가능 인원 -->
+              <div class="row">
+                <label class="counts"><i class="bi bi-asterisk"></i>입장 가능 인원</label>
+                <div class="dropdown-wrapper">
+                  <div class="form-select" @click="isCntVisible = !isCntVisible">  <!-- :class="isFocused ? 'focus-outline': '' " , changeOutline() -->
+                    <p v-if="selectedCnt">{{ selectedCnt }}</p>
+                    <p v-else>인원수를 선택하세요</p>
+                  </div>
+                  <div v-show="isCntVisible" class="dropdown-popover">
+                    <div class="options">
+                      <ul class="scroll cnt-ul">
+                        <li v-for="(cnt, index) in counts" :key="index" :value="cnt" @click="selectCnt(cnt)">{{ cnt }}</li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <p class="cnt-error" v-if="cntError">{{ cntError }}</p>
-
-            <!-- 쇼핑몰 사이트 검색 -->
-            <div class="row mall-container">
-              <label><i class="bi bi-asterisk"></i>쇼핑몰 사이트</label>
-              <div class="dropdown-wrapper">
-                <div class="form-select" @click="isMallListVisible = !isMallListVisible">
-                  <p v-if="selectedItem">{{ selectedItem.name }}</p>
-                  <p v-else>쇼핑몰을 선택하세요</p>
-                </div>
-                <div v-if="isMallListVisible" class="dropdown-popover">
-                  <input @keyup="searchMall()" v-model="searchQuery" class="search-mall-input" type="text" placeholder="검색하세요">
-                  <span v-if="searchedMalls.length === 0"><p class="text-center">검색결과 없음</p></span>
-                  <div class="options">
-                    <ul class="scroll">
-                      <li v-for="mall in searchedMalls" :key="mall.id" :value="mall.name" @click="selectItem(mall)">
-                        {{ mall.name }}
-                      </li>
-                    </ul>
+              <p class="cnt-error" v-if="cntError">{{ cntError }}</p>
+              <!-- 쇼핑몰 사이트 검색 -->
+              <div class="row mall-container">
+                <label><i class="bi bi-asterisk"></i>쇼핑몰 사이트</label>
+                <div class="dropdown-wrapper">
+                  <div class="form-select" @click="isMallListVisible = !isMallListVisible">
+                    <p v-if="selectedMall">{{ selectedMall.name }}</p>
+                    <p v-else>쇼핑몰을 선택하세요</p>
+                  </div>
+                  <div v-if="isMallListVisible" class="dropdown-popover">
+                    <input @keyup="searchMall()" v-model="searchQuery" class="search-mall-input" type="text" placeholder="검색하세요">
+                    <span v-if="searchedMalls.length === 0"><p class="text-center">검색결과 없음</p></span>
+                    <div class="options">
+                      <ul class="scroll">
+                        <li v-for="mall in searchedMalls" :key="mall.id" :value="mall.name" @click="selectItem(mall)">
+                          {{ mall.name }}
+                        </li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <p class="mall-error" v-if="mallError">{{ mallError }}</p>
-
-            <!-- 사이트 직접 입력 -->
-            <div class="d-flex flex-row-reverse" v-if="!isMall"> 
-              <div class="mall-input-container">
-                <div class="mall-input mb-2">
-                  <label><i class="bi bi-asterisk"></i>사이트 이름</label>
-                  <input v-model="inputMallName" class="form-control text-input shadow-none" type="text">
-                </div>
-                <div class="mall-input">
-                  <label><i class="bi bi-asterisk"></i>사이트 주소</label>
-                  <input v-model="inputMallUrl" class="form-control text-input shadow-none" type="text">
+              <p class="mall-error" v-if="mallError">{{ mallError }}</p>
+              <!-- 사이트 직접 입력 -->
+              <div class="d-flex flex-row-reverse" v-if="!isMall"> 
+                <div class="mall-input-container">
+                  <div class="mall-input mb-2">
+                    <label><i class="bi bi-asterisk"></i>사이트 이름</label>
+                    <input v-model="inputMallName" class="form-control text-input shadow-none" type="text">
+                  </div>
+                  <div class="mall-input">
+                    <label><i class="bi bi-asterisk"></i>사이트 주소</label>
+                    <input v-model="inputMallUrl" class="form-control text-input shadow-none" type="text">
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <!-- 공개범위 설정 -->
-            <div class="row private-container" :class="isPrivate ? 'private-margin-change' : ''" 
-              :style="[isMall ? { 'margin-top': '203px' } : { 'margin-top': '75px' }]"
-            >
-              <label>공개범위</label>
-              <span class="form-radio">
-                <span @click="selectPublic()" class="radio-box">
-                  <input class="form-check-input" type="radio" name="flexRadioDefault" checked="checked" id="public">
-                  <label class="form-check-label" for="public">공개</label>
+              <!-- 공개범위 설정 -->
+              <div class="row private-container" :class="isPrivate ? 'private-margin-change' : ''" 
+                :style="[isMall ? { 'margin-top': '203px' } : { 'margin-top': '75px' }]"
+              >
+                <label>공개범위</label>
+                <span class="form-radio">
+                  <span @click="selectPublic()" class="radio-box">
+                    <input class="form-check-input" type="radio" name="flexRadioDefault" checked="checked" id="public">
+                    <label class="form-check-label" for="public">공개</label>
+                  </span>
+                  <span @click="selectPrivate()" class="radio-box">
+                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="private">
+                    <label class="form-check-label" for="private" >비공개</label>
+                  </span>
                 </span>
-                <span @click="selectPrivate()" class="radio-box">
-                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="private">
-                  <label class="form-check-label" for="private" >비공개</label>
-                </span>
-              </span>
+              </div>
+              <!-- 비밀번호 입력 -->
+              <div class="row password-container" v-show="isPrivate">  
+                <label>비밀번호</label>
+                <input v-model="password" class="form-control shadow-none" type="password" placeholder="6자리 이하로 작성해주세요">
+                <p class="password-error" v-if="passwordError">{{ passwordError }}</p>
+              </div>
+              <div class="button-box">
+                <button class="btn shadow-none" @click="validationCheck()">생성하기</button>
+                <button class="btn shadow-none" @click="goToMain()">취소</button>
+              </div>        
             </div>
-            <!-- 비밀번호 입력 -->
-            <div class="row password-container" v-show="isPrivate">  
-              <label>비밀번호</label>
-              <input v-model="password" class="form-control shadow-none" type="password" placeholder="6자리 이하로 작성해주세요">
-              <p class="password-error" v-if="passwordError">{{ passwordError }}</p>
-            </div>
-            <div class="button-box">
-              <button class="btn shadow-none" @click="validationCheck()">생성하기</button>
-              <button class="btn shadow-none" @click="goToMain()">취소</button>
-            </div>        
           </div>
         </div>
       </div>
@@ -101,8 +100,8 @@
 <script>
 import { reactive, ref, toRefs, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import axios from '../api/axios'
-import Navbar from '@/components/Navbar.vue'
+import axios from '../api/axios';
+import Navbar from '@/components/Navbar.vue';
 
 export default {
   name: 'CreateRoom',
@@ -115,20 +114,18 @@ export default {
     let isCntVisible = ref(false);
 
     let searchQuery = ref('');
-    let searchedMalls = ref({})
-    let selectedItem = ref(null);  // 선택한 mall
+    let searchedMalls = ref({});  // 쇼핑몰 검색결과
+    let selectedMall = ref(null);
     let isMallListVisible = ref(false);
 
     let isPrivate = ref(false);
     let password = ref(null);
     
-
     const error = reactive({
       cntError: null,
       mallError: null,
       passwordError: null,
     });
-
 
     const state = reactive({
       isMall: true,
@@ -140,7 +137,7 @@ export default {
     watch(searchedMalls, (searchedMalls) => {
       if (searchedMalls.length === 0) {
         state.isMall = false;
-        selectedItem.value = null;
+        selectedMall.value = null;
       } else {
         state.isMall = true;
       }
@@ -153,28 +150,29 @@ export default {
     };
 
     const selectItem = (mall) => {
-      selectedItem.value = mall;
+      selectedMall.value = mall;
       isMallListVisible.value = false;
-    }
+    };
     
     // 쇼핑몰 검색
    const searchMall = () => {
       axios.get(`shopping-malls?keyword=${searchQuery.value}`)
         .then(res => {
-          searchedMalls.value = res.data.data
+          searchedMalls.value = res.data.data;
         })
-    }
+        .catch(err => console.log(err))
+    };
 
     // dropdown 닫기
     document.addEventListener('click', function(e){
       if (isMallListVisible.value == true) {
         if (e.target.className !== 'dropdown-popover' && e.target.className !== 'form-select' && e.target.className !== '' && e.target.className !== 'search-mall-input' ) {
-          isMallListVisible.value = false
+          isMallListVisible.value = false;
         }
       } 
       if (isCntVisible.value == true) {
         if (e.target.className !== 'dropdown-popover' && e.target.className !== 'form-select' && e.target.className !== '' && e.target.className !== 'search-mall-input' ) {
-          isCntVisible.value = false
+          isCntVisible.value = false;
         }
       } 
     });
@@ -197,7 +195,7 @@ export default {
       } else error.cntError = '';
       
       // 쇼핑몰 확인
-      if (!selectedItem.value) {
+      if (!selectedMall.value) {
         if (!state.inputMallName || !state.inputMallUrl) {
           error.mallError = '쇼핑몰을 선택하거나 입력해주세요!';
           isValid = false;
@@ -215,15 +213,15 @@ export default {
         } else error.passwordError = '';
       }
       if (isValid) makeShoppingRoom();
-    }
+    };
 
     // 쇼핑룸 생성
     const makeShoppingRoom = () => {
       let mallId = null;
-      if (selectedItem.value) {
-        mallId = selectedItem.value.id
-        state.inputMallName = null
-        state.inputMallUrl = null
+      if (selectedMall.value) {
+        mallId = selectedMall.value.id;
+        state.inputMallName = null;
+        state.inputMallUrl = null;
       }
       if (!isPrivate.value) password.value = null;
       
@@ -239,41 +237,45 @@ export default {
 
       axios.post('shopping-rooms/', roomData)
         .then(res => {
-          const data = res.data.data
-          router.push({ name: 'ShoppingRoom', params: { roomId: data.shoppingRoomId, token: data.token, mallUrl: data.shoppingRoomUrl, hostId: data.hostId }}) 
+          const data = res.data.data;
+          router.push({ name: 'ShoppingRoom', params: { roomId: data.shoppingRoomId, token: data.token, mallUrl: data.shoppingRoomUrl, hostId: data.hostId }});
         })
         .catch(err => {
-          console.log(err.response)
           if (err.response.data.statusCode == 400) {
-            error.mallError = '유효하지 않은 쇼핑몰입니다. 다시 입력해주세요.'
+            error.mallError = '유효하지 않은 쇼핑몰입니다. 다시 입력해주세요.';
           } 
-        })
+        });
     };
 
     const goToMain = () => {
-      router.push({ name: 'Main' })
+      router.push({ name: 'Main' });
     };
 
     return { 
-      selectPrivate, makeShoppingRoom, goToMain, selectPublic,
-      ...toRefs(state), ...toRefs(error), counts, searchQuery, selectedCnt ,selectedItem, isMallListVisible, 
-      isCntVisible, selectItem, selectCnt, isPrivate, password,
-      searchedMalls, searchMall, validationCheck
+      selectPrivate, selectPublic, makeShoppingRoom, goToMain, 
+      ...toRefs(state), ...toRefs(error), counts, searchQuery, selectedCnt, selectedMall, isMallListVisible, 
+      isCntVisible, selectItem, selectCnt, isPrivate, password, searchedMalls, searchMall, validationCheck
     }
   }
 }
 </script>
 
 <style scoped>
-.create-container {
-  margin: 0px 142px 0;
+#container {
   display: flex;
   justify-content: center;
+}
+
+.create-container {
+  display: flex;
+  justify-content: center;
+  width: 1224px;
+  height: 94vh;
   background-color: white;
 }
 
 #new-room {
-  margin: 10px 187px 90px;
+  margin: 20px 187px 90px;
   width: 782px;
   height: 851px;
 }
@@ -390,13 +392,11 @@ label {
   line-height: 38px;
 }
 
-/* 비번 없음 */
+/* 비밀번호 여부 */
 .private-container {
-  /* margin-top: 75px; */
   margin-bottom: 159px;
 }
 
-/* 비번 입력시 */
 .private-margin-change {   
   margin-top: 75px;
   margin-bottom: 54px;
@@ -461,14 +461,11 @@ label {
 }
 
 .button-box {
-  /* display: flex;
-  justify-content: space-between; */
-
   text-align: center;
 }
 
 button {
-  width: 330px;
+  width: 300px;
   height: 50px;
   flex-grow: 0;
   margin: 0 15px;

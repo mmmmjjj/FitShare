@@ -9,19 +9,14 @@
 <script>
 export default {
     name: 'ShoppingSite',
-    
     props: {
       shoppingMallUrl: String,
     },
 
     setup() {
-      document.cookie = "SameSite=None; Secure"
+      document.cookie = "SameSite=None; Secure";
       
-      // document.cookie = 'cookie1=value1; SameSite=Lax';
-      // document.cookie = 'cookie2=value2; SameSite=None; Secure';
-
-      return {
-      }
+      return {}
     }
 
 }
