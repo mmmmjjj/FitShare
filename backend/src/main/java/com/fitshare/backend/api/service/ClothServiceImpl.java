@@ -2,6 +2,7 @@ package com.fitshare.backend.api.service;
 
 import com.fitshare.backend.api.request.ClothReq;
 import com.fitshare.backend.api.response.ClothRes;
+import com.fitshare.backend.common.exception.ImageFailedException;
 import com.fitshare.backend.db.entity.Cloth;
 import com.fitshare.backend.db.entity.RoomParticipant;
 import com.fitshare.backend.db.repository.ClothRepository;
@@ -65,6 +66,11 @@ public class ClothServiceImpl implements ClothService {
         }
 
         File transImage = new File("/data/" + imageTitle);
+
+        boolean isExists = transImage.exists();
+
+        // 이미지 생성에 실패 시 에러 반환
+        if(!isExists) throw new ImageFailedException();
 
         // S3 서버에 업로드
         clothUrl = s3Service.upload(transImage, "images");

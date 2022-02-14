@@ -13,8 +13,10 @@ public enum ErrorCode {
     DUPLICATE_EMAIL(400, "U001", "Email is Duplicated"),
 
     // Shopping Room
-    EXCEED_PARTICIPANT_COUNT(403, "S001", "Exceed the number of participants");
+    EXCEED_PARTICIPANT_COUNT(403, "S001", "Exceed the number of participants"),
 
+    // Dress
+    IMAGE_NOT_FOUND(404,"D001","Converting Image is failed");
 
     private int status;
     private final String code;

@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 import static com.fitshare.backend.common.model.ResponseMessage.*;
 
 @Api(value = "옷장 API", tags = {"Cloth"})
@@ -34,7 +36,7 @@ public class ClothController {
             @ApiResponse(code = 500, message = "서버 에러", response = ErrorResponse.class)
     })
     @PostMapping("")
-    public ResponseEntity<BaseResponseBody> addCloth(@RequestBody ClothReq req) {
+    public ResponseEntity<BaseResponseBody> addCloth(@Valid @RequestBody ClothReq req) {
         Long memberId = JwtUtil.getCurrentId().orElseThrow(() -> new AccessDeniedException("Access denied"));
         return ResponseEntity.ok(BaseResponseBody.of(HttpStatus.CREATED, ADD_CLOTH,clothService.addCloth(memberId,req)));
     }
