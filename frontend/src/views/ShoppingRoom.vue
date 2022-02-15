@@ -189,7 +189,7 @@ export default {
     GroupChat,
   },
 
-  setup() {
+  setup(props, {emit}) {
     onMounted(() => {
       connect();
     });
@@ -233,17 +233,18 @@ export default {
       Authorization: "Bearer " + accessToken,
     };
 
-    // let roomId = route.params.roomId;
+    let roomId = route.params.roomId;
     const connect = () => {
       stomp.connect(headers, (frame) => {
         console.log("Connect Status : " + frame);
-        // stomp.subscribe(
-        //   `/topic/rooms/${roomId}`,
-        //   (response) => {
-        //     store.dispatch("chat/pushMsg", response.body, { root: true });
-        //   },
-        //   headers
-        // );
+        stomp.subscribe(
+          `/topic/rooms/${roomId}`,
+          (response) => {
+            emit('emitMsg', response.body);
+            store.dispatch("chat/pushMsg", response.body, { root: true });
+          },
+          headers
+        );
         (error) => {
           console.log("Connect Status : ", error);
         };
