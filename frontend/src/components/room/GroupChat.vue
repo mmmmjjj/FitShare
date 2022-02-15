@@ -2,8 +2,9 @@
   <div class="container">
     <div>
       <!-- <span id="chatLogo"><b>Chat</b></span> -->
-      <span class="material-icons-outlined" style="float:right"> cancel </span>
-      <span></span>
+      <span class="material-icons" id="cancelIcon" @click="closeGroupChat">
+        cancel
+      </span>
     </div>
     <div>
       <textarea
@@ -25,6 +26,7 @@
         v-model="state.message"
         placeholder="Message를 입력해주세요"
         @keyup.enter="sendMessage()"
+        autocomplete="off"
         autofocus
       />
     </div>
@@ -47,7 +49,7 @@ export default {
     const { cookies } = useCookies();
 
     onMounted(() => {
-      connect();
+      recvMsg();
     });
 
     const state = reactive({
@@ -55,14 +57,14 @@ export default {
       userName: "",
       message: "",
       textarea: "",
-      connected: false,
+      receivedMsg: [],
     });
 
     state.roomId = route.params.roomId; // 쇼핑룸 생성 시 쇼핑룸 id 가져오기
+    // state.receivedMsg = computed(() => store.state.chat.recvMsg); // vuex에서 가져오기
     state.userName = computed(() => store.state.user.user_name); // vuex에서 가져오기
 
-    let accessToken = cookies.get("accessToken");
-
+    let accessToken = cookies.get("accessToken"); // accessToken cookie에서 가져오기
     let headers = {
       Authorization: "Bearer " + accessToken,
     };
@@ -70,9 +72,14 @@ export default {
     const sockJs = new SockJS("https://i6a405.p.ssafy.io/api/v1/chat");
     const stomp = Stomp.over(sockJs);
 
+    // watch(state.receivedMsg, () => {
+    //   if (!state.receivedMsg.length) {
+    //     recvMsg(state.receivedMsg);
+    //   }
+    // });
+
     const dateFormatChange = (date) => {
       let changedDate = new Date(date);
-      // console.log(changedDate.getHours() + changedDate.getMinutes());
       if (changedDate.getHours() > 12) {
         return (
           "오후 " +
@@ -90,34 +97,24 @@ export default {
       }
     };
 
-    // 연결
-    const connect = () => {
-      // if (!state.connected) {
-      stomp.connect(headers, (frame) => {
-        state.connected = true;
-        console.log("Connect Status : " + frame);
-        stomp.subscribe(
-          `/topic/rooms/${state.roomId}`,
-          (response) => {
-            // 구독을 설정할 때, 메시지를 받으면 어떻게 처리할건지도 설정
-            console.log(response);
-            let receiveMsgBody = JSON.parse(response.body);
-            state.textarea +=
-              "[" +
-              receiveMsgBody.senderName +
-              "] " +
-              dateFormatChange(receiveMsgBody.createdTime) +
-              "\n" +
-              receiveMsgBody.message +
-              "\n";
-          },
-          headers
-        );
-        (error) => {
-          console.log("Connect Status : ", error);
-          state.connected = false;
-        };
-      });
+    const recvMsg = () => {
+      stomp.subscribe(
+        `/topic/rooms/${state.roomId}`,
+        (response) => {
+          // 구독을 설정할 때, 메시지를 받으면 어떻게 처리할건지도 설정
+          console.log(response);
+          let receiveMsgBody = JSON.parse(response.body);
+          state.textarea +=
+            "[" +
+            receiveMsgBody.senderName +
+            "] " +
+            dateFormatChange(receiveMsgBody.createdTime) +
+            "\n" +
+            receiveMsgBody.message +
+            "\n";
+        },
+        headers
+      );
     };
 
     const koreaTime = () => {
@@ -150,9 +147,7 @@ export default {
     // 메세지를 보냈을 때
     const sendMessage = async () => {
       // message의 값이 있고 연결된 상태라면
-      if (state.message !== "" && state.connected) {
-        console.log("szfdz");
-        console.log(koreaTime());
+      if (state.message !== "") {
         let sendMsg = {
           senderName: state.userName,
           message: state.message,
@@ -167,15 +162,18 @@ export default {
       }
     };
 
+    const closeGroupChat = () => {};
+
     return {
       state,
       accessToken,
       headers,
-      connect,
+      recvMsg,
       sendMessage,
       dateFormatChange,
       koreaTime,
       pad,
+      closeGroupChat,
     };
   },
 };
@@ -191,7 +189,7 @@ export default {
 
 #textarea {
   /* change */
-  margin-top: 40px;
+  margin-top: 15px;
   height: 430px;
   width: 100%;
   resize: none;
@@ -203,5 +201,9 @@ export default {
   background-color: #d3d3d380;
   height: 30px;
   margin-top: 4px;
+}
+#cancelIcon {
+  float: right;
+  cursor: pointer;
 }
 </style>

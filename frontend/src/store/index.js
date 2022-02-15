@@ -3,6 +3,7 @@ import createPersisedState from "vuex-persistedstate";
 import { room } from "@/store/modules/room";
 import { user } from "@/store/modules/user";
 import { friend } from "@/store/modules/friend";
+import { chat } from "@/store/modules/chat"
 
 export default createStore({
   state: {
@@ -20,5 +21,6 @@ export default createStore({
     room,
     user,
     friend,
+    chat,
   },
 });
