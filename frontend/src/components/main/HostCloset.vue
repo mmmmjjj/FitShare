@@ -22,23 +22,23 @@ export default {
     const store = useStore();
     let hostClothes = ref([]);
     
-    // hostcloset 요청 
+    // host 옷장 요청
     const hostCloset = () => {
       if (selectedShoppingRoom.value) {
         axios.get(`clothes/${selectedShoppingRoom.value.shoppingRoomId}/${selectedShoppingRoom.value.hostId}`)
           .then(res => {
-            hostClothes.value = res.data.data
+            hostClothes.value = res.data.data;
           })
-          .catch(err => console.log(err))
+          .catch(err => console.log(err));
       }
-    }
+    };
 
     const selectedShoppingRoom = computed(() => {
-      return store.state.room.selectedShoppingRoom
+      return store.state.room.selectedShoppingRoom;
     });
 
     watch(selectedShoppingRoom, () => {
-      hostCloset()
+      hostCloset();
     });
 
     return {
@@ -89,6 +89,6 @@ export default {
 }
 .host-closet-item::-webkit-scrollbar-thumb {
   border-radius: 10px;
-  background-color: #B0D8DA;
+  background-color: hsl(210deg 8% 65%);
 }
 </style>
