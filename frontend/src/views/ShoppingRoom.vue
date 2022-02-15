@@ -132,19 +132,25 @@
               v-if="clickStatus"
               @click="changeClickStatus"
             >
-              <!-- <img src="@/assets/closed_closet.png" alt="" class="closetBtn" /> -->
+              <img src="@/assets/closed_closet.png" alt="" class="closetBtn" />
             </button>
             <button
               class="btn shadow-none right"
               v-if="clickStatus === false"
               @click="changeClickStatus"
             >
-              <!-- <img src="@/assets/opened_closet.png" alt="" class="closetBtn" /> -->
+              <img src="@/assets/opened_closet.png" alt="" class="closetBtn" />
             </button>
-
             <button
               class="btn shadow-none right"
               v-if="clickChatStatus"
+              @click="changeClickChatStatus"
+            >
+              <img src="@/assets/chatting_icon.png" alt="" class="chatBtn" />
+            </button>
+            <button
+              class="btn shadow-none right"
+              v-if="clickChatStatus === false"
               @click="changeClickChatStatus"
             >
               <img src="@/assets/chatting_icon.png" alt="" class="chatBtn" />
