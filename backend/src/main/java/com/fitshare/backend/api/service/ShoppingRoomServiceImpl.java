@@ -133,8 +133,6 @@ public class ShoppingRoomServiceImpl implements ShoppingRoomService {
         if (!checkParticipant(memberId, shoppingRoomId))
             throw new ParticipantNotFoundException(memberId, shoppingRoomId);
 
-        Session session = getSession(shoppingRoom.getSessionId());
-
         redisService.delSessionParticipant(shoppingRoom.getSessionId(), String.valueOf(memberId));
 
         if (redisService.getSessionParticipantCount(shoppingRoom.getSessionId()) == 0) {
@@ -145,6 +143,7 @@ public class ShoppingRoomServiceImpl implements ShoppingRoomService {
             // 호스트가 방을 나가면 세션 종료
             if (memberId == shoppingRoom.getHost().getId()) {
                 try {
+                    Session session = getSession(shoppingRoom.getSessionId());
                     session.close();
                     redisService.delSession(session.getSessionId());
                     updateShoppingRoomStatus(shoppingRoomId, false);
