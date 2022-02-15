@@ -4,7 +4,7 @@
       검색 결과
     </div>
     <div class="d-flex mt-3" v-if="friend">
-      <img :src="friend.profileImg" alt="profile-img">
+      <img :src="friend" alt="profile-img">
       <div class="ms-3 profile-box name-box">
         {{ friend.name }}
       </div>
@@ -36,7 +36,7 @@ export default {
       .then(res => {
         console.log(res)
       })
-      friend.profileImg = null
+      friend = null
     }
 
     return {

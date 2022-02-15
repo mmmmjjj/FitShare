@@ -35,7 +35,7 @@ export default {
   setup() {
     const state = reactive({
       searchedUsers: [],
-      friend: {},
+      friend: null,
     })
 
     // input에 입력하는 값
@@ -54,7 +54,7 @@ export default {
           })
       }
       else{
-        state.friend = {}
+        state.friend = null
       }
     }
 
