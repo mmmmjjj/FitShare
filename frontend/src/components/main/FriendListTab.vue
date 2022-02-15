@@ -1,13 +1,18 @@
 <template>
   <div>
     <!-- 친구 이름 검색 input-box -->
-    <input
-      class="input-box"
-      type="text"
-      v-model="SearchFriend"
-      placeholder="이름 검색"
-      @keyup="SearchFriendEmail"
-    >
+    <div class="d-flex">
+      <input
+        class="input-box"
+        type="text"
+        v-model="SearchFriend"
+        placeholder="이름 검색"
+        @keyup="SearchFriendEmail"
+      >
+      <button class="search-btn" @click="SearchFriendEmail">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
 
     <!-- 친구 목록 -->
     <div v-for="(friend, index) in stateFriends" :key="friend.id" class="d-flex mt-3">
@@ -60,9 +65,7 @@ export default {
         url: `friends/${stateFriends[index].id}`,
         data: {"friendId": stateFriends[index].id}
         })
-        .then(res => {
-          console.log(stateFriends[index].id)
-          console.log(res)
+        .then(() => {
           stateFriends.splice(index, 1)
         })
     }
@@ -74,15 +77,10 @@ export default {
         url: 'friends',
       })
         .then(res => {
-          console.log(res)
           state.friendLists = res.data.data
         })
-        .then(res => {
-          console.log(res)
+        .then(() => {
           const friend = state.friendLists
-          console.log('성공')
-          console.log(state.friendLists)
-          console.log(friend)
           store.dispatch('friend/getfriends', friend)
         })
     }
@@ -96,12 +94,10 @@ export default {
         url: `friends/${SearchFriend.value}`,
       })
         .then(res => {
-          console.log(res)
           state.friendEmail = res.data.data
           console.log(state.friendEmail)
         })
-        .then(res => {
-          console.log(res)
+        .then(() => {
           const friendbyname = state.friendEmail
           store.dispatch('friend/getfriendsbyname', friendbyname)
         })
@@ -127,7 +123,8 @@ export default {
 }
 
 .input-box {
-  width: 301px;
+  /* width: 301px; */
+  width: 250px;
   border-radius: 20px;
   text-align: center;
 }
@@ -155,5 +152,39 @@ img {
   width: 60px;
   height: 60px;
   border-radius: 30px;
+}
+
+.chattingRoom {
+  position: fixed;
+  right: 410px;
+  top: 300px;
+  z-index: 3;
+}
+
+@media (max-width: 820px) {
+  .chattingRoom {
+    position: fixed;
+    left: 20px;
+    top: 300px;
+    z-index: 3;
+  }
+  .closeChatting {
+    position: fixed;
+    left: 20px;
+    top: 272px;
+    z-index: 3;
+  }
+}
+
+.closeChatting {
+  position: fixed;
+  right: 773px;
+  top: 272px;
+  z-index: 3;
+}
+
+.search-btn {
+  border: none;
+  background-color: #FDFAF3;
 }
 </style>

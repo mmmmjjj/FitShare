@@ -1,13 +1,18 @@
 <template>
   <div>
     <!-- 친구 이름, 이메일 검색 input-box -->
-    <input
-      class="input-box"
-      type="text"
-      placeholder="이메일 검색"
-      @keyup="SearchUserEmail"
-      v-model="SearchUser"
-    >
+    <div class="d-flex">
+      <input
+        class="input-box"
+        type="text"
+        placeholder="이메일 검색"
+        @keyup.enter="SearchUserEmail"
+        v-model="SearchUser"
+      >
+      <button class="search-btn" @click="SearchFriendEmail">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
     
     <!-- 이름, 이메일로 검색 시 나오는 users들 components -->
     <searched-users :friend="state.friend"></searched-users>
@@ -30,7 +35,7 @@ export default {
   setup() {
     const state = reactive({
       searchedUsers: [],
-      friend: {}
+      friend: {},
     })
 
     // input에 입력하는 값
@@ -44,8 +49,8 @@ export default {
           url: `members/${SearchUser.value}`,
           })
           .then(res => {
-            console.log(res)
             state.friend = res.data.data
+            SearchUser.value = ''
           })
       }
       else{
@@ -76,12 +81,17 @@ img {
 }
 
 .input-box {
-  width: 301px;
+  width: 250px;
   border-radius: 20px;
   text-align: center;
 }
 
 input::placeholder {
   text-align: center;
+}
+
+.search-btn {
+  border: none;
+  background-color: #FDFAF3;
 }
 </style>

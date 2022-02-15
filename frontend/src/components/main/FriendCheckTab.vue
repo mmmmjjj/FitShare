@@ -50,11 +50,8 @@ export default {
         method: 'DELETE',
         url: `friends/requests/${checkRequests[index].id}`,
         })
-        .then(res => {
-          console.log(checkRequests[index].id)
-          console.log(res)
+        .then(() => {
           checkRequests.splice(index, 1)
-          console.log(checkRequests)
         })
     }
 

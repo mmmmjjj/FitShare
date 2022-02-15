@@ -59,11 +59,8 @@ export default {
         .then(res => {
           state.friendLists = res.data.data
         })
-        .then(res => {
-          console.log(res)
+        .then(() => {
           const friend = state.friendLists
-          console.log(state.friendLists)
-          console.log(friend)
           store.dispatch('friend/getfriendsbyclick', friend)
         })
     }
@@ -78,7 +75,6 @@ export default {
         'friends/requests',
       )
         .then(res => {
-          console.log(res)
           state.checkRequests = res.data.data
         })
     }
@@ -132,7 +128,7 @@ input[name="tab_item"] {
 /* 탭 컨텐츠 스타일 */
 .tab_content {
   display: none;
-  padding: 15px 40px 0;
+  padding: 15px 55px 0;
   clear: both;
   height: 400px;
   overflow-y: scroll;
