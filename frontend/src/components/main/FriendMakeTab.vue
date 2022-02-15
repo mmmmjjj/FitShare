@@ -9,7 +9,7 @@
         @keyup.enter="SearchUserEmail"
         v-model="SearchUser"
       >
-      <button class="search-btn" @click="SearchFriendEmail">
+      <button class="search-btn" @click="SearchUserEmail">
         <i class="bi bi-search"></i>
       </button>
     </div>

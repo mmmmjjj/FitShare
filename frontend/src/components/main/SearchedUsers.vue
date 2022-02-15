@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div v-if="friend.profileImg" class="text-center result-box mt-3">
+    <div v-if="friend" class="text-center result-box mt-3">
       검색 결과
     </div>
-    <div class="d-flex mt-3" v-if="friend.profileImg">
+    <div class="d-flex mt-3" v-if="friend">
       <img :src="friend.profileImg" alt="profile-img">
       <div class="ms-3 profile-box name-box">
         {{ friend.name }}
