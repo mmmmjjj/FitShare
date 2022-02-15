@@ -11,8 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.*;
 import java.util.*;
 import java.util.function.BiConsumer;
 
@@ -118,18 +117,20 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public List<PrivateChatRes> getPrivateChatListByDate(Long memberId, Long friendId, LocalDate date) {
-        String dateString = date.toString();
+        // 요청 시 현재 날짜
+        ZonedDateTime zonedDateTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+        LocalDate nowDate = zonedDateTime.toLocalDate();
 
-        if (date.isEqual(LocalDate.now())) { // 조회 요청 날짜가 오늘이면 Redis에서 조회
-            String key = "chat_" + memberId + "_" + friendId + "_" + dateString;
+        if (date.isEqual(nowDate)) { // 조회 요청 날짜가 오늘이면 Redis에서 조회
+            String key = "chat_" + memberId + "_" + friendId + "_" + date;
             List<PrivateChatRes> privateChatRes = getPrivateChatResListFromEntries(key, redisService.getEntries(key));
 
-            key = "chat_" + friendId + "_" + memberId + "_" + dateString;
+            key = "chat_" + friendId + "_" + memberId + "_" + date;
             privateChatRes.addAll(getPrivateChatResListFromEntries(key, redisService.getEntries(key)));
 
             return privateChatRes;
         } else { // 조회 요청 날짜가 오늘 전이면 MySQL에서 조회
-            return privateChatRepository.findByCreatedTime(memberId, friendId, dateString);
+            return privateChatRepository.findByCreatedTime(memberId, friendId, date.toString());
         }
     }
 }
