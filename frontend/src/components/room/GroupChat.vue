@@ -67,7 +67,7 @@ export default {
       Authorization: "Bearer " + accessToken,
     };
 
-    const sockJs = new SockJS("http://i6a405.p.ssafy.io:8081/api/v1/chat");
+    const sockJs = new SockJS("https://i6a405.p.ssafy.io:8081/api/v1/chat");
     const stomp = Stomp.over(sockJs);
 
     const dateFormatChange = (date) => {
