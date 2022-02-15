@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { reactive, computed, onMounted } from "vue";
+import { reactive, computed, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 import { useCookies } from "vue3-cookies";
@@ -44,13 +44,11 @@ import SockJS from "sockjs-client";
 export default {
   name: "GroupChat",
   setup() {
+    const sockJs = new SockJS("http://i6a405.p.ssafy.io:8081/api/v1/chat");
+    const stomp = Stomp.over(sockJs);
     const route = useRoute();
     const store = useStore();
     const { cookies } = useCookies();
-
-    onMounted(() => {
-      recvMsg();
-    });
 
     const state = reactive({
       roomId: 0,
@@ -61,7 +59,7 @@ export default {
     });
 
     state.roomId = route.params.roomId; // 쇼핑룸 생성 시 쇼핑룸 id 가져오기
-    // state.receivedMsg = computed(() => store.state.chat.recvMsg); // vuex에서 가져오기
+    state.receivedMsg = computed(() => store.state.chat.recvMsg); // vuex에서 가져오기
     state.userName = computed(() => store.state.user.user_name); // vuex에서 가져오기
 
     let accessToken = cookies.get("accessToken"); // accessToken cookie에서 가져오기
@@ -69,14 +67,13 @@ export default {
       Authorization: "Bearer " + accessToken,
     };
 
-    const sockJs = new SockJS("https://i6a405.p.ssafy.io/api/v1/chat");
-    const stomp = Stomp.over(sockJs);
+    watch(state.receivedMsg, () => {
+      addMsg();
+    });
 
-    // watch(state.receivedMsg, () => {
-    //   if (!state.receivedMsg.length) {
-    //     recvMsg(state.receivedMsg);
-    //   }
-    // });
+    onMounted(() => {
+      recvMsg();
+    });
 
     const dateFormatChange = (date) => {
       let changedDate = new Date(date);
@@ -98,23 +95,17 @@ export default {
     };
 
     const recvMsg = () => {
-      stomp.subscribe(
-        `/topic/rooms/${state.roomId}`,
-        (response) => {
-          // 구독을 설정할 때, 메시지를 받으면 어떻게 처리할건지도 설정
-          console.log(response);
-          let receiveMsgBody = JSON.parse(response.body);
-          state.textarea +=
-            "[" +
-            receiveMsgBody.senderName +
-            "] " +
-            dateFormatChange(receiveMsgBody.createdTime) +
-            "\n" +
-            receiveMsgBody.message +
-            "\n";
-        },
-        headers
-      );
+      
+      state.receivedMsg.forEach((item) => {
+        state.textarea += "[" + item.senderName + "] " + dateFormatChange(item.createdTime) + "\n" + item.message + "\n";
+      });
+    };
+    
+    const addMsg = () => {
+      let temp = state.receivedMsg;
+      let slice = temp.slice(temp.length-1,temp.length);
+      console.log(slice);
+      state.textarea += "[" + slice[0].senderName + "] " + dateFormatChange(slice[0].createdTime) + "\n" + slice[0].message + "\n";
     };
 
     const koreaTime = () => {
@@ -162,8 +153,6 @@ export default {
       }
     };
 
-    const closeGroupChat = () => {};
-
     return {
       state,
       accessToken,
@@ -173,7 +162,7 @@ export default {
       dateFormatChange,
       koreaTime,
       pad,
-      closeGroupChat,
+      addMsg,
     };
   },
 };
@@ -189,7 +178,7 @@ export default {
 
 #textarea {
   /* change */
-  margin-top: 15px;
+  margin-top: 5px;
   height: 430px;
   width: 100%;
   resize: none;
@@ -200,9 +189,10 @@ export default {
   width: 100%;
   background-color: #d3d3d380;
   height: 30px;
-  margin-top: 4px;
+  margin-top: 10px;
 }
 #cancelIcon {
+  margin-top: 3px;
   float: right;
   cursor: pointer;
 }

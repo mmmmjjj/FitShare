@@ -189,12 +189,8 @@ export default {
     GroupChat,
   },
 
-  setup(props, {emit}) {
-    onMounted(() => {
-      connect();
-    });
-
-    const sockJs = new SockJS("https://i6a405.p.ssafy.io/api/v1/chat");
+  setup() {
+    const sockJs = new SockJS("http://i6a405.p.ssafy.io:8081/api/v1/chat");
     const stomp = Stomp.over(sockJs);
     const { cookies } = useCookies();
     const router = useRouter();
@@ -228,20 +224,23 @@ export default {
       clickChatStatus: true,
     });
 
-    let accessToken = cookies.get("accessToken");
-    let headers = {
+    const accessToken = cookies.get("accessToken");
+   
+    const headers = {
       Authorization: "Bearer " + accessToken,
     };
 
-    let roomId = route.params.roomId;
+    onMounted(() => {
+      connect();
+    });
+
     const connect = () => {
       stomp.connect(headers, (frame) => {
         console.log("Connect Status : " + frame);
         stomp.subscribe(
-          `/topic/rooms/${roomId}`,
+          `/topic/rooms/${state.mySessionId}`,
           (response) => {
-            emit('emitMsg', response.body);
-            store.dispatch("chat/pushMsg", response.body, { root: true });
+            store.dispatch("chat/pushMsg", JSON.parse(response.body));
           },
           headers
         );
@@ -481,6 +480,7 @@ export default {
       clothesUrl,
       changeClickStatus,
       changeClickChatStatus,
+      connect,
     };
   },
 };

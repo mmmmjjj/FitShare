@@ -7,7 +7,7 @@ export const chat = {
     },
     mutations: {
         SET_RECIVE_MSG(state, recvMsg){
-            state.recvMsg.push(JSON.parse(recvMsg));
+            state.recvMsg.push(recvMsg);
         }
     },
     actions: {
