@@ -2,7 +2,7 @@
   <div class="container">
     <div>
       <!-- <span id="chatLogo"><b>Chat</b></span> -->
-      <span class="material-icons-outlined" style="float:right"></span>
+      <span class="material-icons-outlined" style="float:right"> cancel </span>
       <span></span>
     </div>
     <div>
@@ -67,7 +67,7 @@ export default {
       Authorization: "Bearer " + accessToken,
     };
 
-    const sockJs = new SockJS("https://i6a405.p.ssafy.io:8081/api/v1/chat");
+    const sockJs = new SockJS("http://i6a405.p.ssafy.io:8081/api/v1/chat");
     const stomp = Stomp.over(sockJs);
 
     const dateFormatChange = (date) => {
