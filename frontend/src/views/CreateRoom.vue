@@ -41,7 +41,7 @@
                     <span v-if="searchedMalls.length === 0"><p class="text-center">검색결과 없음</p></span>
                     <div class="options">
                       <ul class="scroll">
-                        <li v-for="mall in searchedMalls" :key="mall.id" :value="mall.name" @click="selectItem(mall)">
+                        <li v-for="mall in searchedMalls" :key="mall.id" :value="mall.name" @click="selectMall(mall)">
                           {{ mall.name }}
                         </li>
                       </ul>
@@ -149,7 +149,7 @@ export default {
       isCntVisible.value = false;
     };
 
-    const selectItem = (mall) => {
+    const selectMall = (mall) => {
       selectedMall.value = mall;
       isMallListVisible.value = false;
     };
@@ -254,7 +254,7 @@ export default {
     return { 
       selectPrivate, selectPublic, makeShoppingRoom, goToMain, 
       ...toRefs(state), ...toRefs(error), counts, searchQuery, selectedCnt, selectedMall, isMallListVisible, 
-      isCntVisible, selectItem, selectCnt, isPrivate, password, searchedMalls, searchMall, validationCheck
+      isCntVisible, selectMall, selectCnt, isPrivate, password, searchedMalls, searchMall, validationCheck
     }
   }
 }
@@ -270,7 +270,7 @@ export default {
   display: flex;
   justify-content: center;
   width: 1224px;
-  height: 94vh;
+  height: 100vh;
   background-color: white;
 }
 

@@ -98,7 +98,7 @@ h2 {
 }
 .row::-webkit-scrollbar-thumb {
   border-radius: 10px;
-  background-color: #B0D8DA;
+  background-color: hsl(210deg 8% 65%);
 }
 
 .room {
