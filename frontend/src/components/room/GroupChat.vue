@@ -44,7 +44,7 @@ import SockJS from "sockjs-client";
 export default {
   name: "GroupChat",
   setup() {
-    const sockJs = new SockJS("http://i6a405.p.ssafy.io:8081/api/v1/chat");
+    const sockJs = new SockJS("https://i6a405.p.ssafy.io/api/v1/chat");
     const stomp = Stomp.over(sockJs);
     const route = useRoute();
     const store = useStore();
