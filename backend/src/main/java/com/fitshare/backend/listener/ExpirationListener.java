@@ -20,6 +20,7 @@ public class ExpirationListener implements MessageListener {
         String key = message.toString();
 
         if (key.startsWith("shadowkey")) {
+            // shadow key를 이용해 실제 키값을 구한다
             key = key.substring(10);
 
             Map<String, String> entries = (Map<String, String>) redisService.getEntries(key);

@@ -97,7 +97,11 @@ public class ChatServiceImpl implements ChatService {
     public void addPrivateChatInRedis(Long memberId, PrivateChatReq privateChatReq) {
         PrivateChat privateChat = makePrivateChatEntity(memberId, privateChatReq);
 
-        String key = "chat_" + memberId + "_" + privateChatReq.getReceiverId();
+        String nowDate = "" + privateChat.getCreatedTime().getYear() + "-";
+        nowDate += privateChat.getCreatedTime().getMonthValue() < 10 ? "0" + privateChat.getCreatedTime().getMonthValue() : privateChat.getCreatedTime().getMonthValue();
+        nowDate += "-" + privateChat.getCreatedTime().getDayOfMonth();
+
+        String key = "chat_" + memberId + "_" + privateChatReq.getReceiverId() + "_" + nowDate;
         redisService.setData(key, privateChat);
     }
 
@@ -117,10 +121,10 @@ public class ChatServiceImpl implements ChatService {
         String dateString = date.toString();
 
         if (date.isEqual(LocalDate.now())) { // 조회 요청 날짜가 오늘이면 Redis에서 조회
-            String key = "chat_" + memberId + "_" + friendId;
+            String key = "chat_" + memberId + "_" + friendId + "_" + dateString;
             List<PrivateChatRes> privateChatRes = getPrivateChatResListFromEntries(key, redisService.getEntries(key));
 
-            key = "chat_" + friendId + "_" + memberId;
+            key = "chat_" + friendId + "_" + memberId + "_" + dateString;
             privateChatRes.addAll(getPrivateChatResListFromEntries(key, redisService.getEntries(key)));
 
             return privateChatRes;
