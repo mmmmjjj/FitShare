@@ -21,7 +21,6 @@
         </div>
         <div class="content">
           <div class="viewer">
-            <!-- <group-chat class="group-chat"></group-chat> -->
             <!-- 메인 화면 -->
             <main-video
               id="main-video"
@@ -34,6 +33,11 @@
               :shopping-mall-url="shoppingMallUrl"
               class="shopping-site"
             ></shopping-site>
+            <!-- 단체 채팅 -->
+            <group-chat
+              class="group-chat"
+              v-if="clickChatStatus === false"
+            ></group-chat>
             <!-- 옷장 접기 -->
             <closet
               :subscribers="subscribers"
@@ -128,14 +132,22 @@
               v-if="clickStatus"
               @click="changeClickStatus"
             >
-              <img src="@/assets/closed_closet.png" alt="" class="closetBtn" />
+              <!-- <img src="@/assets/closed_closet.png" alt="" class="closetBtn" /> -->
             </button>
             <button
               class="btn shadow-none right"
               v-if="clickStatus === false"
               @click="changeClickStatus"
             >
-              <img src="@/assets/opened_closet.png" alt="" class="closetBtn" />
+              <!-- <img src="@/assets/opened_closet.png" alt="" class="closetBtn" /> -->
+            </button>
+
+            <button
+              class="btn shadow-none right"
+              v-if="clickChatStatus"
+              @click="changeClickChatStatus"
+            >
+              <img src="@/assets/chatting_icon.png" alt="" class="chatBtn" />
             </button>
           </div>
         </div>
@@ -155,7 +167,7 @@ import SubscriberVideo from "@/components/room/SubscriberVideo.vue";
 import MainVideo from "@/components/room/MainVideo.vue";
 import ShoppingSite from "@/components/room/ShoppingSite.vue";
 import Closet from "@/components/room/Closet.vue";
-// import GroupChat from '@/components/room/GroupChat.vue';
+import GroupChat from "@/components/room/GroupChat.vue";
 
 export default {
   name: "ShoppingRoom",
@@ -165,6 +177,7 @@ export default {
     MainVideo,
     ShoppingSite,
     Closet,
+    GroupChat,
   },
 
   setup() {
@@ -194,13 +207,21 @@ export default {
       isAudio: false,
       isVideo: false,
       closetClass: "closet",
+      chatClass: "group-chat",
       clickStatus: true,
+      clickChatStatus: true,
     });
 
     const changeClickStatus = () => {
       state.clickStatus = !state.clickStatus;
       if (state.clickStatus) state.closetClass = "closet blocked";
       else state.closetClass = "closet";
+    };
+
+    const changeClickChatStatus = () => {
+      state.clickChatStatus = !state.clickChatStatus;
+      if (state.clickChatStatus) state.chatClass = "group-chat blocked";
+      else state.chatClass = "group-chat";
     };
 
     const userData = computed(() => {
@@ -421,6 +442,7 @@ export default {
       showMainVideo,
       clothesUrl,
       changeClickStatus,
+      changeClickChatStatus,
     };
   },
 };
@@ -444,7 +466,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: #8ABDBE;
+  background-color: #8abdbe;
   width: 220px;
   height: 100vh;
 }
@@ -467,7 +489,21 @@ export default {
   width: 100%;
 }
 
-.group-chat,
+/* change */
+.group-chat {
+  position: fixed;
+  right: 40px;
+  bottom: 110px;
+  min-width: 290px;
+  width: 180px;
+  height: 530px;
+  margin: 0;
+  background-color: white;
+  border-radius: 10px;
+  /* background-color: #1B4D50; */
+  /* border: 1px solid black; */
+  box-shadow: 3px 3px 15px rgb(121 121 121);
+}
 .closet {
   min-width: 290px;
   width: 29vh;
@@ -532,6 +568,12 @@ p {
 }
 
 .closetBtn {
+  vertical-align: middle;
+  width: 44px;
+  height: auto;
+}
+
+.chatBtn {
   vertical-align: middle;
   width: 44px;
   height: auto;

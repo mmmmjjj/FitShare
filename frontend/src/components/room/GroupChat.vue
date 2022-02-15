@@ -1,7 +1,8 @@
 <template>
   <div class="container">
     <div>
-      <span id="chatLogo"><b>Chat</b></span>
+      <!-- <span id="chatLogo"><b>Chat</b></span> -->
+      <span class="material-icons-outlined" style="float:right"></span>
       <span></span>
     </div>
     <div>
@@ -81,7 +82,10 @@ export default {
         );
       } else {
         return (
-          "오전 " + pad(changedDate.getHours()) + ":" + pad(changedDate.getMinutes())
+          "오전 " +
+          pad(changedDate.getHours()) +
+          ":" +
+          pad(changedDate.getMinutes())
         );
       }
     };
@@ -180,16 +184,24 @@ export default {
 <style scoped>
 #container {
 }
+
 #chatLogo {
   font-size: 24px;
 }
+
 #textarea {
-  height: 82vh;
+  /* change */
+  margin-top: 40px;
+  height: 430px;
+  width: 100%;
   resize: none;
-  background-color: #d3e2e7;
+  background-color: #fdfaf3;
   color: gray;
 }
 #message {
   width: 100%;
+  background-color: #d3d3d380;
+  height: 30px;
+  margin-top: 4px;
 }
 </style>
