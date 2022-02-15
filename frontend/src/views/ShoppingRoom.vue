@@ -22,11 +22,7 @@
         <div class="content">
           <div class="viewer">
             <!-- 메인 화면 -->
-            <main-video
-              id="main-video"
-              v-if="showMainVideo"
-              :stream-manager="mainStreamManager"
-            />
+            <main-video id="main-video" v-if="showMainVideo" :stream-manager="mainStreamManager" />
             <!-- 쇼핑사이트 -->
             <shopping-site
               v-show="!showMainVideo"
@@ -34,10 +30,7 @@
               class="shopping-site"
             ></shopping-site>
             <!-- 단체 채팅 -->
-            <group-chat
-              class="group-chat"
-              v-if="clickChatStatus === false"
-            ></group-chat>
+            <group-chat class="group-chat" v-if="clickChatStatus === false"></group-chat>
             <!-- 옷장 접기 -->
             <closet
               :subscribers="subscribers"
@@ -50,111 +43,68 @@
           </div>
           <!-- 버튼 -->
           <div class="buttons" :class="buttons - center">
-            <!-- 가상피팅화면 종료 -->
-            <button
-              v-if="showMainVideo"
-              class="btn shadow-none stop-fitting-btn"
-              @click="backToSite"
-            >
-              <i class="fas fa-arrow-left"></i>
-              <p>피팅 종료하기</p>
-            </button>
-            <!-- 기본 기능 -->
-            <button
-              v-if="isAudio"
-              class="btn shadow-none"
-              @click="changeAudio()"
-            >
-              <i class="bi bi-mic-mute-fill"></i>
-            </button>
-            <button
-              v-if="!isAudio"
-              class="btn shadow-none"
-              @click="changeAudio()"
-            >
-              <i class="bi bi-mic-fill"></i>
-            </button>
-            <button
-              v-if="isVideo"
-              class="btn shadow-none"
-              @click="changeVideo()"
-            >
-              <i class="bi bi-camera-video-off-fill"></i>
-            </button>
-            <button
-              v-if="!isVideo"
-              class="btn shadow-none"
-              @click="changeVideo()"
-            >
-              <i class="bi bi-camera-video-fill"></i>
-            </button>
-            <input
-              class="btn shadow-none"
-              type="button"
-              id="buttonLeaveSession"
-              @click="leaveSession"
-              value="나가기"
-            />
+            <div id="video-btn" align="right">
+              <!-- 가상피팅화면 종료 -->
+              <button v-if="showMainVideo" class="btn shadow-none stop-fitting-btn" @click="backToSite">
+                <i class="fas fa-arrow-left"></i>
+                <p>피팅 종료하기</p>
+              </button>
+              <!-- 기본 기능 -->
+              <button v-if="isAudio" class="btn shadow-none" @click="changeAudio()">
+                <i class="bi bi-mic-mute-fill"></i>
+              </button>
+              <button v-if="!isAudio" class="btn shadow-none" @click="changeAudio()">
+                <i class="bi bi-mic-fill"></i>
+              </button>
+              <button v-if="isVideo" class="btn shadow-none" @click="changeVideo()">
+                <i class="bi bi-camera-video-off-fill"></i>
+              </button>
+              <button v-if="!isVideo" class="btn shadow-none" @click="changeVideo()">
+                <i class="bi bi-camera-video-fill"></i>
+              </button>
+              <input
+                class="btn shadow-none"
+                type="button"
+                id="buttonLeaveSession"
+                @click="leaveSession"
+                value="나가기"
+              />
 
-            <!-- 필터 change -->
-            <div v-if="isFitting && showMainVideo" class="radio-box">
-              <div @click="changeFilter('top')">
-                <input
-                  class="form-check-input"
-                  type="radio"
-                  name="flexRadioDefault"
-                  checked="checked"
-                  id="top"
-                />
-                <label class="form-check-label" for="top">상의</label>
-              </div>
-              <div @click="changeFilter('bottoms')">
-                <input
-                  class="form-check-input"
-                  type="radio"
-                  name="flexRadioDefault"
-                  id="bottom"
-                />
-                <label class="form-check-label" for="bottom">하의</label>
-              </div>
-              <div @click="changeFilter('hat')">
-                <input
-                  class="form-check-input"
-                  type="radio"
-                  name="flexRadioDefault"
-                  id="hat"
-                />
-                <label class="form-check-label" for="hat">모자</label>
+              <!-- 필터 change -->
+              <div v-if="isFitting && showMainVideo" class="radio-box">
+                <div @click="changeFilter('top')">
+                  <input class="form-check-input" type="radio" name="flexRadioDefault" checked="checked" id="top" />
+                  <label class="form-check-label" for="top">상의</label>
+                </div>
+                <div @click="changeFilter('bottoms')">
+                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="bottom" />
+                  <label class="form-check-label" for="bottom">하의</label>
+                </div>
+                <div @click="changeFilter('hat')">
+                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="hat" />
+                  <label class="form-check-label" for="hat">모자</label>
+                </div>
               </div>
             </div>
-            <button
-              class="btn shadow-none right"
-              v-if="clickStatus"
-              @click="changeClickStatus"
-            >
-              <img src="@/assets/closed_closet.png" alt="" class="closetBtn" />
-            </button>
-            <button
-              class="btn shadow-none right"
-              v-if="clickStatus === false"
-              @click="changeClickStatus"
-            >
-              <img src="@/assets/opened_closet.png" alt="" class="closetBtn" />
-            </button>
-            <button
-              class="btn shadow-none right"
-              v-if="clickChatStatus"
-              @click="changeClickChatStatus"
-            >
+            <div id="closet-btn" align="right">
+              <button class="btn shadow-none right" v-if="clickStatus" @click="changeClickStatus">
+                <img src="@/assets/closed_closet.png" alt="" class="closetBtn" />
+              </button>
+
+              <button class="btn shadow-none right" v-if="clickStatus === false" @click="changeClickStatus">
+                <img src="@/assets/opened_closet.png" alt="" class="closetBtn" />
+              </button>
+            </div>
+            <!-- <button class="btn shadow-none right" v-if="clickChatStatus" @click="changeClickChatStatus">
               <img src="@/assets/chatting_icon.png" alt="" class="chatBtn" />
-            </button>
-            <button
+            </button> -->
+            <!-- <button
               class="btn shadow-none right"
               v-if="clickChatStatus === false"
               @click="changeClickChatStatus"
             >
-              <img src="@/assets/chatting_icon.png" alt="" class="chatBtn" />
-            </button>
+              <img src="@/assets/chatting_icon.png" alt="" class="chatBtn" /> -->
+            <!-- </button> -->
           </div>
         </div>
       </div>
@@ -413,11 +363,7 @@ export default {
           });
         })
         .catch((error) => {
-          console.log(
-            "There was an error connecting to the session:",
-            error.code,
-            error.message
-          );
+          console.log("There was an error connecting to the session:", error.code, error.message);
         });
 
       window.addEventListener("beforeunload", leaveSession);
@@ -564,7 +510,7 @@ export default {
 }
 
 .buttons {
-  width: 900px;
+  width: 100%;
   height: 70px;
   line-height: 70px;
   text-align: center;
@@ -670,5 +616,15 @@ details > summary > i {
 details > summary > .closeIcon {
   position: fixed;
   right: 275px;
+}
+
+#video-btn {
+  float: left;
+  width: 55%;
+}
+
+#closet-btn {
+  float: left;
+  width: 45%;
 }
 </style>

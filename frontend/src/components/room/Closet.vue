@@ -2,78 +2,103 @@
   <div id="closet">
     <div class="accordion" id="accordionExample">
       <div class="accordion-item">
-        <h2 class="accordion-header" :id="'heading'+myId">
-          <button class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse'+myId" aria-expanded="true" :aria-controls="'collapse'+myId" @click="getClothes(myId)">
+        <h2 class="accordion-header" :id="'heading' + myId">
+          <button
+            class="accordion-button"
+            type="button"
+            data-bs-toggle="collapse"
+            :data-bs-target="'#collapse' + myId"
+            aria-expanded="true"
+            :aria-controls="'collapse' + myId"
+            @click="getClothes(myId)"
+          >
             내 옷장
           </button>
         </h2>
-        <div :id="'collapse'+myId" class="accordion-collapse collapse show" :aria-labelledby="'heading'+myId" data-bs-parent="#accordionExample">
+        <div
+          :id="'collapse' + myId"
+          class="accordion-collapse collapse show"
+          :aria-labelledby="'heading' + myId"
+          data-bs-parent="#accordionExample"
+        >
           <div class="accordion-body">
             <div class="d-flex input-style">
-              <input type="text" placeholder="이미지 Url 입력" class="img-url mt-1" v-model="ImgUrl">
-              <img src="@/assets/plus_icon.png" @click="AddUrl" alt="" class="plus-img ms-3">
+              <input type="text" placeholder="이미지 URL 입력" class="img-url mt-1" v-model="ImgUrl" />
+              <img src="@/assets/plus_icon.png" @click="AddUrl" alt="" class="plus-img ms-3" />
             </div>
             <div class="img-box mt-2">
               <div v-for="(cloth, index) in state.clothes" :key="cloth.clothId">
-                <button class="delete-btn" @click="deleteCloth(state.clothes, index)"><img src="@/assets/close-icon.png" alt=""></button>
+                <button class="delete-btn" @click="deleteCloth(state.clothes, index)">
+                  <img src="@/assets/close-icon.png" alt="" />
+                </button>
                 <button class="btn btn-secondary" @click="$emit('fitting', cloth.imageUrl)">입어보기</button>
-                <img :src="cloth.imageUrl" alt="img" class="img-style">
+                <img :src="cloth.imageUrl" alt="img" class="img-style" />
               </div>
             </div>
           </div>
         </div>
       </div>
-      
+
       <div class="accordion-item" v-for="(subscribe, index) in subscribers" :key="index">
-        <h2 class="accordion-header" :id="'heading'+index">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse'+index" aria-expanded="false" :aria-controls="'collapse'+index" @click="getFriendsClothes(subscribe)">
-            {{ splitName(subscribe).split(' ')[0] }} 's 옷장
+        <h2 class="accordion-header" :id="'heading' + index">
+          <button
+            class="accordion-button collapsed"
+            type="button"
+            data-bs-toggle="collapse"
+            :data-bs-target="'#collapse' + index"
+            aria-expanded="false"
+            :aria-controls="'collapse' + index"
+            @click="getFriendsClothes(subscribe)"
+          >
+            {{ splitName(subscribe).split(" ")[0] }} 님의 옷장
           </button>
         </h2>
-        <div :id="'collapse'+index" class="accordion-collapse collapse" :aria-labelledby="'heading'+index" data-bs-parent="#accordionExample">
+        <div
+          :id="'collapse' + index"
+          class="accordion-collapse collapse"
+          :aria-labelledby="'heading' + index"
+          data-bs-parent="#accordionExample"
+        >
           <div class="accordion-body">
             <div class="img-box">
               <div v-for="cloth in state.friendsClothes" :key="cloth.id">
                 <button class="btn btn-secondary" @click="$emit('fitting', cloth.imageUrl)">입어보기</button>
-                <img :src="cloth.imageUrl" alt="img" class="img-style">
+                <img :src="cloth.imageUrl" alt="img" class="img-style" />
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    
+
     <div v-if="warn_alert" class="alert alert-warning warn-alert" role="alert">
-      <i class="bi bi-exclamation-triangle-fill"></i>이미지 주소를 확인해 주세요 
+      <i class="bi bi-exclamation-triangle-fill"></i>이미지 주소를 확인해 주세요
     </div>
 
     <div v-if="success_alert" class="alert alert-primary success-alert" role="alert">
       <i class="bi bi-basket"></i>옷장에 추가되었습니다
     </div>
-
   </div>
 </template>
 
 <script scoped>
-import { ref, reactive, computed, watch } from 'vue'
-import { useStore } from 'vuex'
-import axios from '../../api/axios'
+import { ref, reactive, computed, watch } from "vue";
+import { useStore } from "vuex";
+import axios from "../../api/axios";
 
 export default {
-  name: 'Closet',
-  components: {
-    
-  },
+  name: "Closet",
+  components: {},
   props: {
     subscribers: Object,
     mySessionId: String,
     publisher: Object,
   },
-  emits: ['fitting'],
+  emits: ["fitting"],
   setup(props) {
-    const ImgUrl = ref('')
-    
-    const Urls = ref('')
+    const ImgUrl = ref("");
+
+    const Urls = ref("");
 
     let warn_alert = ref(false);
 
@@ -84,104 +109,100 @@ export default {
       subscribers: [],
       clientData: computed(() => {
         const { clientData } = getConnectionData();
-        return Number(clientData.split(' ')[1])
+        return Number(clientData.split(" ")[1]);
       }),
       friendsClothes: [],
       errorStatus: false,
-    })
+    });
 
     // publisher data 객체만 추출
     const getConnectionData = () => {
-      const { connection } = props.publisher.stream
+      const { connection } = props.publisher.stream;
       return JSON.parse(connection.data);
-    }
+    };
 
     // subscriber data 추출
     const splitName = (subscribe) => {
-      const { connection } = subscribe.stream
-      const parse = JSON.parse(connection.data)
-      const { clientData } =  parse
-      return clientData
-    }
+      const { connection } = subscribe.stream;
+      const parse = JSON.parse(connection.data);
+      const { clientData } = parse;
+      return clientData;
+    };
 
-    const store = useStore()
-    
+    const store = useStore();
+
     // 내 id store/login 에서 가져오기
     const myId = computed(() => {
-      return Number(store.state.user.user_id)
-    })
+      return Number(store.state.user.user_id);
+    });
 
     // 옷 이미지 주소 입력 후 등록
     const AddUrl = () => {
-      if(ImgUrl.value.length < 1) {
-        alert('이미지 주소를 입력하세요')
-      }
-      else {
+      if (ImgUrl.value.length < 1) {
+        alert("이미지 주소를 입력하세요");
+      } else {
         // alert('옷장에 추가되었습니다.')
         axios({
-          method: 'POST',
+          method: "POST",
           url: `clothes`,
-          data: {"imageUrl": ImgUrl.value, "shoppingRoomId": props.mySessionId}
+          data: { imageUrl: ImgUrl.value, shoppingRoomId: props.mySessionId },
+        })
+          .then((res) => {
+            console.log(res);
+            state.clothes.push(res.data.data);
+            success_alert.value = true;
           })
-          .then(res => {
-            console.log(res)
-            state.clothes.push(res.data.data)
-            success_alert.value = true
-          })
-          .catch(err => {
-            console.log(err)
+          .catch((err) => {
+            console.log(err);
             if (err.response.status == 400) {
-              warn_alert.value = true
+              warn_alert.value = true;
             }
-          })
-        ImgUrl.value = ''
+          });
+        ImgUrl.value = "";
       }
-    }
+    };
 
     watch(success_alert, () => {
-      if (success_alert.value) setTimeout(() => success_alert.value = false, 3000);
+      if (success_alert.value) setTimeout(() => (success_alert.value = false), 3000);
     });
 
     watch(warn_alert, () => {
-      if (warn_alert.value) setTimeout(() => warn_alert.value = false, 3000);
+      if (warn_alert.value) setTimeout(() => (warn_alert.value = false), 3000);
     });
 
     // mySessionId번 방의 내 memberId(myId) 의 옷 리스트 GET 요청
     const getClothes = (myId) => {
       axios({
-        method: 'GET',
+        method: "GET",
         url: `clothes/${props.mySessionId}/${myId}`,
-      })
-      .then(res => {
-        console.log(res)
-        state.clothes = res.data.data
-        console.log(state.clothes)
-      })
-    }
+      }).then((res) => {
+        console.log(res);
+        state.clothes = res.data.data;
+        console.log(state.clothes);
+      });
+    };
 
     const getFriendsClothes = (subscribe) => {
-      state.friendsClothes = []
+      state.friendsClothes = [];
       axios({
-        method: 'GET',
-        url: `clothes/${props.mySessionId}/${splitName(subscribe).split(' ')[1]}`,
-      })
-      .then(res => {
-        console.log(res)
-        state.friendsClothes = res.data.data
-      })
-    }
+        method: "GET",
+        url: `clothes/${props.mySessionId}/${splitName(subscribe).split(" ")[1]}`,
+      }).then((res) => {
+        console.log(res);
+        state.friendsClothes = res.data.data;
+      });
+    };
 
     // 내 옷 삭제
     const deleteCloth = (clothes, index) => {
       axios({
-        method: 'DELETE',
-        url: `clothes/${clothes[index].clothId}`
-      })
-      .then(res => {
-        console.log(res)
-        clothes.splice(index, 1)
-      })
-    }
+        method: "DELETE",
+        url: `clothes/${clothes[index].clothId}`,
+      }).then((res) => {
+        console.log(res);
+        clothes.splice(index, 1);
+      });
+    };
 
     return {
       ImgUrl,
@@ -190,10 +211,15 @@ export default {
       getClothes,
       state,
       myId,
-      getConnectionData, splitName, getFriendsClothes, deleteCloth, warn_alert, success_alert
-    }
-  }
-}
+      getConnectionData,
+      splitName,
+      getFriendsClothes,
+      deleteCloth,
+      warn_alert,
+      success_alert,
+    };
+  },
+};
 </script>
 
 <style scoped>
@@ -210,7 +236,7 @@ export default {
 }
 
 .img-url {
-  width: 170px; 
+  width: 170px;
 }
 
 /* 버튼모양 이미지로 대체했을 때 스타일 */
@@ -235,7 +261,7 @@ export default {
 }
 
 .delete-btn {
-  background-color: white; 
+  background-color: white;
   color: black;
   border: none;
 }
@@ -260,19 +286,19 @@ export default {
   border-radius: 10px;
 }
 .img-box::-webkit-scrollbar-track {
-  background-color: #FDFAF3;
+  background-color: #fdfaf3;
   border-radius: 10px;
   box-shadow: inset 0px 0px 5px white;
 }
 
 .clth-style {
   width: 300px;
-  height: 300px;;
+  height: 300px;
 }
 
 .warn-alert {
   position: absolute;
-  left:80%;
+  left: 80%;
   top: 6%;
 }
 

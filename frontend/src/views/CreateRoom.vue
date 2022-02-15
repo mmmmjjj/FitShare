@@ -1,9 +1,9 @@
 <template>
   <div>
-    <Navbar/>
+    <Navbar />
     <div id="container">
       <div class="create-container">
-        <div id="new-room"> 
+        <div id="new-room">
           <div id="dialog" class="vertical-center">
             <div class="d-flex flex-row title">
               <i class="bi bi-house-door me-4"></i>
@@ -14,14 +14,17 @@
               <div class="row">
                 <label class="counts"><i class="bi bi-asterisk"></i>입장 가능 인원</label>
                 <div class="dropdown-wrapper">
-                  <div class="form-select" @click="isCntVisible = !isCntVisible">  <!-- :class="isFocused ? 'focus-outline': '' " , changeOutline() -->
+                  <div class="form-select" @click="isCntVisible = !isCntVisible">
+                    <!-- :class="isFocused ? 'focus-outline': '' " , changeOutline() -->
                     <p v-if="selectedCnt">{{ selectedCnt }}</p>
                     <p v-else>인원수를 선택하세요</p>
                   </div>
                   <div v-show="isCntVisible" class="dropdown-popover">
                     <div class="options">
                       <ul class="scroll cnt-ul">
-                        <li v-for="(cnt, index) in counts" :key="index" :value="cnt" @click="selectCnt(cnt)">{{ cnt }}</li>
+                        <li v-for="(cnt, index) in counts" :key="index" :value="cnt" @click="selectCnt(cnt)">
+                          {{ cnt }}
+                        </li>
                       </ul>
                     </div>
                   </div>
@@ -37,7 +40,13 @@
                     <p v-else>쇼핑몰을 선택하세요</p>
                   </div>
                   <div v-if="isMallListVisible" class="dropdown-popover">
-                    <input @keyup="searchMall()" v-model="searchQuery" class="search-mall-input" type="text" placeholder="검색하세요">
+                    <input
+                      @keyup="searchMall()"
+                      v-model="searchQuery"
+                      class="search-mall-input"
+                      type="text"
+                      placeholder="검색하세요"
+                    />
                     <span v-if="searchedMalls.length === 0"><p class="text-center">검색결과 없음</p></span>
                     <div class="options">
                       <ul class="scroll">
@@ -51,44 +60,57 @@
               </div>
               <p class="mall-error" v-if="mallError">{{ mallError }}</p>
               <!-- 사이트 직접 입력 -->
-              <div class="d-flex flex-row-reverse" v-if="!isMall"> 
+              <div class="d-flex flex-row-reverse" v-if="!isMall">
                 <div class="mall-input-container">
                   <div class="mall-input mb-2">
                     <label><i class="bi bi-asterisk"></i>사이트 이름</label>
-                    <input v-model="inputMallName" class="form-control text-input shadow-none" type="text">
+                    <input v-model="inputMallName" class="form-control text-input shadow-none" type="text" />
                   </div>
                   <div class="mall-input">
                     <label><i class="bi bi-asterisk"></i>사이트 주소</label>
-                    <input v-model="inputMallUrl" class="form-control text-input shadow-none" type="text">
+                    <input v-model="inputMallUrl" class="form-control text-input shadow-none" type="text" />
                   </div>
                 </div>
               </div>
               <!-- 공개범위 설정 -->
-              <div class="row private-container" :class="isPrivate ? 'private-margin-change' : ''" 
+              <div
+                class="row private-container"
+                :class="isPrivate ? 'private-margin-change' : ''"
                 :style="[isMall ? { 'margin-top': '203px' } : { 'margin-top': '75px' }]"
               >
                 <label>공개범위</label>
                 <span class="form-radio">
                   <span @click="selectPublic()" class="radio-box">
-                    <input class="form-check-input" type="radio" name="flexRadioDefault" checked="checked" id="public">
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      name="flexRadioDefault"
+                      checked="checked"
+                      id="public"
+                    />
                     <label class="form-check-label" for="public">공개</label>
                   </span>
                   <span @click="selectPrivate()" class="radio-box">
-                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="private">
-                    <label class="form-check-label" for="private" >비공개</label>
+                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="private" />
+                    <label class="form-check-label" for="private">비공개</label>
                   </span>
                 </span>
               </div>
               <!-- 비밀번호 입력 -->
-              <div class="row password-container" v-show="isPrivate">  
+              <div class="row password-container" v-show="isPrivate">
                 <label>비밀번호</label>
-                <input v-model="password" class="form-control shadow-none" type="password" placeholder="6자리 이하로 작성해주세요">
+                <input
+                  v-model="password"
+                  class="form-control shadow-none"
+                  type="password"
+                  placeholder="6자리 이하로 작성해주세요"
+                />
                 <p class="password-error" v-if="passwordError">{{ passwordError }}</p>
               </div>
               <div class="button-box">
                 <button class="btn shadow-none" @click="validationCheck()">생성하기</button>
                 <button class="btn shadow-none" @click="goToMain()">취소</button>
-              </div>        
+              </div>
             </div>
           </div>
         </div>
@@ -98,29 +120,29 @@
 </template>
 
 <script>
-import { reactive, ref, toRefs, watch } from 'vue';
-import { useRouter } from 'vue-router';
-import axios from '../api/axios';
-import Navbar from '@/components/Navbar.vue';
+import { reactive, ref, toRefs, watch } from "vue";
+import { useRouter } from "vue-router";
+import axios from "../api/axios";
+import Navbar from "@/components/Navbar.vue";
 
 export default {
-  name: 'CreateRoom',
+  name: "CreateRoom",
   components: { Navbar },
   setup() {
     const router = useRouter();
-    
+
     let counts = ref([1, 2, 3, 4, 5, 6]);
     let selectedCnt = ref(null);
     let isCntVisible = ref(false);
 
-    let searchQuery = ref('');
-    let searchedMalls = ref({});  // 쇼핑몰 검색결과
+    let searchQuery = ref("");
+    let searchedMalls = ref({}); // 쇼핑몰 검색결과
     let selectedMall = ref(null);
     let isMallListVisible = ref(false);
 
     let isPrivate = ref(false);
     let password = ref(null);
-    
+
     const error = reactive({
       cntError: null,
       mallError: null,
@@ -133,7 +155,7 @@ export default {
       inputMallUrl: null,
     });
 
-    // 쇼핑몰 입력부분 생성 
+    // 쇼핑몰 입력부분 생성
     watch(searchedMalls, (searchedMalls) => {
       if (searchedMalls.length === 0) {
         state.isMall = false;
@@ -143,7 +165,7 @@ export default {
       }
     });
 
-    // select dropdown 
+    // select dropdown
     const selectCnt = (cnt) => {
       selectedCnt.value = cnt;
       isCntVisible.value = false;
@@ -153,64 +175,75 @@ export default {
       selectedMall.value = mall;
       isMallListVisible.value = false;
     };
-    
+
     // 쇼핑몰 검색
-   const searchMall = () => {
-      axios.get(`shopping-malls?keyword=${searchQuery.value}`)
-        .then(res => {
+    const searchMall = () => {
+      axios
+        .get(`shopping-malls?keyword=${searchQuery.value}`)
+        .then((res) => {
           searchedMalls.value = res.data.data;
         })
-        .catch(err => console.log(err))
+        .catch((err) => console.log(err));
     };
 
     // dropdown 닫기
-    document.addEventListener('click', function(e){
+    document.addEventListener("click", function (e) {
       if (isMallListVisible.value == true) {
-        if (e.target.className !== 'dropdown-popover' && e.target.className !== 'form-select' && e.target.className !== '' && e.target.className !== 'search-mall-input' ) {
+        if (
+          e.target.className !== "dropdown-popover" &&
+          e.target.className !== "form-select" &&
+          e.target.className !== "" &&
+          e.target.className !== "search-mall-input"
+        ) {
           isMallListVisible.value = false;
         }
-      } 
+      }
       if (isCntVisible.value == true) {
-        if (e.target.className !== 'dropdown-popover' && e.target.className !== 'form-select' && e.target.className !== '' && e.target.className !== 'search-mall-input' ) {
+        if (
+          e.target.className !== "dropdown-popover" &&
+          e.target.className !== "form-select" &&
+          e.target.className !== "" &&
+          e.target.className !== "search-mall-input"
+        ) {
           isCntVisible.value = false;
         }
-      } 
+      }
     });
-    
+
     const selectPrivate = () => {
-      isPrivate.value = true
+      isPrivate.value = true;
     };
 
     const selectPublic = () => {
-      isPrivate.value = false
+      isPrivate.value = false;
     };
 
-    // 유효성 검사 
+    // 유효성 검사
     const validationCheck = () => {
       let isValid = true;
-      // 인원수 
+      // 인원수
       if (!selectedCnt.value) {
-        error.cntError = '인원수를 선택해주세요!';
+        error.cntError = "인원수를 선택해주세요!";
         isValid = false;
-      } else error.cntError = '';
-      
+      } else error.cntError = "";
+
       // 쇼핑몰 확인
       if (!selectedMall.value) {
         if (!state.inputMallName || !state.inputMallUrl) {
-          error.mallError = '쇼핑몰을 선택하거나 입력해주세요!';
+          error.mallError = "쇼핑몰을 선택하거나 입력해주세요!";
           isValid = false;
-        } else error.mallError = ''; 
-      } else error.mallError = '';
-      
+        } else error.mallError = "";
+      } else error.mallError = "";
+
       // 비밀번호 확인
       if (isPrivate.value) {
         if (!password.value) {
-          error.passwordError = '비밀번호를 입력해주세요';
+          error.passwordError = "비밀번호를 입력해주세요";
           return;
         } else if (password.value.length > 6) {
-          error.passwordError = '비밀번호는 6자리 이하로 작성해주세요';
+          error.passwordError = "비밀번호는 6자리 이하로 작성해주세요";
           return;
-        } else error.passwordError = '';
+        } else error.passwordError = "";
       }
       if (isValid) makeShoppingRoom();
     };
@@ -224,40 +257,65 @@ export default {
         state.inputMallUrl = null;
       }
       if (!isPrivate.value) password.value = null;
-      
-      const roomData = {  
+
+      const roomData = {
         customShoppingMall: !state.isMall,
         participantCount: selectedCnt.value,
         password: password.value,
-        private: isPrivate.value,  
-        shoppingMallId: mallId, 
-        shoppingMallName: state.inputMallName, 
-        shoppingMallUrl: state.inputMallUrl,  
+        private: isPrivate.value,
+        shoppingMallId: mallId,
+        shoppingMallName: state.inputMallName,
+        shoppingMallUrl: state.inputMallUrl,
       };
 
-      axios.post('shopping-rooms/', roomData)
-        .then(res => {
+      axios
+        .post("shopping-rooms/", roomData)
+        .then((res) => {
           const data = res.data.data;
-          router.push({ name: 'ShoppingRoom', params: { roomId: data.shoppingRoomId, token: data.token, mallUrl: data.shoppingRoomUrl, hostId: data.hostId }});
+          router.push({
+            name: "ShoppingRoom",
+            params: {
+              roomId: data.shoppingRoomId,
+              token: data.token,
+              mallUrl: data.shoppingRoomUrl,
+              hostId: data.hostId,
+            },
+          });
         })
-        .catch(err => {
+        .catch((err) => {
           if (err.response.data.statusCode == 400) {
-            error.mallError = '유효하지 않은 쇼핑몰입니다. 다시 입력해주세요.';
-          } 
+            error.mallError = "유효하지 않은 쇼핑몰입니다. 다시 입력해주세요.";
+          }
         });
     };
 
     const goToMain = () => {
-      router.push({ name: 'Main' });
+      router.push({ name: "Main" });
     };
 
-    return { 
-      selectPrivate, selectPublic, makeShoppingRoom, goToMain, 
-      ...toRefs(state), ...toRefs(error), counts, searchQuery, selectedCnt, selectedMall, isMallListVisible, 
-      isCntVisible, selectMall, selectCnt, isPrivate, password, searchedMalls, searchMall, validationCheck
-    }
-  }
-}
+    return {
+      selectPrivate,
+      selectPublic,
+      makeShoppingRoom,
+      goToMain,
+      ...toRefs(state),
+      ...toRefs(error),
+      counts,
+      searchQuery,
+      selectedCnt,
+      selectedMall,
+      isMallListVisible,
+      isCntVisible,
+      selectMall,
+      selectCnt,
+      isPrivate,
+      password,
+      searchedMalls,
+      searchMall,
+      validationCheck,
+    };
+  },
+};
 </script>
 
 <style scoped>
@@ -269,15 +327,15 @@ export default {
 .create-container {
   display: flex;
   justify-content: center;
-  width: 1224px;
-  height: 100vh;
-  background-color: white;
 }
 
 #new-room {
-  margin: 20px 187px 90px;
-  width: 782px;
-  height: 851px;
+  margin: 40px 187px 0px;
+  width: 682px;
+  height: 831px;
+  background: #fdfaf3;
+  border-radius: 16px;
+  box-shadow: 0 0 5px 1px #dadada;
 }
 
 .row {
@@ -295,6 +353,7 @@ export default {
 }
 
 .dropdown-popover {
+  z-index: 2;
   position: absolute;
   border: 1px solid lightgray;
   top: 35px;
@@ -304,7 +363,7 @@ export default {
   max-width: 100%;
   min-height: 40px;
   padding: 10px;
-  box-shadow: 0 0 6px #D3E2E7;
+  box-shadow: 0 0 6px #d3e2e7;
 }
 
 .form-select {
@@ -319,7 +378,7 @@ export default {
 }
 
 p {
-  margin: 0;  
+  margin: 0;
 }
 
 .bi-asterisk {
@@ -327,9 +386,9 @@ p {
   color: red;
   margin-right: 4px;
 }
- 
+
 .mall-container {
-  margin-top: 160px;
+  margin-top: 80px;
 }
 
 .search-mall-input {
@@ -372,7 +431,7 @@ li:hover {
 }
 
 input:focus {
-  outline:none;
+  outline: none;
   box-shadow: none;
 }
 
@@ -397,7 +456,7 @@ label {
   margin-bottom: 159px;
 }
 
-.private-margin-change {   
+.private-margin-change {
   margin-top: 75px;
   margin-bottom: 54px;
 }
@@ -452,8 +511,8 @@ label {
 }
 
 .password-container input:focus {
-  border: 2px solid #D3E2E7;
-  box-shadow: 0 0 10px #D3E2E7
+  border: 2px solid #d3e2e7;
+  box-shadow: 0 0 10px #d3e2e7;
 }
 
 .password-container input::placeholder {
@@ -465,12 +524,14 @@ label {
 }
 
 button {
-  width: 300px;
+  width: 250px;
   height: 50px;
   flex-grow: 0;
   margin: 0 15px;
   border-radius: 12px;
-  border: solid 2px #000;
+  /* border: solid 2px #000; */
+  background: #8abdbe;
+  box-shadow: 0 0 10px black;
 }
 
 /* error */
@@ -496,6 +557,6 @@ button {
 }
 .scroll::-webkit-scrollbar-thumb {
   border-radius: 10px;
-  background-color: #D3E2E7;
+  background-color: #d3e2e7;
 }
 </style>

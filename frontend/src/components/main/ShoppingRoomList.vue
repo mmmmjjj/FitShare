@@ -1,14 +1,18 @@
 <template>
   <div class="room-container">
-    <h2><i class="bi bi-record2-fill me-1"></i>Live</h2>
+    <h2><i class="bi bi-record2-fill me-1"></i>LIVE</h2>
     <div v-if="shoppingRoomList.length" class="row">
-      <div id="room" class="room col-6" v-for="(room, index) in shoppingRoomList" :key="index"
-        :class="[(index % 2 ? 'room-right' : 'room-left'), (index == clicked ? 'room-clicked' : '')]" 
-        :style="{ 'background-image': `url(${require(`@/assets/shopping_${index % 5 + 1}.png`)})` }"
+      <div
+        id="room"
+        class="room col-6"
+        v-for="(room, index) in shoppingRoomList"
+        :key="index"
+        :class="[index % 2 ? 'room-right' : 'room-left', index == clicked ? 'room-clicked' : '']"
+        :style="{ 'background-image': `url(${require(`@/assets/shopping_${(index % 5) + 1}.png`)})` }"
         @click="selectShoppingRoom(room, index)"
       >
         <div class="participant">
-          <i class="bi bi-eye me-1"></i> {{room.participantCount}} / {{room.maxParticipantCount}}
+          <i class="bi bi-eye me-1"></i> {{ room.participantCount }} / {{ room.maxParticipantCount }}
         </div>
         <i v-if="room.isPrivate" class="fas fa-lock"></i>
         <div class="room-info">
@@ -28,46 +32,49 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue';
-import { useStore } from 'vuex';
+import { computed, ref } from "vue";
+import { useStore } from "vuex";
 
 export default {
-    name: 'ShoppingRoomList',
-    
-    setup() {
-      const store = useStore();
+  name: "ShoppingRoomList",
 
-      const clicked = ref(0);
+  setup() {
+    const store = useStore();
 
-      const shoppingRoomList = computed(() => {
-        return store.state.room.shoppingRoomList;
-      });
+    const clicked = ref(0);
 
-      const loadShoppingRoomList = () => {
-        store.dispatch('room/loadShoppingRoomList');
-      };
-      
-      const selectShoppingRoom = (room, index) => {
-        store.dispatch('room/selectedRoom', room);
-        clicked.value = index;
-      };
+    const shoppingRoomList = computed(() => {
+      return store.state.room.shoppingRoomList;
+    });
 
-      // created
-      loadShoppingRoomList();
+    const loadShoppingRoomList = () => {
+      store.dispatch("room/loadShoppingRoomList");
+    };
 
-      return {
-        shoppingRoomList, selectShoppingRoom, clicked
-      }
-    }
-}
+    const selectShoppingRoom = (room, index) => {
+      store.dispatch("room/selectedRoom", room);
+      clicked.value = index;
+    };
+
+    // created
+    loadShoppingRoomList();
+
+    return {
+      shoppingRoomList,
+      selectShoppingRoom,
+      clicked,
+    };
+  },
+};
 </script>
 
 <style scoped>
 .room-container {
   height: 775px;
   width: 543px;
-  background-color: #FDFAF3;
+  background-color: #fdfaf3;
   border-radius: 16px;
+  box-shadow: 0 0 5px 1px #dadada;
   padding: 0;
   margin-bottom: 20px;
   position: relative;
@@ -104,24 +111,24 @@ h2 {
 .room {
   position: relative;
   padding: 0;
-  margin-bottom: 42px;
+  margin: 5px 0 42px 0;
   width: 205px;
-  height: 297px;  
+  height: 297px;
   border-radius: 10px;
-  border: 3px solid #D3E2E7;
+  border: 3px solid #d3e2e7;
   cursor: pointer;
   background-color: white;
-  background-repeat : no-repeat;
-  background-size : contain;
+  background-repeat: no-repeat;
+  background-size: contain;
   background-position: 0 20%;
 }
 
 .room:hover {
-  box-shadow: 1px 1px 15px rgb(207, 206, 206);
+  box-shadow: 1px 1px 10px #33665f;
 }
 
 .room-clicked {
-  box-shadow: 1px 1px 15px rgb(207, 206, 206);
+  box-shadow: 1px 1px 10px #33665f;
 }
 
 .room-left {
@@ -188,10 +195,11 @@ h2 {
   top: 28%;
   transform: translate(-50%, 0);
   font-size: 80px;
-  color: #1B4D50;
+  color: #1b4d50;
 }
 
-h4, h5 {
+h4,
+h5 {
   text-align: center;
   font-weight: bold;
 }
@@ -199,5 +207,4 @@ h4, h5 {
 h4 > span {
   color: #f2af46;
 }
-
 </style>

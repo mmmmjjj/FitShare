@@ -1,10 +1,10 @@
 <template>
   <nav class="navbar">
-    <img @click="goToMain" src="@/assets/logo.png" alt="Fit Share Logo">
+    <img @click="goToMain" src="@/assets/logo.png" alt="Fit Share Logo" />
     <div class="nav-end">
       <div class="create" @click="goToCreate">쇼핑룸 생성</div>
       <div class="username">{{ userName }}님</div>
-      <img @click="!isVisible ? isVisible=true : isVisible=false" :src="profileImage" alt="profile image">
+      <img @click="!isVisible ? (isVisible = true) : (isVisible = false)" :src="profileImage" alt="profile image" />
       <div class="dropdown" v-if="isVisible">
         <p @click="logout">로그아웃</p>
       </div>
@@ -13,44 +13,49 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
-import { useStore } from 'vuex';
+import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 
 export default {
-    name: 'Navbar',
-    setup() {
-      const router = useRouter();
-      const store = useStore();
+  name: "Navbar",
+  setup() {
+    const router = useRouter();
+    const store = useStore();
 
-      let isVisible = ref(false);
+    let isVisible = ref(false);
 
-      const profileImage = computed(() => {
-        return store.state.user.user_profileURI
-      });
+    const profileImage = computed(() => {
+      return store.state.user.user_profileURI;
+    });
 
-      const userName = computed(() => {
-        return store.state.user.user_name
-      })
+    const userName = computed(() => {
+      return store.state.user.user_name;
+    });
 
-      const goToMain = () => {
-        router.push({ name: 'Main' }) 
-      };
+    const goToMain = () => {
+      router.push({ name: "Main" });
+    };
 
-      const goToCreate = () => {
-        router.push({ name: 'CreateRoom' }) 
-      };
+    const goToCreate = () => {
+      router.push({ name: "CreateRoom" });
+    };
 
-      const logout = () => {
-        store.dispatch("user/logout", store.getters['user/refreshToken']);
-        router.push({ name: 'Login'});
-      }
+    const logout = () => {
+      store.dispatch("user/logout", store.getters["user/refreshToken"]);
+      router.push({ name: "Login" });
+    };
 
-      return {
-        isVisible, profileImage, userName, goToMain, goToCreate, logout
-      }
-    }
-}
+    return {
+      isVisible,
+      profileImage,
+      userName,
+      goToMain,
+      goToCreate,
+      logout,
+    };
+  },
+};
 </script>
 
 <style scoped>
@@ -59,8 +64,7 @@ nav {
   justify-content: space-between;
   align-items: center;
   padding-top: 3px;
-  border-bottom: 3px solid #8ABDBE;
-  background-color: #1B4D50;
+  background-color: #1b4d50;
 }
 
 nav > img {
@@ -79,7 +83,7 @@ nav > img {
 .create {
   font-weight: bold;
   font-size: 18px;
-  color: #1B4D50;
+  color: #1b4d50;
   cursor: pointer;
   background-color: #fdfaf3b9;
   border-radius: 10px;
@@ -94,12 +98,12 @@ nav > img {
   color: #f5ead2;
   font-weight: bold;
   height: 42px;
-  line-height: 57px;
+  line-height: 55px;
   margin-left: 40px;
 }
 
 .nav-end img {
-  border: 2px solid #EDEEF2;
+  border: 2px solid #edeef2;
   border-radius: 16px;
   margin: 2px 45px 0 20px;
   width: 50px;
@@ -117,10 +121,10 @@ nav > img {
   background-color: rgba(255, 255, 255, 0.658);
   border: 1px solid lightgray;
   border-radius: 5px;
-  box-shadow: 3px 3px 3px rgb(207, 206, 206)
+  box-shadow: 3px 3px 3px rgb(207, 206, 206);
 }
 
-.dropdown p { 
+.dropdown p {
   height: 45px;
   margin-bottom: 0px;
   text-align: center;
@@ -131,5 +135,4 @@ nav > img {
 .dropdown p:hover {
   color: #81b5b6;
 }
-
 </style>
