@@ -1,24 +1,18 @@
 <template>
   <div>
     <!-- 친구 이름 검색 input-box -->
-    <input
-      class="input-box"
-      type="text"
-      v-model="SearchFriend"
-      placeholder="이름 검색"
-      @keyup="SearchFriendEmail"
-    >
+    <input class="input-box" type="text" v-model="SearchFriend" placeholder="이름 검색" @keyup="SearchFriendEmail" />
 
     <!-- 친구 목록 -->
     <div v-for="(friend, index) in stateFriends" :key="friend.id" class="d-flex mt-3">
-      <img :src="friend.profileImg" alt="profile-img">
+      <img :src="friend.profileImg" alt="profile-img" class="profile-img" />
       <div class="ms-3 d-flex flex-column">
         <div class="name-box">
           {{ friend.name }}
         </div>
         <div class="d-flex mt-2 button-box">
           <button class="" @click="DeleteFriend(stateFriends, index)">친구삭제</button>
-          <button type="button" class="ms-3" @click="openChatting(friend.id, friend.name)">채팅하기</button>
+          <button type="button" class="ms-2" @click="openChatting(friend.id, friend.name)">채팅하기</button>
         </div>
       </div>
     </div>
@@ -30,8 +24,8 @@
 </template>
 
 <script>
-import { ref, reactive, computed } from 'vue'
-import axios from '../../api/axios'
+import { ref, reactive, computed } from 'vue';
+import axios from '../../api/axios';
 import { useStore } from "vuex";
 import FriendChatting from './FriendChatting.vue';
 
@@ -48,12 +42,10 @@ export default {
       chattingStatus: false,
       friendId: '',
       friendName: '',
-    })
+    });
 
-    const SearchFriend = ref('')
-
-    // store test
-    const store = useStore()
+    const SearchFriend = ref('');
+    const store = useStore();
 
     // store의 state에서 받아와서 저장해두기
     const stateFriends = computed(() => {
@@ -65,12 +57,12 @@ export default {
       axios({
         method: 'DELETE',
         url: `friends/${stateFriends[index].id}`,
-        data: {"friendId": stateFriends[index].id}
+        data: { friendId: stateFriends[index].id }
         })
         .then(() => {
           stateFriends.splice(index, 1)
         })
-    }
+    };
 
     // created , store에서 받아오기
     const GetFriendList = () => {
@@ -85,7 +77,7 @@ export default {
           const friend = state.friendLists
           store.dispatch('friend/getfriends', friend)
         })
-    }
+    };
 
     GetFriendList()
 
@@ -95,20 +87,20 @@ export default {
         method: 'GET',
         url: `friends/${SearchFriend.value}`,
       })
-        .then(res => {
-          state.friendEmail = res.data.data
-          console.log(state.friendEmail)
+        .then((res) => {
+          state.friendEmail = res.data.data;
+          console.log(state.friendEmail);
         })
         .then(() => {
-          const friendbyname = state.friendEmail
-          store.dispatch('friend/getfriendsbyname', friendbyname)
+          const friendbyname = state.friendEmail;
+          store.dispatch('friend/getfriendsbyname', friendbyname);
         })
     }
 
     const openChatting = (friendId, friendName) => {
       state.chattingStatus = !state.chattingStatus;
-      state.friendId = friendId
-      state.friendName = friendName
+      state.friendId = friendId;
+      state.friendName = friendName;
     }
 
     return {
@@ -157,6 +149,7 @@ input::placeholder {
 img {
   width: 60px;
   height: 60px;
+  min-width: 60px;
   border-radius: 30px;
 }
 
