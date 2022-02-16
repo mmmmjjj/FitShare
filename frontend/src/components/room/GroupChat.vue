@@ -1,12 +1,6 @@
 <template>
   <div class="container">
     <div>
-      <!-- <span id="chatLogo"><b>Chat</b></span> -->
-      <span class="material-icons" id="cancelIcon" @click="closeGroupChat">
-        cancel
-      </span>
-    </div>
-    <div>
       <textarea
         name=""
         id="textarea"
@@ -57,7 +51,7 @@ export default {
       textarea: "",
       receivedMsg: [],
     });
-
+    // state.textarea.scrollTop(state.textarea.scrollHeight);
     state.roomId = route.params.roomId; // 쇼핑룸 생성 시 쇼핑룸 id 가져오기
     state.receivedMsg = computed(() => store.state.chat.recvMsg); // vuex에서 가져오기
     state.userName = computed(() => store.state.user.user_name); // vuex에서 가져오기
@@ -152,7 +146,7 @@ export default {
         state.message = "";
       }
     };
-
+    
     return {
       state,
       accessToken,
@@ -178,12 +172,16 @@ export default {
 
 #textarea {
   /* change */
-  margin-top: 5px;
-  height: 430px;
+  margin-top: 10px;
   width: 100%;
   resize: none;
   background-color: #fdfaf3;
   color: gray;
+  height: 430px;
+  /* overflow-y: auto;
+  display: flex;
+  flex-direction: column-reverse;
+  overflow-x: hidden; */
 }
 #message {
   width: 100%;
