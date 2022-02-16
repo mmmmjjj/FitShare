@@ -12,7 +12,7 @@
             :aria-controls="'collapse' + myId"
             @click="getClothes(myId)"
           >
-            내 옷장
+            내 옷장 <img id="hanger" src="@/assets/tshirt.png" alt="" />
           </button>
         </h2>
         <div
@@ -22,9 +22,24 @@
           data-bs-parent="#accordionExample"
         >
           <div class="accordion-body">
-            <div class="d-flex input-style">
-              <input type="text" placeholder="이미지 URL 입력" class="img-url mt-1" v-model="ImgUrl" />
-              <img src="@/assets/plus_icon.png" @click="AddUrl" alt="" class="plus-img ms-3" />
+            <div class="d-flex align-items-end">
+              <input type="text" placeholder="이미지 URL 입력" class="img-url" v-model="ImgUrl" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="31"
+                height="31"
+                fill="currentColor"
+                class="bi bi-plus-square ms-3"
+                @click="AddUrl"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"
+                ></path>
+                <path
+                  d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
+                ></path>
+              </svg>
             </div>
             <div class="img-box mt-2">
               <div v-for="(cloth, index) in state.clothes" :key="cloth.clothId">
@@ -236,7 +251,8 @@ export default {
 }
 
 .img-url {
-  width: 170px;
+  width: 200px;
+  box-shadow: 0 0 0 0;
 }
 
 /* 버튼모양 이미지로 대체했을 때 스타일 */
@@ -306,5 +322,49 @@ export default {
   position: absolute;
   left: 80%;
   top: 6%;
+}
+
+.accordion-body {
+  height: 634px;
+}
+
+.accordion-button {
+  font-weight: bold;
+  font-size: 0.65em;
+  height: 60px;
+}
+.accordion-button.collapsed {
+  background-color: #703b00;
+  color: #eac59e;
+}
+
+.accordion-button {
+  color: #703b00;
+  background-color: #eac59e;
+}
+
+.accordion-button.collapsed::after {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+}
+
+.accordion-button:after {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+}
+
+.accordion-button:not(.collapsed) {
+  color: none;
+}
+
+.accordion-button:focus {
+  z-index: 3;
+  border-color: none;
+  outline: 0;
+  box-shadow: none;
+}
+
+#hanger {
+  margin-left: 10px;
+  width: 24px;
+  height: 24px;
 }
 </style>

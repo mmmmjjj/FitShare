@@ -438,7 +438,7 @@ export default {
 }
 
 #session {
-  background-color: #d3e2e7;
+  background-color: #f4f1ee;
 }
 
 #video-container {
@@ -446,7 +446,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: #8abdbe;
+  background-color: #f4f1ee;
   width: 220px;
   height: 100vh;
 }
