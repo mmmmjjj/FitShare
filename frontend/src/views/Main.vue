@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="Main">
     <Navbar/>
     <div id="container">
       <div class="container-box">

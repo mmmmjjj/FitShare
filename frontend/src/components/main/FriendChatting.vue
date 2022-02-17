@@ -2,14 +2,14 @@
   <div>
     <div class="container">
       <div class="tab">
-        <div v-if="state.lastMessages" class="last-chat" @click="getMessages()">더보기</div>
+        <div class="last-chat" @click="getMessages()">
+          <img src="@/assets/expand_less_1x_icon.png" alt="" class="expand_icon" />
+        </div>
       </div>
       <div class="msg-box">
         <div v-for="msg in state.textarea" :key="msg.createdTime">
           <div v-if="msg.receiverId !== friendId">
-            <div class="mt-2 friend-msg-box">
-              [{{ friendName }}] {{ dateFormat(msg.createdTime) }} <br/>
-            </div>
+            <div class="mt-2 friend-msg-box">[{{ friendName }}] {{ dateFormat(msg.createdTime) }} <br /></div>
             <div class="friend-message">
               <p class="friend-msg mt-1">
                 {{ msg.message }}
@@ -17,9 +17,7 @@
             </div>
           </div>
           <div v-else>
-            <div class="mt-2 my-msg-box">
-              [나] {{ dateFormat(msg.createdTime)}} <br/>
-            </div>
+            <div class="mt-2 my-msg-box">{{ dateFormat(msg.createdTime) }} <br /></div>
             <div class="my-message">
               <p class="my-msg mt-1">
                 {{ msg.message }}
@@ -27,7 +25,6 @@
             </div>
           </div>
         </div>
-  
       </div>
       <div class="inputDiv">
         <label for="message"></label>
@@ -42,7 +39,6 @@
         />
         <i class="bi bi-send" @click="sendMessage()"></i>
       </div>
-      <div v-if="state.lastMessages" class="last-chat" @click="getMessages()">더보기</div>
     </div>
   </div>
 </template>
@@ -53,18 +49,18 @@ import { useStore } from "vuex";
 import { useCookies } from "vue3-cookies";
 import Stomp from "stompjs";
 import SockJS from "sockjs-client";
-import axios from 'axios';
+import axios from "../../api/axios";
 
 export default {
-  name: 'FriendChatting',
-  props: ['friendId', 'friendName'],
+  name: "FriendChatting",
+  props: ["friendId", "friendName"],
   setup(props) {
     const store = useStore();
     const { cookies } = useCookies();
 
     onMounted(() => {
       connect();
-    })
+    });
 
     const state = reactive({
       userName: "",
@@ -75,8 +71,8 @@ export default {
       myMessage: [],
 
       dayCnt: 0,
-      lastMessages: false,
-      today: '',
+      lastMessages: true,
+      today: "",
     });
 
     let accessToken = cookies.get("accessToken");
@@ -89,47 +85,32 @@ export default {
     const stomp = Stomp.over(sockJs);
 
     const dateFormat = (date) => {
-      const messageDate = createdDate(date)
+      const messageDate = createdDate(date);
       const hour = date.slice(11, 13);
-      const minute = date.slice(14, 16);  
-      
-      if ( state.today == messageDate ) {
+      const minute = date.slice(14, 16);
+
+      if (state.today == messageDate) {
         if (hour > 12) {
-          return (
-            " 오후 " + 
-            String(Number(hour) - 12) +
-            ":" +
-            minute
-          );
+          return " 오후 " + String(Number(hour) - 12) + ":" + minute;
         } else {
-          return (
-            " 오전 " + hour + ":" + minute
-          );
-        }      
+          return " 오전 " + hour + ":" + minute;
+        }
       } else {
         const month = date.slice(5, 7);
         const day = date.slice(8, 10);
-        const changedDate = month + '/' + day;
+        const changedDate = month + "/" + day;
         if (hour > 12) {
-          return (
-            changedDate +
-            " 오후 " + 
-            String(Number(hour) - 12) +
-            ":" +
-            minute
-          );
+          return changedDate + " 오후 " + String(Number(hour) - 12) + ":" + minute;
         } else {
-          return (
-            changedDate + " 오전 " + hour + ":" + minute
-          );
+          return changedDate + " 오전 " + hour + ":" + minute;
         }
       }
     };
 
     const todayDate = () => {
       const today = new Date();
-      const month = ('0' + (today.getMonth() + 1)).slice(-2);
-      const day = ('0' + today.getDate()).slice(-2);
+      const month = ("0" + (today.getMonth() + 1)).slice(-2);
+      const day = ("0" + today.getDate()).slice(-2);
       state.today = month + day;
     };
 
@@ -153,10 +134,10 @@ export default {
             const obj = {
               username: receiveMsgBody.senderName,
               createdTime: receiveMsgBody.createdTime,
-              message: receiveMsgBody.message
-            }
-            state.textarea.push(obj)
-            document.querySelector('.msg-box').scrollTop = document.querySelector('.msg-box').scrollHeight;
+              message: receiveMsgBody.message,
+            };
+            state.textarea.push(obj);
+            document.querySelector(".msg-box").scrollTop = document.querySelector(".msg-box").scrollHeight;
           },
           headers
         );
@@ -193,25 +174,25 @@ export default {
       }
       return number;
     };
-    
-    // 지난 메세지 받기 
+
+    // 지난 메세지 받기
     const getMessages = () => {
       const today = new Date();
       today.setDate(today.getDate() - state.dayCnt);
       const year = today.getFullYear();
-      const month = ('0' + (today.getMonth() + 1)).slice(-2);
-      const day = ('0' + today.getDate()).slice(-2);
+      const month = ("0" + (today.getMonth() + 1)).slice(-2);
+      const day = ("0" + today.getDate()).slice(-2);
       const date = year + month + day;
       axios({
-        method: 'get',
-        url: `https://i6a405.p.ssafy.io/api/v1/chat-rest/${props.friendId}/${date}`,
-        headers: headers
+        method: "get",
+        url: `/chat-rest/${props.friendId}/${date}`,
+        headers: headers,
       })
         .then((res) => {
           const loadedMessage = res.data.data;
           const array = loadedMessage.concat(state.textarea);
-          
-          array.sort(function(a, b) {
+
+          array.sort(function (a, b) {
             const keyA = new Date(a.createdTime);
             const keyB = new Date(b.createdTime);
             if (keyA < keyB) return -1;
@@ -219,28 +200,27 @@ export default {
             return 0;
           });
 
-          const height = document.querySelector('.msg-box').scrollHeight;
+          const height = document.querySelector(".msg-box").scrollHeight;
           state.textarea = array;
 
-          return height
+          return height;
         })
         .then((height) => {
           if (!state.lastMessages) {
-            document.querySelector('.msg-box').scrollTop = document.querySelector('.msg-box').scrollHeight;
+            document.querySelector(".msg-box").scrollTop = document.querySelector(".msg-box").scrollHeight;
           } else {
-            document.querySelector('.msg-box').scrollTop = document.querySelector('.msg-box').scrollHeight - height;
+            document.querySelector(".msg-box").scrollTop = document.querySelector(".msg-box").scrollHeight - height;
           }
-
           state.dayCnt += 1;
           state.lastMessages = false;
         })
-        .catch(err => console.log(err.response));
+        .catch((err) => console.log(err.response));
     };
-    
+
     // created
     getMessages();
     todayDate();
-    
+
     // 메세지를 보냈을 때
     const sendMessage = async () => {
       // message의 값이 있고 연결된 상태라면
@@ -255,24 +235,22 @@ export default {
           createdTime: koreaTime(),
           receiverId: props.friendId,
         };
-        await stomp.send(
-          `/app/messages`, headers, JSON.stringify(sendMsg)
-        )
+        await stomp.send(`/app/messages`, headers, JSON.stringify(sendMsg));
         state.textarea.push(sendMsg);
         state.message = "";
-        document.querySelector('.msg-box').scrollTop = document.querySelector('.msg-box').scrollHeight;
+        document.querySelector(".msg-box").scrollTop = document.querySelector(".msg-box").scrollHeight;
       }
     };
 
     onMounted(() => {
-      let chattingBox = document.querySelector('.msg-box');
-      chattingBox.addEventListener('scroll', () => {
+      let chattingBox = document.querySelector(".msg-box");
+      chattingBox.addEventListener("scroll", () => {
         handleScroll();
-      })
+      });
     });
 
     const handleScroll = () => {
-      const chat = document.querySelector('.msg-box');
+      const chat = document.querySelector(".msg-box");
       if (chat.scrollTop == 0) {
         state.lastMessages = true;
       } else {
@@ -281,12 +259,21 @@ export default {
     };
 
     return {
-      state, stomp, headers, accessToken, 
-      connect, sendMessage, koreaTime, pad, scroll, getMessages, createdDate,
-      dateFormat, 
-    }
-  }
-}
+      state,
+      stomp,
+      headers,
+      accessToken,
+      connect,
+      sendMessage,
+      koreaTime,
+      pad,
+      scroll,
+      getMessages,
+      createdDate,
+      dateFormat,
+    };
+  },
+};
 </script>
 
 <style scoped>
@@ -300,11 +287,11 @@ export default {
 .container {
   width: 387px;
   height: 490px;
-  background-color: #fdfaf3;    
+  background-color: #fdfaf3;
   position: fixed;
   right: 470px;
   bottom: 104px;
-  box-shadow: 3px 3px 15px rgb(121 121 121)
+  box-shadow: 3px 3px 15px rgb(121 121 121);
 }
 
 .tab {
@@ -355,7 +342,7 @@ i {
   text-align: right;
 }
 
-.my-message { 
+.my-message {
   display: flex;
   flex-direction: row-reverse;
 }
@@ -366,7 +353,7 @@ i {
 }
 
 .my-msg {
-  background-color: #FFBDBD;
+  background-color: #ffbdbd;
   right: 5px;
   max-width: 200px;
   margin-left: 110px;
@@ -376,13 +363,13 @@ i {
   border-radius: 10px;
 }
 
-.friend-message { 
+.friend-message {
   display: flex;
   flex-direction: row;
 }
 
 .friend-msg {
-  background-color: #E5EBF7;
+  background-color: #e5ebf7;
   max-width: 200px;
   display: flex;
   flex-direction: row;
@@ -390,5 +377,8 @@ i {
   border-radius: 10px;
 }
 
-
+.expand_icon {
+  width: 30px;
+  height: 20px;
+}
 </style>
