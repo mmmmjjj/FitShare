@@ -474,14 +474,13 @@ export default {
   position: fixed;
   right: 40px;
   bottom: 110px;
+  z-index: 1;
   min-width: 290px;
   width: 180px;
   height: 530px;
   margin: 0;
   background-color: white;
   border-radius: 10px;
-  /* background-color: #1B4D50; */
-  /* border: 1px solid black; */
   box-shadow: 3px 3px 15px rgb(121 121 121);
 }
 .closet {
@@ -580,7 +579,7 @@ i {
   display: flex;
   position: absolute;
   top: 16px;
-  right: 22px;
+  right: 180px;
   height: 40px;
   line-height: 40px;
   color: #363738;

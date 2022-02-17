@@ -25,6 +25,6 @@ video {
 	width: 100%;
 	height: 91vh;
 	padding: 20px 0px 0;
-  background-color: #D3E2E7;
+  background-color: #f4f1ee;
 }
 </style>
