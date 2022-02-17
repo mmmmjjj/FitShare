@@ -305,8 +305,8 @@ i {
   border-radius: 50px;
   border: none;
   position: fixed;
-  right: 120px;
-  bottom: 20px;
+  right: 100px;
+  bottom: 40px;
   background-color: #8ABDBE;
   
 }
@@ -321,17 +321,16 @@ i {
 
 /* 친구버튼 클릭시 나오는 tab style */
 .tab-box {
-  top: 300px;
-  right: 20px;
-  bottom: 10px;
+  right: 80px;
+  bottom: 30px;
   position: fixed;
   z-index: 2;
 }
 
 .friend-close {
   position: fixed;
-  top: 265px;
-  right: 380px;
+  right: 447px;
+  bottom: 593px;
 }
 
 .btn { 

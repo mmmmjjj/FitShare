@@ -302,8 +302,8 @@ export default {
   height: 490px;
   background-color: #fdfaf3;    
   position: fixed;
-  right: 510px;
-  bottom: 124px;
+  right: 470px;
+  bottom: 104px;
   box-shadow: 3px 3px 15px rgb(121 121 121)
 }
 
