@@ -25,8 +25,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 import static com.fitshare.backend.common.model.ResponseMessage.*;
 
 @Api(value = "소셜 로그인 API", tags = "Auth")
@@ -53,6 +51,7 @@ public class AuthController {
     @ApiOperation(value = "카카오 로그인", notes = "카카오 액세스 토큰으로 유저 정보를 받아 jwt 토큰을 발급하고 전송하는 api입니다.")
     @ApiResponses({
             @ApiResponse(code = 200, message = LOGIN, response = LoginRes.class),
+            @ApiResponse(code = 400, message = "Email is Duplicated", response = ErrorResponse.class),
             @ApiResponse(code = 500, message = "서버 에러", response = ErrorResponse.class)
     })
     @GetMapping(value = "/kakao/login")
@@ -111,6 +110,7 @@ public class AuthController {
     @ApiOperation(value = "네이버 로그인", notes = "네이버 액세스 토큰으로 유저 정보를 받아 jwt 토큰을 발급하고 전송하는 api입니다.")
     @ApiResponses({
             @ApiResponse(code = 200, message = LOGIN, response = LoginRes.class),
+            @ApiResponse(code = 400, message = "Email is Duplicated", response = ErrorResponse.class),
             @ApiResponse(code = 500, message = "서버 에러", response = ErrorResponse.class)
     })
     @GetMapping(value = "/naver/login")
