@@ -70,36 +70,42 @@ export default {
     });
 
     const dateFormatChange = (date) => {
-      let changedDate = new Date(date);
-      if (changedDate.getHours() > 12) {
-        return (
-          "오후 " +
-          pad(changedDate.getHours() - 12) +
-          ":" +
-          pad(changedDate.getMinutes())
-        );
+      let received = date.split("-");
+      let hour = received[2].charAt(3) + received[2].charAt(4);
+      let minute = received[2].charAt(6) + received[2].charAt(7);
+
+      if (hour > 12) {
+        return "오후 " + pad(hour - 12) + ":" + pad(minute);
       } else {
-        return (
-          "오전 " +
-          pad(changedDate.getHours()) +
-          ":" +
-          pad(changedDate.getMinutes())
-        );
+        return "오전 " + pad(hour) + ":" + pad(minute);
       }
     };
 
     const recvMsg = () => {
-      
       state.receivedMsg.forEach((item) => {
-        state.textarea += "[" + item.senderName + "] " + dateFormatChange(item.createdTime) + "\n" + item.message + "\n";
+        state.textarea +=
+          "[" +
+          item.senderName +
+          "] " +
+          dateFormatChange(item.createdTime) +
+          "\n" +
+          item.message +
+          "\n";
       });
     };
-    
+
     const addMsg = () => {
       let temp = state.receivedMsg;
-      let slice = temp.slice(temp.length-1,temp.length);
+      let slice = temp.slice(temp.length - 1, temp.length);
       console.log(slice);
-      state.textarea += "[" + slice[0].senderName + "] " + dateFormatChange(slice[0].createdTime) + "\n" + slice[0].message + "\n";
+      state.textarea +=
+        "[" +
+        slice[0].senderName +
+        "] " +
+        dateFormatChange(slice[0].createdTime) +
+        "\n" +
+        slice[0].message +
+        "\n";
     };
 
     const koreaTime = () => {
@@ -146,7 +152,7 @@ export default {
         state.message = "";
       }
     };
-    
+
     return {
       state,
       accessToken,
