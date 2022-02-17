@@ -34,13 +34,10 @@ public class RedisServiceImpl implements RedisService {
             setOperations.add(key, String.valueOf(value));
         } else if (value instanceof PrivateChat) {
             // key : chat_senderId_receiverId_yyyy-MM-dd
-            System.out.println("key = " + key);
-            System.out.println("value = " + value);
             PrivateChat privateChat = (PrivateChat) value;
             hashOperations.put(key, privateChat.getCreatedTime(), privateChat.getMessage());
             // 삭제 이벤트를 발생시키기 위한 shadow key set
-//            valueOperations.set("shadowkey:" + key, "", getSecondsUntilTomorrow());
-            valueOperations.set("shadowkey:" + key, "", Duration.ofSeconds(10));
+            valueOperations.set("shadowkey:" + key, "", getSecondsUntilTomorrow());
         }
     }
 
