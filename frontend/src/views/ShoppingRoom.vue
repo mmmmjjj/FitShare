@@ -179,6 +179,8 @@ export default {
       chatClass: "group-chat",
       clickStatus: false,
       clickChatStatus: true,
+
+      myClothes: [],
     });
 
     const accessToken = cookies.get("accessToken");
@@ -208,8 +210,12 @@ export default {
     };
     const changeClickStatus = () => {
       state.clickStatus = !state.clickStatus;
-      if (state.clickStatus) state.closetClass = "closet blocked";
-      else state.closetClass = "closet";
+      if (state.clickStatus) {
+        state.closetClass = "closet blocked";
+      }
+      else { 
+        state.closetClass = "closet"; 
+      }
     };
 
     const changeClickChatStatus = () => {

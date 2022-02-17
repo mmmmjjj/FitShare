@@ -219,6 +219,21 @@ export default {
       });
     };
 
+    // created
+    const createdGetClothes = () => {
+      const userId = store.state.user.user_id;
+      axios({
+        method: "GET",
+        url: `clothes/${props.mySessionId}/${userId}`,
+      }).then((res) => {
+        if (res.data.data) {
+          state.clothes = res.data.data
+        }
+      });
+    }
+
+    createdGetClothes()
+
     return {
       ImgUrl,
       AddUrl,
@@ -232,6 +247,7 @@ export default {
       deleteCloth,
       warn_alert,
       success_alert,
+      createdGetClothes
     };
   },
 };
