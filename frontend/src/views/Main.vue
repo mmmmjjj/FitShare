@@ -18,7 +18,7 @@
         </div>
 
         <!-- 버튼 클릭 시 친구 아이콘 html / css tab 버전 -->
-        <button class="friend-btn" @click="OpenTab">
+        <button class="btn friend-btn" @click="OpenTab">
           <img class="friend_icon" src="@/assets/friend_icon.png" alt="friend_icon">
         </button>
         <div v-if="status">
@@ -308,6 +308,7 @@ i {
   right: 120px;
   bottom: 20px;
   background-color: #8ABDBE;
+  
 }
 
 .friend_icon {
@@ -331,5 +332,9 @@ i {
   position: fixed;
   top: 265px;
   right: 380px;
+}
+
+.btn { 
+  box-shadow: 0 0 10px 1px #438185; 
 }
 </style>
