@@ -1,6 +1,6 @@
 <template>
   <div class="room-container">
-    <h2><i class="bi bi-record2-fill me-1" ></i>Live</h2>
+    <h2><i class="bi bi-record2-fill me-1" ></i>LIVE</h2>
     <div v-if="shoppingRoomList.length" class="row">
       <div
         id="room"
@@ -73,15 +73,17 @@ export default {
 .room-container {
   height: 775px;
   width: 543px;
-  background-color: #fff0cc;
+  background-color: #f5e6c0;
   border-radius: 16px;
   padding: 0;
   margin-bottom: 20px;
   position: relative;
+  box-shadow: 2px 8px 18px rgb(207 206 206);
+  border: 3px solid #f7d682;
 }
 
 h2 {
-  font-size: 38px;
+  font-size: 40px;
   font-weight: bold;
   padding: 30px 43px;
   margin: 0;

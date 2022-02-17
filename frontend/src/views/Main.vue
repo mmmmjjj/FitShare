@@ -211,10 +211,12 @@ export default {
 .host-closet {
   width: 543px;
   height: 595px;
-  background-color: #fff0cc;
+  background-color: #fdfaf3;
   z-index: 0;
   position: relative;
   border-radius: 16px;
+  border: 3px solid #d5d1c6;
+  box-shadow: 0px 5px 15px rgb(207 206 206);
 }
 
 /* modal */

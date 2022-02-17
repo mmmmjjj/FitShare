@@ -50,7 +50,7 @@ export default {
 
 <style scoped>
 .host-name {
-  font-size: 38px;
+  font-size: 40px;
   font-weight: bold;
   padding: 30px 43px;
   margin: 0;
@@ -65,9 +65,9 @@ export default {
   transform: translate(-50%, -50%);
 }
 
-image {
- width: 40px;
- height: 40px;
+img {
+ width: 38px;
+ height: 38px;
  margin-right: 10px;
 }
 

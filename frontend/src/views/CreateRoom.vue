@@ -45,7 +45,7 @@
                       v-model="searchQuery"
                       class="search-mall-input"
                       type="text"
-                      placeholder="검색하세요"
+                      placeholder="쇼핑몰 이름이나 도메인을 검색하세요"
                     />
                     <span v-if="searchedMalls.length === 0"><p class="text-center">검색결과 없음</p></span>
                     <div class="options">
