@@ -4,8 +4,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @ApiModel("ChatResponse")
 @Getter
 @Setter
@@ -27,6 +25,6 @@ public class PrivateChatRes {
     private Boolean isChecked;
 
     @ApiModelProperty(name = "메시지 전송 시각", example = "2022-02-03T17:20:52")
-    private LocalDateTime createdTime;
+    private String createdTime;
 
 }

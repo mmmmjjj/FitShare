@@ -22,7 +22,7 @@ public interface PrivateChatRepository extends JpaRepository<PrivateChat, Long> 
     @Query(value = "SELECT NEW com.fitshare.backend.api.response.PrivateChatRes" +
             "( p.sender.id, p.receiver.id, p.message, p.isChecked, p.createdTime )" +
             "  FROM PrivateChat p" +
-            " WHERE function('date_format', p.createdTime, '%Y-%m-%d') = :date" +
+            " WHERE SUBSTRING(p.createdTime, 1, 10) = :date" +
             "   AND ((p.sender.id = :senderId AND p.receiver.id = :receiverId)" +
             "         OR (p.sender.id = :receiverId AND p.receiver.id = :senderId))" +
             " ORDER BY p.createdTime DESC ")

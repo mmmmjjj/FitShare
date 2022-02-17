@@ -4,7 +4,6 @@ import com.fitshare.backend.api.request.PrivateChatReq;
 import com.fitshare.backend.api.response.PrivateChatRes;
 import com.fitshare.backend.db.entity.PrivateChat;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +21,6 @@ public interface ChatService {
 
     void checkChatList(Long memberId, Long friendId);
 
-    List<PrivateChatRes> getPrivateChatListByDate(Long memberId, Long friendId, LocalDate date);
+    List<PrivateChatRes> getPrivateChatListByDate(Long memberId, Long friendId, String date);
 
 }

@@ -11,7 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.*;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.function.BiConsumer;
 
@@ -56,7 +57,7 @@ public class ChatServiceImpl implements ChatService {
                     .sender(sender)
                     .receiver(receiver)
                     .message((String) value)
-                    .createdTime(LocalDateTime.parse(hashKey.toString()))
+                    .createdTime((String) hashKey)
                     .build();
 
             privateChatList.add(privateChat);
@@ -81,7 +82,7 @@ public class ChatServiceImpl implements ChatService {
                     .senderId(senderId)
                     .receiverId(receiverId)
                     .message((String) value)
-                    .createdTime(LocalDateTime.parse(hashKey.toString()))
+                    .createdTime((String) hashKey)
                     .build();
 
             privateChatResList.add(privateChatRes);
@@ -96,9 +97,9 @@ public class ChatServiceImpl implements ChatService {
     public void addPrivateChatInRedis(Long memberId, PrivateChatReq privateChatReq) {
         PrivateChat privateChat = makePrivateChatEntity(memberId, privateChatReq);
 
-        String nowDate = "" + privateChat.getCreatedTime().getYear() + "-";
-        nowDate += privateChat.getCreatedTime().getMonthValue() < 10 ? "0" + privateChat.getCreatedTime().getMonthValue() : privateChat.getCreatedTime().getMonthValue();
-        nowDate += "-" + privateChat.getCreatedTime().getDayOfMonth();
+        // 2022-02-03T17:20:52 형태에서 날짜만 가져온다
+        String[] dateArr = privateChatReq.getCreatedTime().split("T");
+        String nowDate = dateArr[0];
 
         String key = "chat_" + memberId + "_" + privateChatReq.getReceiverId() + "_" + nowDate;
         redisService.setData(key, privateChat);
@@ -116,21 +117,24 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public List<PrivateChatRes> getPrivateChatListByDate(Long memberId, Long friendId, LocalDate date) {
-        // 요청 시 현재 날짜
+    public List<PrivateChatRes> getPrivateChatListByDate(Long memberId, Long friendId, String date) {
+        // 요청 시 현재 날짜 (yyyy-MM-dd)
         ZonedDateTime zonedDateTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
-        LocalDate nowDate = zonedDateTime.toLocalDate();
+        String nowDate = zonedDateTime.toLocalDate().toString();
 
-        if (date.isEqual(nowDate)) { // 조회 요청 날짜가 오늘이면 Redis에서 조회
-            String key = "chat_" + memberId + "_" + friendId + "_" + date;
+        // 조회할 날짜 (yyyy-MM-dd)
+        String requiredDate = date.substring(0, 4) + "-" + date.substring(4, 6) + "-" + date.substring(6, 8);
+
+        if (requiredDate.equals(nowDate)) { // 조회 요청 날짜가 오늘이면 Redis에서 조회
+            String key = "chat_" + memberId + "_" + friendId + "_" + requiredDate;
             List<PrivateChatRes> privateChatRes = getPrivateChatResListFromEntries(key, redisService.getEntries(key));
 
-            key = "chat_" + friendId + "_" + memberId + "_" + date;
+            key = "chat_" + friendId + "_" + memberId + "_" + requiredDate;
             privateChatRes.addAll(getPrivateChatResListFromEntries(key, redisService.getEntries(key)));
 
             return privateChatRes;
         } else { // 조회 요청 날짜가 오늘 전이면 MySQL에서 조회
-            return privateChatRepository.findByCreatedTime(memberId, friendId, date.toString());
+            return privateChatRepository.findByCreatedTime(memberId, friendId, requiredDate);
         }
     }
 }

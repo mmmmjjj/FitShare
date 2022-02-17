@@ -5,8 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
-import java.time.LocalTime;
+import java.time.*;
 import java.util.Map;
 
 @Slf4j
@@ -34,11 +33,14 @@ public class RedisServiceImpl implements RedisService {
         } else if (value instanceof Long) {
             setOperations.add(key, String.valueOf(value));
         } else if (value instanceof PrivateChat) {
-            // key : chat_senderId_receiverId
+            // key : chat_senderId_receiverId_yyyy-MM-dd
+            System.out.println("key = " + key);
+            System.out.println("value = " + value);
             PrivateChat privateChat = (PrivateChat) value;
-            hashOperations.put(key, String.valueOf(privateChat.getCreatedTime()), privateChat.getMessage());
+            hashOperations.put(key, privateChat.getCreatedTime(), privateChat.getMessage());
             // 삭제 이벤트를 발생시키기 위한 shadow key set
-            valueOperations.set("shadowkey:" + key, "", getSecondsUntilTomorrow());
+//            valueOperations.set("shadowkey:" + key, "", getSecondsUntilTomorrow());
+            valueOperations.set("shadowkey:" + key, "", Duration.ofSeconds(10));
         }
     }
 
@@ -63,10 +65,11 @@ public class RedisServiceImpl implements RedisService {
 
     // 다음날 정각까지 남은 시간을 초단위로 계산
     private Duration getSecondsUntilTomorrow() {
-        LocalTime nowTime = LocalTime.now();
+        ZonedDateTime zonedDateTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+        LocalTime nowTime = zonedDateTime.toLocalTime();
         LocalTime endTime = LocalTime.of(23, 59, 59);
 
-        return Duration.between(nowTime, endTime).plusSeconds(2);
+        return Duration.between(nowTime, endTime).plusSeconds(10);
     }
 
     // 세션에서 나간 유저 id 삭제

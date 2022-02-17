@@ -14,8 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-
 import static com.fitshare.backend.common.model.ResponseMessage.CHECK_CHAT;
 import static com.fitshare.backend.common.model.ResponseMessage.GET_CHAT_LIST;
 
@@ -45,7 +43,7 @@ public class ChatRestController {
             @ApiResponse(code = 500, message = "서버 에러", response = ErrorResponse.class)
     })
     @GetMapping(value = "/{friendId}/{date}")
-    public ResponseEntity<BaseResponseBody> getPrivateChatListByDate(@PathVariable Long friendId, @PathVariable @DateTimeFormat(pattern = "yyyyMMdd") LocalDate date) {
+    public ResponseEntity<BaseResponseBody> getPrivateChatListByDate(@PathVariable Long friendId, @PathVariable @DateTimeFormat(pattern = "yyyyMMdd") String date) {
         Long memberId = JwtUtil.getCurrentId().orElseThrow(() -> new AccessDeniedException("Access denied"));
         return ResponseEntity.ok(BaseResponseBody.of(HttpStatus.OK, GET_CHAT_LIST, chatService.getPrivateChatListByDate(memberId, friendId, date)));
     }
