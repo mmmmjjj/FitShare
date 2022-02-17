@@ -1,24 +1,30 @@
 <template>
   <div class="room-container">
-    <h2><i class="bi bi-record2-fill me-1"></i>LIVE</h2>
+    <h2><i class="bi bi-record2-fill me-1" ></i>Live</h2>
     <div v-if="shoppingRoomList.length" class="row">
       <div
         id="room"
         class="room col-6"
+        :class="index % 2 ? 'room-right' : 'room-left'"
+        :style="{
+          'background-image': `url(${require(`@/assets/shopping_${
+            (index % 5) + 1
+          }.png`)})`,
+        }"
         v-for="(room, index) in shoppingRoomList"
         :key="index"
-        :class="[index % 2 ? 'room-right' : 'room-left', index == clicked ? 'room-clicked' : '']"
-        :style="{ 'background-image': `url(${require(`@/assets/shopping_${(index % 5) + 1}.png`)})` }"
-        @click="selectShoppingRoom(room, index)"
+        @click="selectShoppingRoom(room)"
       >
         <div class="participant">
-          <i class="bi bi-eye me-1"></i> {{ room.participantCount }} / {{ room.maxParticipantCount }}
+          <i class="bi bi-eye me-1"></i> {{ room.participantCount }} /
+          {{ room.maxParticipantCount }}
         </div>
         <i v-if="room.isPrivate" class="fas fa-lock"></i>
         <div class="room-info">
           <p class="mall-name">{{ room.shoppingMallName }}</p>
           <div>
-            <span class="host-name">[ {{ room.hostName }} ]</span><span>님의 쇼핑룸</span>
+            <span class="host-name">[ {{ room.hostName }} ]</span
+            ><span>님의 쇼핑룸</span>
           </div>
         </div>
       </div>
@@ -32,16 +38,13 @@
 </template>
 
 <script>
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { useStore } from "vuex";
 
 export default {
   name: "ShoppingRoomList",
-
   setup() {
     const store = useStore();
-
-    const clicked = ref(0);
 
     const shoppingRoomList = computed(() => {
       return store.state.room.shoppingRoomList;
@@ -51,9 +54,8 @@ export default {
       store.dispatch("room/loadShoppingRoomList");
     };
 
-    const selectShoppingRoom = (room, index) => {
+    const selectShoppingRoom = (room) => {
       store.dispatch("room/selectedRoom", room);
-      clicked.value = index;
     };
 
     // created
@@ -62,7 +64,6 @@ export default {
     return {
       shoppingRoomList,
       selectShoppingRoom,
-      clicked,
     };
   },
 };
@@ -72,31 +73,30 @@ export default {
 .room-container {
   height: 775px;
   width: 543px;
-  background-color: #fdfaf3;
+  background-color: #fff0cc;
   border-radius: 16px;
-  box-shadow: 0 0 5px 1px #dadada;
   padding: 0;
   margin-bottom: 20px;
   position: relative;
 }
 
 h2 {
-  font-size: 28px;
+  font-size: 38px;
   font-weight: bold;
-  padding: 30px 45px;
+  padding: 30px 43px;
   margin: 0;
   color: red;
 }
 
 .row {
   width: 543px;
-  height: 680px;
+  height: 691px;
   overflow-y: scroll;
   padding: 0 43px 0 43px;
   margin: 0;
 }
 
-/* scroll */
+/* 스크롤 */
 .row::-webkit-scrollbar {
   width: 7px;
 }
@@ -105,30 +105,27 @@ h2 {
 }
 .row::-webkit-scrollbar-thumb {
   border-radius: 10px;
-  background-color: hsl(210deg 8% 65%);
+  background-color: #2f3542;
 }
 
 .room {
   position: relative;
   padding: 0;
-  margin: 5px 0 42px 0;
+  margin-bottom: 45px;
   width: 205px;
   height: 297px;
   border-radius: 10px;
   border: 3px solid #d3e2e7;
   cursor: pointer;
-  background-color: white;
+  background-color: #ffffff;
+
   background-repeat: no-repeat;
   background-size: contain;
   background-position: 0 20%;
 }
 
 .room:hover {
-  box-shadow: 1px 1px 10px #33665f;
-}
-
-.room-clicked {
-  box-shadow: 1px 1px 10px #33665f;
+  box-shadow: 1px 1px 15px rgb(207, 206, 206);
 }
 
 .room-left {
