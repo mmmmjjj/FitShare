@@ -62,7 +62,12 @@ export default {
           }
         })
         .catch((error) => {
-          console.log(error);
+          if (error.response.data.statusCode === 400) {
+            alert("동일한 이메일로 가입한 계정이 있습니다.");
+            router.replace("/");
+          } else {
+            console.log(error.response);
+          }
         });
     };
 
@@ -90,7 +95,12 @@ export default {
           }
         })
         .catch((error) => {
-          console.log(error);
+          if (error.response.data.statusCode === 400) {
+            alert("동일한 이메일로 가입한 계정이 있습니다.");
+            router.replace("/");
+          } else {
+            console.log(error.response);
+          }
         });
     };
 
@@ -109,7 +119,7 @@ export default {
         })
         .catch((error) => {
           console.log("카카오 Access Token 생성 실패");
-          console.log(error);
+          console.log(error.response);
         });
     };
 
@@ -126,12 +136,13 @@ export default {
         })
         .catch((error) => {
           console.log("네이버 Access Token 생성 실패");
-          console.log(error);
+
+          console.log(error.response);
         });
     };
 
     const movePage = () => {
-      router.push({ name: "Main" });
+      router.replace("/main");
     };
 
     return {
