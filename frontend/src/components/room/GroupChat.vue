@@ -74,8 +74,13 @@ export default {
       let hour = received[2].charAt(3) + received[2].charAt(4);
       let minute = received[2].charAt(6) + received[2].charAt(7);
 
-      if (hour > 12) {
-        return "오후 " + pad(hour - 12) + ":" + minute;
+      if (hour >= 12) {
+        if(hour > 12){
+          return "오후 " + pad(hour - 12) + ":" + minute;
+        }
+        else{
+          return "오후 " + pad(hour) + ":" + minute;  
+        }
       } else {
         return "오전 " + pad(hour) + ":" + minute;
       }
